@@ -2,5 +2,134 @@
 
 [![Build Status](https://travis-ci.org/mczachurski/Swiftgger.svg?branch=master)](https://travis-ci.org/mczachurski/Swiftgger) [![codecov](https://codecov.io/gh/mczachurski/Swiftgger/branch/master/graph/badge.svg)](https://codecov.io/gh/mczachurski/Swiftgger) [![codebeat badge](https://codebeat.co/badges/44f41b51-3cb9-441b-84fa-8506c3011214)](https://codebeat.co/projects/github-com-mczachurski-swiftgger-master) [![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](ttps://developer.apple.com/swift/) [![Platforms OS X | Linux](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/) 
 
-Swiftgger is simple library which generates for you objects which are compatible with OpenAPI version 3.0. Generated objects can be serialized and returned by your API endpoint. URL to that endpoint can be used in Swagger. Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute endpoints.
+Swiftgger is simple library which generates OpenAPI objects for you. Library generate output which is compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject). Generated objects can be serialized and returned by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute endpoints. It's specially helpful during API testing.
+
+![swagger](Images/screen-02.png)
+
+## Getting started
+
+Swiftgger support Swift Package Manager. You have to add to your `Package.swift` file information about Swiftgger. Below is a simple example.
+
+```swift
+let package = Package(
+    name: "YourApp",
+    dependencies: [
+        // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.0.0")
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+        .target(name: "YourApp", dependencies: ["Swiftgger"]),
+        .testTarget(name: "YourAppTests", dependencies: ["YourApp"])
+    ]
+)
+```
+
+Then you have to run: `swift build` command. Libraries should be downloaded. Now you can use classes which library provides.
+
+## How to use it
+
+Unfortunately Swift is not perfect in *reflection* (introspection) and a lot of settings we have to do manually. Below is example how code for adding CRUD operations for one controller looks like. Of course in that example whole configuration is done in one place, however in your application you can put endpoint/actions configuration near your implementation (separate for each endpoint) and then managing of that configuration will be much simpler.
+
+### Example of configuration
+
+```swift
+
+// Objects which be shown as a examples in Swagger.
+let userDto = UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)
+let validationErrorResponseDto = ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."])
+
+// Create builder.
+let openAPIBuilder = OpenAPIBuilder(
+    title: "Tasker server API",
+    version: "1.0.0",
+    description: "This is a sample server for task server application.",
+    termsOfService: "http://example.com/terms/",
+    name: "John Doe",
+    email: "john.doe@some-email.org",
+    url: URL(string: "http://example-domain.com/@john"),
+    authorizations: [.jwt(description: "You can get token from *sign-in* action from *Account* controller.")]
+)
+.addController(APIController(name: "Users", description: "Controller where we can manage users", actions: [
+        APIAction(method: .get, route: "/users",
+            summary: "Getting all users",
+            description: "Action for getting all users from server",
+            responses: [
+                APIResponse(code: "200", description: "List of users", object: [userDto]),
+                APIResponse(code: "401", description: "User not authorized")
+            ],
+            authorization: true
+        ),
+        APIAction(method: .get, route: "/users/{id}",
+            summary: "Getting user by id",
+            description: "Action for getting specific user from server",
+            parameters: [
+                APIParameter(name: "id", description: "User id", required: true)
+            ],
+            responses: [
+                APIResponse(code: "200", description: "Specific user", object: userDto),
+                APIResponse(code: "404", description: "User with entered id not exists"),
+                APIResponse(code: "401", description: "User not authorized")
+            ],
+            authorization: true
+        ),
+        APIAction(method: .post, route: "/users",
+            summary: "Adding new user",
+            description: "Action for adding new user to the server",
+            request: APIRequest(object: userDto, description: "Object with user information."),
+            responses: [
+                APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
+                APIResponse(code: "400", description: "There was issues during adding new user", object: validationErrorResponseDto),
+                APIResponse(code: "401", description: "User not authorized")
+            ],
+            authorization: true
+        ),
+        APIAction(method: .put, route: "/users/{id}",
+            summary: "Updating user",
+            description: "Action for updating specific user in the server",
+            parameters: [
+                APIParameter(name: "id", description: "User id", required: true)
+            ],
+            request: APIRequest(object: userDto, description: "Object with user information."),
+            responses: [
+                APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
+                APIResponse(code: "400", description: "There was issues during updating user", object: validationErrorResponseDto),
+                APIResponse(code: "404", description: "User with entered id not exists"),
+                APIResponse(code: "401", description: "User not authorized")
+            ],
+            authorization: true
+        ),
+        APIAction(method: .delete, route: "/users/{id}",
+            summary: "Deleting user",
+            description: "Action for deleting user from the database",
+            parameters: [
+                APIParameter(name: "id", description: "User id", required: true)
+            ],
+            responses: [
+                APIResponse(code: "200", description: "User was deleted"),
+                APIResponse(code: "404", description: "User with entered id not exists"),
+                APIResponse(code: "401", description: "User not authorized")
+            ],
+            authorization: true
+        )
+    ])
+)
+```
+
+When you prepared configuration for all your controllers/actions then you have to execute following code:
+
+```swift
+let document = try openAPIBuilder.build()
+```
+
+Object `document` stores information about your API with OpenAPI format. Now you have to serialize that object to JSON and expose by additional endpoint in your API application. You can use that endpoint in Swagger UI application.
+
+![user in swagger 1](Images/screen-01.png)![user in swagger 2](Images/screen-03.png)
+
+More examples you can find in my other GitHub [project](https://github.com/mczachurski/TaskServerSwift).
+
+## Lincese
+
+This project is licensed under the terms of the MIT license.
 
