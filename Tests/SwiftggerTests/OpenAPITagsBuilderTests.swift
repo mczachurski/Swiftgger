@@ -36,8 +36,8 @@ class OpenAPITagsBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription"))
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription"))
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -53,9 +53,9 @@ class OpenAPITagsBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription",
-                                         externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription",
+                                     externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -71,9 +71,9 @@ class OpenAPITagsBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription",
-                                         externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription",
+                                     externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
