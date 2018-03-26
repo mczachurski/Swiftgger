@@ -7,7 +7,7 @@
 
 import Foundation
 
-class APIServer {
+public class APIServer {
 
     var url: String
     var description: String?

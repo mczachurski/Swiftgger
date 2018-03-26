@@ -8,7 +8,7 @@
 import Foundation
 
 // Object with example description.
-class OpenAPIExample: Encodable {
+public class OpenAPIExample: Encodable {
 
     public private(set) var ref: String?
     public private(set) var summary: String?
@@ -35,7 +35,7 @@ class OpenAPIExample: Encodable {
         case externalValue
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         if self.ref != nil {

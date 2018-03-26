@@ -7,7 +7,7 @@
 
 import Foundation
 
-class OpenAPIHeader: Encodable {
+public class OpenAPIHeader: Encodable {
 
     public private(set) var ref: String?
     public private(set) var name: String?

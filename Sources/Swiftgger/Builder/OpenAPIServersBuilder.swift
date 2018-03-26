@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class OpenAPIServersBuilder {
+class OpenAPIServersBuilder {
 
     let servers: [APIServer]
 

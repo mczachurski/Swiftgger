@@ -7,7 +7,7 @@
 
 import Foundation
 
-class OpenAPIObjectProperty: Encodable {
+public class OpenAPIObjectProperty: Encodable {
 
     public private(set) var type: String
     public private(set) var example: String?

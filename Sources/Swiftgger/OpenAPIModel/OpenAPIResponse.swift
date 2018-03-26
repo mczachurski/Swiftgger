@@ -9,7 +9,7 @@ import Foundation
 
 // Describes a single response from an API Operation, including design-time,
 // static links to operations based on the response.
-class OpenAPIResponse: Encodable {
+public class OpenAPIResponse: Encodable {
 
     public private(set) var ref: String?
     public private(set) var description: String?

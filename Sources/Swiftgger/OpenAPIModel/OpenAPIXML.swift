@@ -8,7 +8,7 @@
 import Foundation
 
 // A metadata object that allows for more fine-tuned XML model definitions.
-class OpenAPIXML: Encodable {
+public class OpenAPIXML: Encodable {
 
     public private(set) var name: String?
     public private(set) var namespace: String?

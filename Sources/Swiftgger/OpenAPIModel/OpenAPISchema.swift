@@ -8,7 +8,7 @@
 import Foundation
 
 // The Schema Object allows the definition of input and output data types.
-class OpenAPISchema: Encodable {
+public class OpenAPISchema: Encodable {
 
     public private(set) var ref: String?
     public private(set) var type: String?

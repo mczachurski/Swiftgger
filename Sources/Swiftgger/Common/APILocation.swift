@@ -8,7 +8,7 @@
 import Foundation
 
 // Enum with possible parameters locations.
-enum APILocation: String, Encodable {
+public enum APILocation: String, Encodable {
     case query
     case header
     case path

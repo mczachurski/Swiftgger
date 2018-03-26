@@ -9,7 +9,7 @@ import Foundation
 
 // Describes a single operation parameter.
 // A unique parameter is defined by a combination of a name and location.
-class OpenAPIParameter: Encodable {
+public class OpenAPIParameter: Encodable {
 
     public private(set) var ref: String?
     public private(set) var name: String?

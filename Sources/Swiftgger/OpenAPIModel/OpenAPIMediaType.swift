@@ -8,7 +8,7 @@
 import Foundation
 
 // Each Media Type Object provides schema and examples for the media type identified by its key.
-class OpenAPIMediaType: Encodable {
+public class OpenAPIMediaType: Encodable {
 
     public private(set) var ref: String?
     public private(set) var schema: OpenAPISchema?

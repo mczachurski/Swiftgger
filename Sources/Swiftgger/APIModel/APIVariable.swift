@@ -7,7 +7,7 @@
 
 import Foundation
 
-class APIVariable: Encodable {
+class APIVariable {
 
     var name: String
     var defaultValue: String

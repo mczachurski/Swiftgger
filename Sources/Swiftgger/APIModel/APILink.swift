@@ -7,7 +7,7 @@
 
 import Foundation
 
-class APILink {
+public class APILink {
 
     var url: String
     var description: String?
