@@ -5,7 +5,7 @@ import XCTest
 
 class OpenAPIOperationBuilderTests: XCTestCase {
 
-    func testControllerTitleShouldBeTranslatedToOpenAPIDocument() {
+    func testAPITitleShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -21,7 +21,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("Title", openAPIDocument.info.title)
     }
 
-    func testControllerVersionShouldBeTranslatedToOpenAPIDocument() {
+    func testAPIVersionShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -37,7 +37,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("1.0.0", openAPIDocument.info.version)
     }
 
-    func testControllerDescriptionShouldBeTranslatedToOpenAPIDocument() {
+    func testAPIDescriptionShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -53,7 +53,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("Description", openAPIDocument.info.description)
     }
 
-    func testControllerTermsOfServiceShouldBeTranslatedToOpenAPIDocument() {
+    func testAPITermsOfServiceShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -70,7 +70,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("Terms of service", openAPIDocument.info.termsOfService)
     }
 
-    func testControllerContactNameShouldBeTranslatedToOpenAPIDocument() {
+    func testAPIContactNameShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -87,7 +87,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("John Doe", openAPIDocument.info.contact?.name)
     }
 
-    func testControllerContactEmailShouldBeTranslatedToOpenAPIDocument() {
+    func testAPIContactEmailShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -104,7 +104,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual("john.doe@email.com", openAPIDocument.info.contact?.email)
     }
 
-    func testControllerContactUrlShouldBeTranslatedToOpenAPIDocument() {
+    func testAPIContactUrlShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -121,56 +121,13 @@ class OpenAPIOperationBuilderTests: XCTestCase {
         XCTAssertEqual(URL(string: "http://contact.url/"), openAPIDocument.info.contact?.url)
     }
 
-    func testControllerBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
-
-        // Arrange.
-        let openAPIBuilder = OpenAPIBuilder(
-            title: "Title",
-            version: "1.0.0",
-            description: "Description",
-            authorizations: [.basic(description: "Basic authorization")]
-        )
-
-        // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
-
-        // Assert.
-        let securitySchema = openAPIDocument.components?.securitySchemes!["auth_basic"]
-        XCTAssertEqual("http", securitySchema?.type)
-        XCTAssertEqual("basic", securitySchema?.scheme)
-        XCTAssertEqual("Basic authorization", securitySchema?.description)
-    }
-
-    func testControllerBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
-
-        // Arrange.
-        let openAPIBuilder = OpenAPIBuilder(
-            title: "Title",
-            version: "1.0.0",
-            description: "Description",
-            authorizations: [.jwt(description: "JWT authorization")]
-        )
-
-        // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
-
-        // Assert.
-        let securitySchema = openAPIDocument.components?.securitySchemes!["auth_jwt"]
-        XCTAssertEqual("http", securitySchema?.type)
-        XCTAssertEqual("bearer", securitySchema?.scheme)
-        XCTAssertEqual("jwt", securitySchema?.bearerFormat)
-        XCTAssertEqual("JWT authorization", securitySchema?.description)
-    }
-
     static var allTests = [
-        ("testControllerTitleShouldBeTranslatedToOpenAPIDocument", testControllerTitleShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerVersionShouldBeTranslatedToOpenAPIDocument", testControllerVersionShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerDescriptionShouldBeTranslatedToOpenAPIDocument", testControllerDescriptionShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerTermsOfServiceShouldBeTranslatedToOpenAPIDocument", testControllerTermsOfServiceShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerContactNameShouldBeTranslatedToOpenAPIDocument", testControllerContactNameShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerContactEmailShouldBeTranslatedToOpenAPIDocument", testControllerContactEmailShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerContactUrlShouldBeTranslatedToOpenAPIDocument", testControllerContactUrlShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument", testControllerBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument", testControllerBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument)
+        ("testAPITitleShouldBeTranslatedToOpenAPIDocument", testAPITitleShouldBeTranslatedToOpenAPIDocument),
+        ("testAPIVersionShouldBeTranslatedToOpenAPIDocument", testAPIVersionShouldBeTranslatedToOpenAPIDocument),
+        ("testAPIDescriptionShouldBeTranslatedToOpenAPIDocument", testAPIDescriptionShouldBeTranslatedToOpenAPIDocument),
+        ("testAPITermsOfServiceShouldBeTranslatedToOpenAPIDocument", testAPITermsOfServiceShouldBeTranslatedToOpenAPIDocument),
+        ("testAPIContactNameShouldBeTranslatedToOpenAPIDocument", testAPIContactNameShouldBeTranslatedToOpenAPIDocument),
+        ("testAPIContactEmailShouldBeTranslatedToOpenAPIDocument", testAPIContactEmailShouldBeTranslatedToOpenAPIDocument),
+        ("testAPIContactUrlShouldBeTranslatedToOpenAPIDocument", testAPIContactUrlShouldBeTranslatedToOpenAPIDocument)
     ]
 }
