@@ -13,7 +13,7 @@ public class APIResponse {
     var code: String
     var contentType: String?
 
-    init(code: String, description: String, object: Any? = nil, contentType: String? = nil) {
+    public init(code: String, description: String, object: Any? = nil, contentType: String? = nil) {
         self.code = code
         self.description = description
         self.object = object

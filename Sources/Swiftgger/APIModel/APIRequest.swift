@@ -12,7 +12,7 @@ public class APIRequest {
     var description: String?
     var contentType: String?
 
-    init(object: Any? = nil, description: String? = nil, contentType: String? = nil) {
+    public init(object: Any? = nil, description: String? = nil, contentType: String? = nil) {
         self.object = object
         self.description = description
         self.contentType = contentType

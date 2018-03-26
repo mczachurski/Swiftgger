@@ -15,14 +15,14 @@ public class APIParameter {
     var deprecated: Bool = false
     var allowEmptyValue: Bool = false
 
-    init(
+    public init(
         name: String,
         parameterLocation: APILocation = APILocation.path,
         description: String? = nil,
         required: Bool = false,
         deprecated: Bool = false,
         allowEmptyValue: Bool = false
-        ) {
+    ) {
         self.name = name
         self.parameterLocation = parameterLocation
         self.description = description

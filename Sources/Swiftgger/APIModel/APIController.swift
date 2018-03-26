@@ -13,7 +13,7 @@ public class APIController {
     var link: APILink?
     var actions: [APIAction]
 
-    init(name: String, description: String, externalDocs: APILink? = nil, actions: [APIAction] = []) {
+    public init(name: String, description: String, externalDocs: APILink? = nil, actions: [APIAction] = []) {
         self.name = name
         self.description = description
         self.link = externalDocs

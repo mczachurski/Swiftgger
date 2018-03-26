@@ -17,7 +17,7 @@ public class APIAction {
     var responses: [APIResponse]?
     var authorization: Bool = false
 
-    init(
+    public init(
         method: APIHttpMethod,
         route: String,
         summary: String,

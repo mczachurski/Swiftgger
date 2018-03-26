@@ -12,7 +12,7 @@ public class APILink {
     var url: String
     var description: String?
 
-    init(url: String, description: String? = nil) {
+    public init(url: String, description: String? = nil) {
         self.url = url
         self.description = description
     }

@@ -13,7 +13,7 @@ public class APIServer {
     var description: String?
     var variables: [APIVariable]?
 
-    init(url: String, description: String? = nil, variables: [APIVariable]? = nil) {
+    public init(url: String, description: String? = nil, variables: [APIVariable]? = nil) {
         self.url = url
         self.description = description
         self.variables = variables

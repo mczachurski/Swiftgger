@@ -21,7 +21,7 @@ public class OpenAPIBuilder {
     var controllers: [APIController] = []
     var servers: [APIServer] = []
 
-    init(
+    public init(
         title: String,
         version: String,
         description: String,
@@ -41,17 +41,17 @@ public class OpenAPIBuilder {
         self.authorizations = authorizations
     }
 
-    func addController(_ controller: APIController) -> OpenAPIBuilder {
+    public func addController(_ controller: APIController) -> OpenAPIBuilder {
         self.controllers.append(controller)
         return self
     }
 
-    func addServer(_ server: APIServer) -> OpenAPIBuilder {
+    public func addServer(_ server: APIServer) -> OpenAPIBuilder {
         self.servers.append(server)
         return self
     }
 
-    func build() throws -> OpenAPIDocument {
+    public func build() throws -> OpenAPIDocument {
 
         // Basic controller information.
         let contact = OpenAPIContact(name: self.name, email: self.email, url: self.url)

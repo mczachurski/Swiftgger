@@ -7,14 +7,14 @@
 
 import Foundation
 
-class APIVariable {
+public class APIVariable {
 
     var name: String
     var defaultValue: String
     var enumValues: [String]?
     var description: String?
 
-    init(name: String, defaultValue: String, enumValues: [String]? = nil, description: String? = nil) {
+    public init(name: String, defaultValue: String, enumValues: [String]? = nil, description: String? = nil) {
         self.name = name
         self.defaultValue = defaultValue
         self.enumValues = enumValues
