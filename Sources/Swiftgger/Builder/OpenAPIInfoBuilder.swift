@@ -21,7 +21,7 @@ class OpenAPIInfoBuilder {
         version: String,
         description: String,
         termsOfService: String?,
-        contact: APIContact?, 
+        contact: APIContact?,
         license: APILicense?
     ) {
         self.title = title

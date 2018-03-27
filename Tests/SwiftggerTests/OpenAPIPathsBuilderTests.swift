@@ -8,7 +8,7 @@
 import XCTest
 @testable import Swiftgger
 
-// swiftlint:disable force_try
+// swiftlint:disable force_try type_body_length file_length
 
 class Animal {
     var name: String
@@ -239,7 +239,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"], 
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"],
             "Default response content type should be added to the tree.")
     }
 
@@ -264,7 +264,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/xml"], 
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/xml"],
             "Custom response content type should be added to the tree.")
     }
 
@@ -289,7 +289,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema, 
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema,
             "Response schema should be added to the tree.")
     }
 
@@ -339,7 +339,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
-    }    
+    }
 
     func testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument() {
 
@@ -362,8 +362,9 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.items?.ref)
-    }    
+        XCTAssertEqual("#/components/schemas/Animal",
+            openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.items?.ref)
+    }
 
     func testActionRequestBodyShouldBeAddedToOpenAPIDocument() {
 
@@ -493,7 +494,8 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
-                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description",
+                                 required: true, deprecated: true, allowEmptyValue: true)
                 ])
             ])
         )
@@ -515,7 +517,8 @@ class OpenAPIPathsBuilderTests: XCTestCase {
             )
             .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
-                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description",
+                                 required: true, deprecated: true, allowEmptyValue: true)
                     ])
                 ])
         )
@@ -537,7 +540,8 @@ class OpenAPIPathsBuilderTests: XCTestCase {
             )
             .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
-                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description",
+                                 required: true, deprecated: true, allowEmptyValue: true)
                     ])
                 ])
         )

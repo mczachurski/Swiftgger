@@ -55,7 +55,7 @@ public class OpenAPIBuilder {
                                              version: self.version,
                                              description: self.description,
                                              termsOfService: self.termsOfService,
-                                             contact: self.contact, 
+                                             contact: self.contact,
                                              license: self.license)
         let info = openAPIInfoBuilder.build()
 
