@@ -20,6 +20,32 @@ class Vehicle {
     }
 }
 
+/*
+    Tests for schames part of OpenAPI standard (/components/schemas).
+
+    "components": {
+        "schemas": {
+            "Vehicle" : {
+                 "type": "object",
+                 "properties": {
+                     "age": {
+                         "type": "int",
+                     },
+                     "name": {
+                        "type": "string"
+                     }
+                 },
+                 "required": [
+                    "name"
+                 ],
+                 "example": {
+                     "name": "Ford",
+                     "age": 21
+                 }
+            }
+        }
+    }
+ */
 class OpenAPISchemasBuilderTests: XCTestCase {
 
     func testSchemaNameShouldBeTranslatedToOpenAPIDocument() {

@@ -10,6 +10,32 @@ import XCTest
 
 // swiftlint:disable force_try
 
+/*
+    Tests for server part of OpenAPI standard (/servers).
+
+    "servers" : [{
+        "url" : "http://localhost:8181",
+        "description" : "Main server"
+    },
+    {
+        "url" : "http://localhost:{port}/{basePath}",
+        "variables" : {
+            "port" : {
+                "default" : "80",
+                "description" : "Port to the API",
+                "enum" : [
+                    "80",
+                    "443"
+                ]
+            },
+            "basePath" : {
+                "default" : "v1",
+                "description" : "Base path to the server API"
+            }
+        },
+        "description" : "Secure server"
+    }]
+ */
 class OpenAPIServersBuilderTests: XCTestCase {
 
     func testServerUrlShouldBeTranslatedToOpenAPIDocument() {

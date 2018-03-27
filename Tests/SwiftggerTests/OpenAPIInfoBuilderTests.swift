@@ -4,10 +4,9 @@ import XCTest
 // swiftlint:disable force_try
 
 /*
-    Tests for info part of OpenAPI schema.
+    Tests for info part of OpenAPI schema (/info).
 
-    "info": 
-    {
+    "info": {
         "title": "Sample Pet Store App",
         "description": "This is a sample server for a pet store.",
         "termsOfService": "http://example.com/terms/",
@@ -22,7 +21,7 @@ import XCTest
         },
         "version": "1.0.1"
     }
-*/
+ */
 class OpenAPIInfoBuilderTests: XCTestCase {
 
     func testAPITitleShouldBeTranslatedToOpenAPIDocument() {

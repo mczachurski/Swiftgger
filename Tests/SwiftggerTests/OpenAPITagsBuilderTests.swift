@@ -10,6 +10,29 @@ import XCTest
 
 // swiftlint:disable force_try
 
+/*
+    Tests for tags (controllers descriptions) part of OpenAPI standard (/tags).
+
+    "tags" : [
+        {
+            "name" : "Account",
+            "description" : "Controller where we can manage tasks"
+        },
+        {
+            "name" : "Users",
+            "description" : "Controller where we can manage users"
+        },
+        {
+            "name" : "Tasks",
+            "description" : "Controller where we can manage tasks"
+        },
+        {
+            "name" : "Health",
+            "description" : "Controller where we can check health"
+        }
+    ]
+
+ */
 class OpenAPITagsBuilderTests: XCTestCase {
 
     func testControllerNameShouldBeTranslatedToOpenAPIDocument() {

@@ -21,44 +21,51 @@ class Animal {
 }
 
 /*
-    "paths":
-    {
+    Tests for paths components in OpenAPI standard (/paths).
+
+    "paths": {
         "/animals": {
             "get": {
+                "summary": "Returns all pets",
                 "description": "Returns all pets from the system that the user has access to",
                 "responses": {
-                    "200": {          
+                    "200": {
                         "description": "A list of pets.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/pet"
+                                        "items": {
+                                            "$ref": "#/components/schemas/pet"
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            },
+                },
             "post": {
-                "description": "Returns all pets from the system that the user has access to",
-                "request": {
-                    "object": {
-                        "name": "Dog",
-                        "age": 21
+                "summary": "Create new pet",
+                "description": "Create new pet to the system",
+                "requestBody": {
+                    "description": "A list of pets.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/pet"
+                            }
+                        }
                     }
                 }
                 "responses": {
-                    "200": {          
+                    "200": {
                         "description": "A list of pets."
                     }
                 }
             }
         }
     }
-*/
+ */
 class OpenAPIPathsBuilderTests: XCTestCase {
 
     func testActionRouteShouldBeAddedToOpenAPIDocument() {
@@ -99,6 +106,26 @@ class OpenAPIPathsBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"], "Action method should be added to the tree.")
+    }
+
+    func testActionSummaryShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description")
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("Action summary", openAPIDocument.paths["/animals"]?.get?.summary)
     }
 
     func testActionDescriptionShouldBeAddedToOpenAPIDocument() {
@@ -338,10 +365,194 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.items?.ref)
     }    
 
+    func testActionRequestBodyShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let animal = Animal(name: "Dog", age: 21)
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+
+                    )
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.requestBody,
+                        "Request body should be added to the tree.")
+    }
+
+    func testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let animal = Animal(name: "Dog", age: 21)
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+
+                )
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/json"],
+                        "Default request content type should be added to the tree.")
+    }
+
+    func testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let animal = Animal(name: "Dog", age: 21)
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description", request: APIRequest(object: animal, description: "Animal request", contentType: "application/xml")
+
+                )
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/xml"],
+                        "Custom request content type should be added to the tree.")
+    }
+
+    func testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let animal = Animal(name: "Dog", age: 21)
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+
+                )
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("Animal request", openAPIDocument.paths["/animals"]?.get?.requestBody?.description)
+    }
+
+    func testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let animal = Animal(name: "Dog", age: 21)
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals", summary: "Action summary",
+                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+
+                )
+                ]))
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/json"]?.schema?.ref)
+    }
+
+    func testActionParameterNameShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                ])
+            ])
+        )
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("id", openAPIDocument.paths["/animals/{id}"]?.get?.parameters![0].name)
+    }
+
+    func testActionParameterLocationShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                    ])
+                ])
+        )
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual(APILocation.path, openAPIDocument.paths["/animals/{id}"]?.get?.parameters![0].parameterLocation)
+    }
+
+    func testActionParameterDescriptionShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+            )
+            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
+                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description", required: true, deprecated: true, allowEmptyValue: true)
+                    ])
+                ])
+        )
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("Parameter description", openAPIDocument.paths["/animals/{id}"]?.get?.parameters![0].description)
+    }
 
     static var allTests = [
         ("testActionRouteShouldBeAddedToOpenAPIDocument", testActionRouteShouldBeAddedToOpenAPIDocument),
         ("testActionMethodShouldBeAddedToOpenAPIDocument", testActionMethodShouldBeAddedToOpenAPIDocument),
+        ("testActionSummaryShouldBeAddedToOpenAPIDocument", testActionSummaryShouldBeAddedToOpenAPIDocument),
         ("testActionDescriptionShouldBeAddedToOpenAPIDocument", testActionDescriptionShouldBeAddedToOpenAPIDocument),
         ("testActionCodeResponseShouldBeAddedToOpenAPIDocument", testActionCodeResponseShouldBeAddedToOpenAPIDocument),
         ("testActionResponseDescriptionShouldBeAddedToOpenAPIDocument", testActionResponseDescriptionShouldBeAddedToOpenAPIDocument),
@@ -351,6 +562,14 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         ("testActionResponseSchemaShouldBeAddedToOpenAPIDocument", testActionResponseSchemaShouldBeAddedToOpenAPIDocument),
         ("testActionArrayResponseTypeShouldBeAddedToOpenAPIDocument", testActionArrayResponseTypeShouldBeAddedToOpenAPIDocument),
         ("testActionObjectResponseReferenceShouldBeAddedToOpenAPIDocument", testActionObjectResponseReferenceShouldBeAddedToOpenAPIDocument),
-        ("testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument", testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument)
+        ("testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument", testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument),
+        ("testActionRequestBodyShouldBeAddedToOpenAPIDocument", testActionRequestBodyShouldBeAddedToOpenAPIDocument),
+        ("testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument", testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument),
+        ("testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument", testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument),
+        ("testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument", testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument),
+        ("testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument", testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument),
+        ("testActionParameterNameShouldBeAddedToOpenAPIDocument", testActionParameterNameShouldBeAddedToOpenAPIDocument),
+        ("testActionParameterLocationShouldBeAddedToOpenAPIDocument", testActionParameterLocationShouldBeAddedToOpenAPIDocument),
+        ("testActionParameterDescriptionShouldBeAddedToOpenAPIDocument", testActionParameterDescriptionShouldBeAddedToOpenAPIDocument)
     ]
 }
