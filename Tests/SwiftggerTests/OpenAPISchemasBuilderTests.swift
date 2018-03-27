@@ -10,7 +10,7 @@ import XCTest
 
 // swiftlint:disable force_try
 
-class TestClass {
+class Vehicle {
     var name: String
     var age: Int?
 
@@ -25,7 +25,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaNameShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -33,20 +33,20 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: testClass))
+                      description: "Action description", request: APIRequest(object: car))
         ]))
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["TestClass"], "Schema name not exists")
+        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"], "Schema name not exists")
     }
 
     func testSchemaTypeShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -54,7 +54,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: testClass))
+                          description: "Action description", request: APIRequest(object: car))
             ]
         ))
 
@@ -62,13 +62,13 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertEqual("object", openAPIDocument.components?.schemas!["TestClass"]?.type)
+        XCTAssertEqual("object", openAPIDocument.components?.schemas!["Vehicle"]?.type)
     }
 
     func testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -76,7 +76,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: testClass))
+                      description: "Action description", request: APIRequest(object: car))
             ]
         ))
 
@@ -84,15 +84,15 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["TestClass"]?.properties!["name"], "String property not exists in schema")
-        XCTAssertEqual("string", openAPIDocument.components?.schemas!["TestClass"]?.properties!["name"]?.type)
-        XCTAssertEqual("Test name", openAPIDocument.components?.schemas!["TestClass"]?.properties!["name"]?.example)
+        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"], "String property not exists in schema")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"]?.type)
+        XCTAssertEqual("Ford", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"]?.example)
     }
 
     func testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -100,7 +100,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: testClass))
+                          description: "Action description", request: APIRequest(object: car))
             ]
         ))
 
@@ -108,15 +108,15 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["TestClass"]?.properties!["age"], "Integer property not exists in schema")
-        XCTAssertEqual("int", openAPIDocument.components?.schemas!["TestClass"]?.properties!["age"]?.type)
-        XCTAssertEqual("21", openAPIDocument.components?.schemas!["TestClass"]?.properties!["age"]?.example)
+        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"], "Integer property not exists in schema")
+        XCTAssertEqual("int", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"]?.type)
+        XCTAssertEqual("21", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"]?.example)
     }
 
     func testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -124,7 +124,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             )
             .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: testClass))
+                          description: "Action description", request: APIRequest(object: car))
                 ]
             ))
 
@@ -132,13 +132,13 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssert(openAPIDocument.components?.schemas!["TestClass"]?.required?.contains("name") == true, "Required property not exists in schema")
+        XCTAssert(openAPIDocument.components?.schemas!["Vehicle"]?.required?.contains("name") == true, "Required property not exists in schema")
     }
 
     func testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let testClass = TestClass(name: "Test name", age: 21)
+        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -146,7 +146,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             )
             .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: testClass))
+                          description: "Action description", request: APIRequest(object: car))
                 ]
             ))
 
@@ -154,7 +154,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = try! openAPIBuilder.build()
 
         // Assert.
-        XCTAssert(openAPIDocument.components?.schemas!["TestClass"]?.required?.contains("age") == false, "Not required property exists in schema")
+        XCTAssert(openAPIDocument.components?.schemas!["Vehicle"]?.required?.contains("age") == false, "Not required property exists in schema")
     }
 
     static var allTests = [

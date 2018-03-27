@@ -13,9 +13,8 @@ public class OpenAPIBuilder {
     var version: String
     var description: String
     var termsOfService: String?
-    var name: String?
-    var email: String?
-    var url: URL?
+    var contact: APIContact?
+    var license: APILicense?
     var authorizations: [APIAuthorizationType]?
 
     var controllers: [APIController] = []
@@ -26,18 +25,16 @@ public class OpenAPIBuilder {
         version: String,
         description: String,
         termsOfService: String? = nil,
-        name: String? = nil,
-        email: String? = nil,
-        url: URL? = nil,
+        contact: APIContact? = nil,
+        license: APILicense? = nil,
         authorizations: [APIAuthorizationType]? = nil
     ) {
         self.title = title
         self.version = version
         self.description = description
         self.termsOfService = termsOfService
-        self.name = name
-        self.email = email
-        self.url = url
+        self.contact = contact
+        self.license = license
         self.authorizations = authorizations
     }
 
@@ -53,15 +50,14 @@ public class OpenAPIBuilder {
 
     public func build() throws -> OpenAPIDocument {
 
-        // Basic controller information.
-        let contact = OpenAPIContact(name: self.name, email: self.email, url: self.url)
-        let info = OpenAPIInfo(
-            title: self.title,
-            version: self.version,
-            description: self.description,
-            termsOfService: self.termsOfService,
-            contact: contact
-        )
+        // Create basic controller information (info).
+        let openAPIInfoBuilder = OpenAPIInfoBuilder(title: self.title,
+                                             version: self.version,
+                                             description: self.description,
+                                             termsOfService: self.termsOfService,
+                                             contact: self.contact, 
+                                             license: self.license)
+        let info = openAPIInfoBuilder.build()
 
         // Create information about tags (controllers).
         let openAPITagsBuilder = OpenAPITagsBuilder(controllers: self.controllers)

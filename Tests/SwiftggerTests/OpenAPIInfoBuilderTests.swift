@@ -3,7 +3,27 @@ import XCTest
 
 // swiftlint:disable force_try
 
-class OpenAPIOperationBuilderTests: XCTestCase {
+/*
+    Tests for info part of OpenAPI schema.
+
+    "info": 
+    {
+        "title": "Sample Pet Store App",
+        "description": "This is a sample server for a pet store.",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.1"
+    }
+*/
+class OpenAPIInfoBuilderTests: XCTestCase {
 
     func testAPITitleShouldBeTranslatedToOpenAPIDocument() {
 
@@ -77,7 +97,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description",
-            name: "John Doe"
+            contact: APIContact(name: "John Doe")
         )
 
         // Act.
@@ -94,7 +114,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description",
-            email: "john.doe@email.com"
+            contact: APIContact(email: "john.doe@email.com")
         )
 
         // Act.
@@ -111,7 +131,7 @@ class OpenAPIOperationBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description",
-            url: URL(string: "http://contact.url/")
+            contact: APIContact(url: URL(string: "http://contact.url/"))
         )
 
         // Act.
@@ -119,6 +139,40 @@ class OpenAPIOperationBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertEqual(URL(string: "http://contact.url/"), openAPIDocument.info.contact?.url)
+    }
+
+    func testAPILicenseNameShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            license: APILicense(name: "MIT")
+        )
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual("MIT", openAPIDocument.info.license?.name)
+    }
+
+    func testAPILicenseUrlShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            license: APILicense(name: "MIT", url: URL(string: "http://mit.license"))
+        )
+
+        // Act.
+        let openAPIDocument = try! openAPIBuilder.build()
+
+        // Assert.
+        XCTAssertEqual(URL(string: "http://mit.license"), openAPIDocument.info.license?.url)
     }
 
     static var allTests = [

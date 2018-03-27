@@ -16,7 +16,7 @@ public class OpenAPIInfo: Encodable {
     public private(set) var description: String?
     public private(set) var termsOfService: String?
     public private(set) var contact: OpenAPIContact?
-    public private(set) var license: OpenAPILicence?
+    public private(set) var license: OpenAPILicense?
 
     init(
         title: String,
@@ -24,7 +24,7 @@ public class OpenAPIInfo: Encodable {
         description: String? = nil,
         termsOfService: String? = nil,
         contact: OpenAPIContact? = nil,
-        license: OpenAPILicence? = nil
+        license: OpenAPILicense? = nil
     ) {
         self.title = title
         self.version = version

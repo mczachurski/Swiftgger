@@ -1,5 +1,5 @@
 //
-//  OpenAPILicence.swift
+//  OpenAPILicense.swift
 //  Swiftgger
 //
 //  Created by Marcin Czachurski on 19.03.2018.
@@ -8,12 +8,12 @@
 import Foundation
 
 // License information for the exposed API.
-public class OpenAPILicence: Encodable {
+public class OpenAPILicense: Encodable {
 
     public private(set) var name: String
-    public private(set) var url: String?
+    public private(set) var url: URL?
 
-    init(name: String, url: String? = nil) {
+    init(name: String, url: URL? = nil) {
         self.name = name
         self.url = url
     }

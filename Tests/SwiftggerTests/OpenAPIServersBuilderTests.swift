@@ -53,11 +53,11 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
-                APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
-                APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
-            ]))
+        )
+        .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+            APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
+            APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
+        ]))
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()

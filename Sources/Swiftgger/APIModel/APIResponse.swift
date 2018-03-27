@@ -8,9 +8,9 @@
 import Foundation
 
 public class APIResponse {
-    var object: Any?
-    var description: String
     var code: String
+    var description: String
+    var object: Any?
     var contentType: String?
 
     public init(code: String, description: String, object: Any? = nil, contentType: String? = nil) {
