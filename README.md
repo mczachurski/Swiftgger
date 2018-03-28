@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mczachurski/Swiftgger.svg?branch=master)](https://travis-ci.org/mczachurski/Swiftgger) [![codecov](https://codecov.io/gh/mczachurski/Swiftgger/branch/master/graph/badge.svg)](https://codecov.io/gh/mczachurski/Swiftgger) [![codebeat badge](https://codebeat.co/badges/44f41b51-3cb9-441b-84fa-8506c3011214)](https://codebeat.co/projects/github-com-mczachurski-swiftgger-master) [![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](ttps://developer.apple.com/swift/) [![Platforms OS X | Linux](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/) 
 
-Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject). Library is generating objects tree which you can serialize to JSON and returned by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's specially helpful during API testing.
+Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject). Library is generating objects tree which you can serialize to JSON and return by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's especially helpful during API testing.
 
 ![swagger](Images/screen-02.png)
 
@@ -14,12 +14,9 @@ Swiftgger support Swift Package Manager. You have to add to your `Package.swift`
 let package = Package(
     name: "YourApp",
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.0.0")
+        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.0.2")
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(name: "YourApp", dependencies: ["Swiftgger"]),
         .testTarget(name: "YourAppTests", dependencies: ["YourApp"])
     ]
@@ -30,9 +27,79 @@ Then you have to run: `swift build` command.
 
 ## How to use it
 
-Unfortunately Swift is not perfect in *reflection* (introspection) and a lot of settings we have to do manually. Below is example how code for adding CRUD operations for one controller looks like. Of course in that example whole configuration is done in one place, however in your application you can put endpoint/actions configuration near your implementation (separate for each endpoint) and then managing of that configuration will be much simpler.
+Unfortunately Swift is not perfect in *reflection* (introspection) and a lot of settings we have to do manually. 
 
-### Example of configuration
+### Basic information
+
+`OpenAPIBuilder` is main object which is responsible for collect information about our API structure and generating OpenAPI response. It contains some basic information about API like title, version, author, license etc.
+
+```swift
+let openAPIBuilder = OpenAPIBuilder(
+    title: "Tasker server API",
+    version: "1.0.0",
+    description: "This is a sample server for task server application.",
+    termsOfService: "http://example.com/terms/",
+    contact: APIContact(name: "John Doe", email: "john.doe@some-email.org", url: URL(string: "http://example-domain.com/@john")),
+    license: APILicense(name: "MIT", url: URL(string: "http://mit.license")),
+    authorizations: [.jwt(description: "You can get token from *sign-in* action from *Account* controller.")]
+)
+```
+
+We can use `openAPIBuilder` object if we want to specify list of controllers and actions.
+
+### Controllers
+
+Adding information about controller is pretty simple. We have to execute `addController` method on `OpenAPIBuilder` object.
+
+```swift
+openAPIBuilder.addController(
+    APIController(name: "Users", description: "Controller where we can manage users", actions: [])
+)
+```
+
+### Actions
+
+Each controller can have list of actions (routes) with name, description, response and requests information.
+
+**Get by id action**
+
+```swift
+APIAction(method: .get, route: "/users/{id}",
+    summary: "Getting user by id",
+    description: "Action for getting specific user from server",
+    parameters: [
+        APIParameter(name: "id", description: "User id", required: true)
+    ],
+    responses: [
+        APIResponse(code: "200", description: "Specific user", object: userDto),
+        APIResponse(code: "404", description: "User with entered id not exists"),
+        APIResponse(code: "401", description: "User not authorized")
+    ],
+    authorization: true
+)
+
+```
+
+**Post action**
+
+```swift
+APIAction(method: .post, route: "/users",
+    summary: "Adding new user",
+    description: "Action for adding new user to the server",
+    request: APIRequest(object: userDto, description: "Object with user information."),
+    responses: [
+        APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
+        APIResponse(code: "400", description: "There was issues during adding new user", object: validationErrorResponseDto),
+        APIResponse(code: "401", description: "User not authorized")
+    ],
+    authorization: true
+)
+```
+
+### Example of CRUD controller configuration
+
+Below is example how code for adding CRUD operations for one controller looks like. Of course in that example whole configuration is done in one place, however in your application you can put endpoint/actions configuration near your implementation (separate for each endpoint) and then managing of that configuration will be much simpler.
+
 
 ```swift
 
@@ -45,10 +112,6 @@ let openAPIBuilder = OpenAPIBuilder(
     title: "Tasker server API",
     version: "1.0.0",
     description: "This is a sample server for task server application.",
-    termsOfService: "http://example.com/terms/",
-    name: "John Doe",
-    email: "john.doe@some-email.org",
-    url: URL(string: "http://example-domain.com/@john"),
     authorizations: [.jwt(description: "You can get token from *sign-in* action from *Account* controller.")]
 )
 .addController(APIController(name: "Users", description: "Controller where we can manage users", actions: [
