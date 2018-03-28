@@ -98,7 +98,7 @@ APIAction(method: .post, route: "/users",
 
 ### Example of CRUD controller configuration
 
-Below is example how code for adding CRUD operations for one controller looks like. Of course in that example whole configuration is done in one place, however in your application you can put endpoint/actions configuration near your implementation (separate for each endpoint) and then managing of that configuration will be much simpler.
+Below there is an example how to configure full CRUD operation. Of course in that example whole configuration is done in one place. However in your application you can put endpoint/actions configuration near your implementation (separate for each action).
 
 
 ```swift
@@ -179,6 +179,8 @@ let openAPIBuilder = OpenAPIBuilder(
     ])
 )
 ```
+
+### Create OpenAPI objects
 
 When you prepared configuration for all your controllers/actions then you have to execute following code:
 
