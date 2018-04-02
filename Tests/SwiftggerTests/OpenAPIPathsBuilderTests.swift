@@ -197,7 +197,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionResponseContentShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -206,10 +205,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: animal)
+                          APIResponse(code: "200", description: "Response description", object: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -221,7 +223,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionDefaultResponseContentTypeShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -230,10 +231,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: animal)
+                          APIResponse(code: "200", description: "Response description", object: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -246,7 +250,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionCustomResponseContentTypeShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -255,10 +258,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: animal, contentType: "application/xml")
+                          APIResponse(code: "200", description: "Response description", object: Animal.self, contentType: "application/xml")
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -271,7 +277,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionResponseSchemaShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -280,10 +285,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: animal)
+                          APIResponse(code: "200", description: "Response description", object: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -296,7 +304,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionArrayResponseTypeShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -305,10 +312,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: [animal])
+                          APIResponse(code: "200", description: "Response description", array: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -320,7 +330,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionObjectResponseReferenceShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -329,10 +338,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: animal)
+                          APIResponse(code: "200", description: "Response description", object: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -344,7 +356,6 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -353,10 +364,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: [animal])
+                          APIResponse(code: "200", description: "Response description", array: Animal.self)
                         ]
             )
         ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -369,18 +383,20 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionRequestBodyShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
 
-                    )
-                ]))
+                )
+        ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -393,18 +409,20 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
 
-                )
-                ]))
+            )
+        ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -417,18 +435,20 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: animal, description: "Animal request", contentType: "application/xml")
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request", contentType: "application/xml")
 
-                )
-                ]))
+            )
+        ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -441,18 +461,20 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
 
-                )
-                ]))
+            )
+        ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -464,18 +486,20 @@ class OpenAPIPathsBuilderTests: XCTestCase {
     func testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument() {
 
         // Arrange.
-        let animal = Animal(name: "Dog", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: animal, description: "Animal request")
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
 
-                )
-                ]))
+            )
+        ]))
+        .addObjects([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()

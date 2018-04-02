@@ -19,6 +19,7 @@ public class OpenAPIBuilder {
 
     var controllers: [APIController] = []
     var servers: [APIServer] = []
+    var objects: [APIObject] = []
 
     public init(
         title: String,
@@ -48,6 +49,11 @@ public class OpenAPIBuilder {
         return self
     }
 
+    public func addObjects(_ objects: [APIObject]) -> OpenAPIBuilder {
+        self.objects.append(contentsOf: objects)
+        return self
+    }
+
     public func build() throws -> OpenAPIDocument {
 
         // Create basic controller information (info).
@@ -72,7 +78,7 @@ public class OpenAPIBuilder {
         let openAPIServers = openAPIServersBuilder.build()
 
         // Create information about schemas (objects).
-        let openAPISchemasBuilder = OpenAPISchemasBuilder(controllers: self.controllers)
+        let openAPISchemasBuilder = OpenAPISchemasBuilder(objects: self.objects)
         let schemas = openAPISchemasBuilder.build()
 
         // Create information about paths (actions).

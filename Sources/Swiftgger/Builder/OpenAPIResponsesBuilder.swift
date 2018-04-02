@@ -28,19 +28,13 @@ class OpenAPIResponsesBuilder {
             var objectTypeReference: String? = nil
             var isArray: Bool = false
 
-            if apiResponse.object != nil {
+            if let apiResponseObject = apiResponse.object {
+                objectTypeReference = self.objectReference(for: apiResponseObject)
+            }
 
-                var responseObject = apiResponse.object
-
-                if responseObject is [Any] {
-                    isArray = true
-                    let arrayObject = responseObject! as! [Any] // swiftlint:disable:this force_cast
-                    responseObject = arrayObject[0]
-                }
-
-                let responseMirror: Mirror = Mirror(reflecting: responseObject!)
-                let mirrorObjectType = String(describing: responseMirror.subjectType)
-                objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
+            if let apiResponseArray = apiResponse.array {
+                isArray = true
+                objectTypeReference = self.objectReference(for: apiResponseArray)
             }
 
             if objectTypeReference != nil {
@@ -69,5 +63,11 @@ class OpenAPIResponsesBuilder {
         }
 
         return openAPIResponses
+    }
+
+    func objectReference(for type: AnyClass) -> String {
+        let mirrorObjectType = String(describing: type)
+        let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
+        return objectTypeReference
     }
 }

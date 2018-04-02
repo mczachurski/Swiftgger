@@ -8,11 +8,11 @@
 import Foundation
 
 public class APIRequest {
-    var object: Any?
+    var object: AnyClass?
     var description: String?
     var contentType: String?
 
-    public init(object: Any? = nil, description: String? = nil, contentType: String? = nil) {
+    public init(object: AnyClass? = nil, description: String? = nil, contentType: String? = nil) {
         self.object = object
         self.description = description
         self.contentType = contentType

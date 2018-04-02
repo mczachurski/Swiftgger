@@ -96,16 +96,27 @@ APIAction(method: .post, route: "/users",
 )
 ```
 
+### Objects schemas
+
+Besides controllers and actions we have to specify list of objects which can be used in API. We can do this like on following snippet.
+
+```swift
+let openAPIBuilder = OpenAPIBuilder(
+    title: "Tasker server API",
+    version: "1.0.0"
+)
+.addObjects([
+    APIObject(object: UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)),
+    APIObject(object: ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."]))
+])
+```
+
 ### Example of CRUD controller configuration
 
 Below there is an example how to configure full CRUD operation. Of course in that example whole configuration is done in one place. However in your application you can put endpoint/actions configuration near your implementation (separate for each action).
 
 
 ```swift
-
-// Objects which be shown as a examples in Swagger.
-let userDto = UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)
-let validationErrorResponseDto = ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."])
 
 // Create builder.
 let openAPIBuilder = OpenAPIBuilder(
@@ -119,7 +130,7 @@ let openAPIBuilder = OpenAPIBuilder(
             summary: "Getting all users",
             description: "Action for getting all users from server",
             responses: [
-                APIResponse(code: "200", description: "List of users", object: [userDto]),
+                APIResponse(code: "200", description: "List of users", object: UserDto.self),
                 APIResponse(code: "401", description: "User not authorized")
             ],
             authorization: true
@@ -131,7 +142,7 @@ let openAPIBuilder = OpenAPIBuilder(
                 APIParameter(name: "id", description: "User id", required: true)
             ],
             responses: [
-                APIResponse(code: "200", description: "Specific user", object: userDto),
+                APIResponse(code: "200", description: "Specific user", object: UserDto.self),
                 APIResponse(code: "404", description: "User with entered id not exists"),
                 APIResponse(code: "401", description: "User not authorized")
             ],
@@ -140,10 +151,10 @@ let openAPIBuilder = OpenAPIBuilder(
         APIAction(method: .post, route: "/users",
             summary: "Adding new user",
             description: "Action for adding new user to the server",
-            request: APIRequest(object: userDto, description: "Object with user information."),
+            request: APIRequest(object: UserDto.self, description: "Object with user information."),
             responses: [
-                APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
-                APIResponse(code: "400", description: "There was issues during adding new user", object: validationErrorResponseDto),
+                APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
+                APIResponse(code: "400", description: "There was issues during adding new user", object: ValidationErrorResponseDto.self),
                 APIResponse(code: "401", description: "User not authorized")
             ],
             authorization: true
@@ -154,10 +165,10 @@ let openAPIBuilder = OpenAPIBuilder(
             parameters: [
                 APIParameter(name: "id", description: "User id", required: true)
             ],
-            request: APIRequest(object: userDto, description: "Object with user information."),
+            request: APIRequest(object: UserDto.self, description: "Object with user information."),
             responses: [
-                APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
-                APIResponse(code: "400", description: "There was issues during updating user", object: validationErrorResponseDto),
+                APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
+                APIResponse(code: "400", description: "There was issues during updating user", object: ValidationErrorResponseDto.self),
                 APIResponse(code: "404", description: "User with entered id not exists"),
                 APIResponse(code: "401", description: "User not authorized")
             ],
@@ -178,6 +189,10 @@ let openAPIBuilder = OpenAPIBuilder(
         )
     ])
 )
+.addObjects([
+    APIObject(object: UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)),
+    APIObject(object: ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."]))
+])
 ```
 
 ### Create OpenAPI objects

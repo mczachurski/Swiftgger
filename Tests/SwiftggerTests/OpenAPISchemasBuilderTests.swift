@@ -51,7 +51,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaNameShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -59,8 +58,11 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: car))
+                      description: "Action description", request: APIRequest(object: Vehicle.self))
         ]))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -72,7 +74,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaTypeShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -80,9 +81,12 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: car))
+                          description: "Action description", request: APIRequest(object: Vehicle.self))
             ]
         ))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -94,7 +98,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -102,9 +105,12 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: car))
+                      description: "Action description", request: APIRequest(object: Vehicle.self))
             ]
         ))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -118,7 +124,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
@@ -126,9 +131,12 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         )
         .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: car))
+                          description: "Action description", request: APIRequest(object: Vehicle.self))
             ]
         ))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -142,17 +150,19 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: car))
-                ]
-            ))
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/api/action", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Vehicle.self))
+            ]
+        ))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()
@@ -164,17 +174,19 @@ class OpenAPISchemasBuilderTests: XCTestCase {
     func testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
-        let car = Vehicle(name: "Ford", age: 21)
         let openAPIBuilder = OpenAPIBuilder(
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: car))
-                ]
-            ))
+        )
+        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/api/action", summary: "Action summary",
+                      description: "Action description", request: APIRequest(object: Vehicle.self))
+            ]
+        ))
+        .addObjects([
+            APIObject(object: Vehicle(name: "Ford", age: 21))
+        ])
 
         // Act.
         let openAPIDocument = try! openAPIBuilder.build()

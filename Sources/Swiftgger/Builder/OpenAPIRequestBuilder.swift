@@ -21,17 +21,18 @@ class OpenAPIRequestBuilder {
             return nil
         }
 
-        var requestBody: OpenAPIRequestBody?
-
-        let requestMirror: Mirror = Mirror(reflecting: objectRequest)
-        let mirrorObjectType = String(describing: requestMirror.subjectType)
-        let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
-
+        let objectTypeReference = self.objectReference(for: objectRequest)
         let mediaType = OpenAPIMediaType(schema: OpenAPISchema(ref: objectTypeReference))
 
         let contentType = apiRequest.contentType ?? "application/json"
-        requestBody = OpenAPIRequestBody(description: apiRequest.description, content: [contentType: mediaType])
+        let requestBody = OpenAPIRequestBody(description: apiRequest.description, content: [contentType: mediaType])
 
         return requestBody
+    }
+
+    func objectReference(for type: AnyClass) -> String {
+        let mirrorObjectType = String(describing: type)
+        let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
+        return objectTypeReference
     }
 }

@@ -9,53 +9,20 @@ import Foundation
 
 class OpenAPISchemasBuilder {
 
-    let controllers: [APIController]
+    let objects: [APIObject]
 
-    init(controllers: [APIController]) {
-        self.controllers = controllers
+    init(objects: [APIObject]) {
+        self.objects = objects
     }
 
     func build() -> [String: OpenAPISchema] {
 
         var schemas: [String: OpenAPISchema] = [:]
-        for controller in self.controllers {
-            for action in controller.actions {
-                objectFrom(request: action.request, appendTo: &schemas)
-                objectsFrom(responses: action.responses, appendTo: &schemas)
-            }
+        for object in self.objects where object.object != nil {
+            add(object: object.object!, toSchemas: &schemas)
         }
 
         return schemas
-    }
-
-    private func objectFrom(request: APIRequest?, appendTo schemas: inout [String: OpenAPISchema]) {
-
-        guard let requestObject = request?.object else {
-            return
-        }
-
-        add(object: requestObject, toSchemas: &schemas)
-    }
-
-    private func objectsFrom(responses: [APIResponse]?, appendTo schemas: inout [String: OpenAPISchema]) {
-
-        guard let responsesArray = responses else {
-            return
-        }
-
-        for response in responsesArray {
-
-            guard var responseObject = response.object else {
-                continue
-            }
-
-            if response.object is [Any] {
-                let arrayObject = responseObject as! [Any] // swiftlint:disable:this force_cast
-                responseObject = arrayObject[0]
-            }
-
-            add(object: responseObject, toSchemas: &schemas)
-        }
     }
 
     private func add(object: Any, toSchemas schemas: inout [String: OpenAPISchema]) {
