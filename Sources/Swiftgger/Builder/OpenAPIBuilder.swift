@@ -92,7 +92,7 @@ public class OpenAPIBuilder {
     /**
         Method which is responsible for build OpenAPI document.
 
-        - Parameter: Object with OpenAPI specification.
+        - Returns: Object with OpenAPI specification.
     */
     public func built() -> OpenAPIDocument {
 
