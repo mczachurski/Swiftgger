@@ -18,6 +18,16 @@ class Vehicle {
     }
 }
 
+struct Spaceship {
+    var name: String
+    var speed: Double?
+
+    init(name: String, speed: Double) {
+        self.name = name
+        self.speed = speed
+    }
+}
+
 /**
     Tests for schames part of OpenAPI standard (/components/schemas).
 
@@ -56,10 +66,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Vehicle.self))
-        ]))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -79,11 +85,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: Vehicle.self))
-            ]
-        ))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -103,11 +104,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Vehicle.self))
-            ]
-        ))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -129,11 +125,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                          description: "Action description", request: APIRequest(object: Vehicle.self))
-            ]
-        ))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -155,11 +146,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Vehicle.self))
-            ]
-        ))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -179,11 +165,6 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/api/action", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Vehicle.self))
-            ]
-        ))
         .add([
             APIObject(object: Vehicle(name: "Ford", age: 21))
         ])
@@ -195,12 +176,36 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssert(openAPIDocument.components?.schemas!["Vehicle"]?.required?.contains("age") == false, "Not required property exists in schema")
     }
 
+    func testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Spaceship(name: "Star Trek", speed: 923211))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas!["Spaceship"], "Schema name not exists")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["name"]?.type)
+        XCTAssertEqual("Star Trek", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["name"]?.example)
+        XCTAssertEqual("double", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["speed"]?.type)
+        XCTAssertEqual("923211.0", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["speed"]?.example)
+    }
+
     static var allTests = [
         ("testSchemaNameShouldBeTranslatedToOpenAPIDocument", testSchemaNameShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaTypeShouldBeTranslatedToOpenAPIDocument", testSchemaTypeShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument", testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument", testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument)
+        ("testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument", testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument),
+        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument)
     ]
 }

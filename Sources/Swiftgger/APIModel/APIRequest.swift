@@ -9,11 +9,11 @@ import Foundation
 
 /// Information about HTTP request.
 public class APIRequest {
-    var object: AnyClass?
+    var object: Any.Type?
     var description: String?
     var contentType: String?
 
-    public init(object: AnyClass? = nil, description: String? = nil, contentType: String? = nil) {
+    public init(object: Any.Type? = nil, description: String? = nil, contentType: String? = nil) {
         self.object = object
         self.description = description
         self.contentType = contentType

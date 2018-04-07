@@ -31,7 +31,7 @@ class OpenAPIRequestBuilder {
         return requestBody
     }
 
-    func objectReference(for type: AnyClass) -> String {
+    func objectReference(for type: Any.Type) -> String {
         let mirrorObjectType = String(describing: type)
         let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
         return objectTypeReference
