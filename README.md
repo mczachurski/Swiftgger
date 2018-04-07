@@ -14,7 +14,7 @@ Swiftgger support Swift Package Manager. You have to add to your `Package.swift`
 let package = Package(
     name: "YourApp",
     dependencies: [
-        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.1.0")
+        .package(url: "https://github.com/mczachurski/Swiftgger.git", from: "1.2.1")
     ],
     targets: [
         .target(name: "YourApp", dependencies: ["Swiftgger"]),
@@ -49,7 +49,7 @@ We can use `openAPIBuilder` object if we want to specify list of controllers and
 
 ### Controllers
 
-Adding information about controller is pretty simple. We have to execute `addController` method on `OpenAPIBuilder` object.
+Adding information about controller is pretty simple. We have to execute `add` method on `OpenAPIBuilder` object.
 
 ```swift
 openAPIBuilder.add(
