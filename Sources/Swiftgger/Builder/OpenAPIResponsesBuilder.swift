@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for response information stored in `paths` part of OpenAPI.
 class OpenAPIResponsesBuilder {
 
     let responses: [APIResponse]?
@@ -15,7 +16,7 @@ class OpenAPIResponsesBuilder {
         self.responses = responses
     }
 
-    func build() -> [String: OpenAPIResponse]? {
+    func built() -> [String: OpenAPIResponse]? {
 
         guard let apiResponses = responses else {
             return nil

@@ -7,7 +7,7 @@
 
 import Foundation
 
-// License information for the exposed API.
+/// Information about license for the exposed API.
 public class OpenAPILicense: Encodable {
 
     public private(set) var name: String

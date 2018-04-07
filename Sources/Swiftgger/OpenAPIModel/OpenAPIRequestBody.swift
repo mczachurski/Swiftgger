@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Describes a single request body.
+/// Describes a single request body.
 public class OpenAPIRequestBody: Encodable {
 
     public private(set) var ref: String?

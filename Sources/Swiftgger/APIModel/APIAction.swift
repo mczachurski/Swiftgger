@@ -7,7 +7,9 @@
 
 import Foundation
 
+/// Objects stores information about single API action.
 public class APIAction {
+
     var method: APIHttpMethod
     var route: String
     var summary: String

@@ -8,11 +8,10 @@
 import XCTest
 @testable import Swiftgger
 
-// swiftlint:disable force_try
-
-/*
+/**
     Tests for tags (controllers descriptions) part of OpenAPI standard (/tags).
 
+    ```
     "tags" : [
         {
             "name" : "Account",
@@ -31,7 +30,7 @@ import XCTest
             "description" : "Controller where we can check health"
         }
     ]
-
+    ```
  */
 class OpenAPITagsBuilderTests: XCTestCase {
 
@@ -43,10 +42,10 @@ class OpenAPITagsBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addController(APIController(name: "ControllerName", description: "ControllerDescription"))
+        .add(APIController(name: "ControllerName", description: "ControllerDescription"))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("ControllerName", openAPIDocument.tags![0].name)
@@ -60,10 +59,10 @@ class OpenAPITagsBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addController(APIController(name: "ControllerName", description: "ControllerDescription"))
+        .add(APIController(name: "ControllerName", description: "ControllerDescription"))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("ControllerDescription", openAPIDocument.tags![0].description)
@@ -77,11 +76,11 @@ class OpenAPITagsBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addController(APIController(name: "ControllerName", description: "ControllerDescription",
+        .add(APIController(name: "ControllerName", description: "ControllerDescription",
                                      externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("http://some.link", openAPIDocument.tags![0].externalDocs?.url)
@@ -95,11 +94,11 @@ class OpenAPITagsBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addController(APIController(name: "ControllerName", description: "ControllerDescription",
+        .add(APIController(name: "ControllerName", description: "ControllerDescription",
                                      externalDocs: APILink(url: "http://some.link", description: "LinkDescription")))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("LinkDescription", openAPIDocument.tags![0].externalDocs?.description)

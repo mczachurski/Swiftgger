@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Contact information to API owner.
 public class APIContact {
 
     var name: String?

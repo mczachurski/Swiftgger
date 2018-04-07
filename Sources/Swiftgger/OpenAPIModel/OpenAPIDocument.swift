@@ -7,7 +7,7 @@
 
 import Foundation
 
-// This is the root document object of the OpenAPI document.
+/// This is the root document object of the OpenAPI document.
 public class OpenAPIDocument: Encodable {
     public let openapi = "3.0.1"
 

@@ -8,11 +8,10 @@
 import XCTest
 @testable import Swiftgger
 
-// swiftlint:disable force_try
-
-/*
+/**
     Tests for server part of OpenAPI standard (/servers).
 
+    ```
     "servers" : [{
         "url" : "http://localhost:8181",
         "description" : "Main server"
@@ -35,6 +34,7 @@ import XCTest
         },
         "description" : "Secure server"
     }]
+    ```
  */
 class OpenAPIServersBuilderTests: XCTestCase {
 
@@ -46,10 +46,10 @@ class OpenAPIServersBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addServer(APIServer(url: "ServerUrl", description: "ServerDescription"))
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription"))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("ServerUrl", openAPIDocument.servers![0].url)
@@ -62,11 +62,11 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription"))
+        )
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription"))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("ServerDescription", openAPIDocument.servers![0].description)
@@ -80,13 +80,13 @@ class OpenAPIServersBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description"
         )
-        .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
             APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
             APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
         ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.servers![0].variables?["var01"], "Server variable not exists")
@@ -99,14 +99,14 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
-                APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
-                APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
-                ]))
+        )
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+            APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
+            APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
+        ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("Variables description", openAPIDocument.servers![0].variables?["var01"]?.description)
@@ -119,14 +119,14 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
-                APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
-                APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
-                ]))
+        )
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+            APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01, val02"], description: "Variables description"),
+            APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03, val04"], description: "Second description")
+        ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("val01", openAPIDocument.servers![0].variables?["var01"]?.defaultValue)
@@ -139,14 +139,14 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
-                APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01", "val02"], description: "Variables description"),
-                APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03", "val04"], description: "Second description")
-                ]))
+        )
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+            APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01", "val02"], description: "Variables description"),
+            APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03", "val04"], description: "Second description")
+        ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("val01", openAPIDocument.servers![0].variables?["var01"]?.enumValues![0])
@@ -160,14 +160,14 @@ class OpenAPIServersBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .addServer(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
-                APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01", "val02"], description: "Variables description"),
-                APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03", "val04"], description: "Second description")
-                ]))
+        )
+        .add(APIServer(url: "ServerUrl", description: "ServerDescription", variables: [
+            APIVariable(name: "var01", defaultValue: "val01", enumValues: ["val01", "val02"], description: "Variables description"),
+            APIVariable(name: "var02", defaultValue: "val03", enumValues: ["val03", "val04"], description: "Second description")
+        ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual(2, openAPIDocument.servers![0].variables?.count)

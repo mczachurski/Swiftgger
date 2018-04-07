@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about request parameter.
 public class APIParameter {
     var name: String
     var parameterLocation: APILocation = APILocation.path

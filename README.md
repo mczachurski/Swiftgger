@@ -52,7 +52,7 @@ We can use `openAPIBuilder` object if we want to specify list of controllers and
 Adding information about controller is pretty simple. We have to execute `addController` method on `OpenAPIBuilder` object.
 
 ```swift
-openAPIBuilder.addController(
+openAPIBuilder.add(
     APIController(name: "Users", description: "Controller where we can manage users", actions: [])
 )
 ```
@@ -71,7 +71,7 @@ APIAction(method: .get, route: "/users/{id}",
         APIParameter(name: "id", description: "User id", required: true)
     ],
     responses: [
-        APIResponse(code: "200", description: "Specific user", object: userDto),
+        APIResponse(code: "200", description: "Specific user", object: UserDto.self),
         APIResponse(code: "404", description: "User with entered id not exists"),
         APIResponse(code: "401", description: "User not authorized")
     ],
@@ -88,8 +88,8 @@ APIAction(method: .post, route: "/users",
     description: "Action for adding new user to the server",
     request: APIRequest(object: userDto, description: "Object with user information."),
     responses: [
-        APIResponse(code: "200", description: "User data after adding to the system", object: userDto),
-        APIResponse(code: "400", description: "There was issues during adding new user", object: validationErrorResponseDto),
+        APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
+        APIResponse(code: "400", description: "There was issues during adding new user", object: ValidationErrorResponseDto.self),
         APIResponse(code: "401", description: "User not authorized")
     ],
     authorization: true
@@ -101,11 +101,7 @@ APIAction(method: .post, route: "/users",
 Besides controllers and actions we have to specify list of objects which can be used in API. We can do this like on following snippet.
 
 ```swift
-let openAPIBuilder = OpenAPIBuilder(
-    title: "Tasker server API",
-    version: "1.0.0"
-)
-.addObjects([
+openAPIBuilder.add([
     APIObject(object: UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)),
     APIObject(object: ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."]))
 ])
@@ -125,7 +121,7 @@ let openAPIBuilder = OpenAPIBuilder(
     description: "This is a sample server for task server application.",
     authorizations: [.jwt(description: "You can get token from *sign-in* action from *Account* controller.")]
 )
-.addController(APIController(name: "Users", description: "Controller where we can manage users", actions: [
+.add(APIController(name: "Users", description: "Controller where we can manage users", actions: [
         APIAction(method: .get, route: "/users",
             summary: "Getting all users",
             description: "Action for getting all users from server",
@@ -189,7 +185,7 @@ let openAPIBuilder = OpenAPIBuilder(
         )
     ])
 )
-.addObjects([
+.add([
     APIObject(object: UserDto(id: UUID(), createDate: Date(), name: "John Doe", email: "email@test.com", isLocked: false)),
     APIObject(object: ValidationErrorResponseDto(message: "Object is invalid", errors: ["property": "Information about error."]))
 ])
@@ -200,7 +196,7 @@ let openAPIBuilder = OpenAPIBuilder(
 When you prepared configuration for all your controllers/actions then you have to execute following code:
 
 ```swift
-let document = try openAPIBuilder.build()
+let document = try openAPIBuilder.built()
 ```
 
 Object `document` stores information about your API and it's compatible with OpenAPI standard. Now you have to serialize that object to JSON and expose by additional endpoint in your API application for GUI (client) applications.

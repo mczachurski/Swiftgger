@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for `info` part of OpenAPI.
 class OpenAPIInfoBuilder {
 
     var title: String
@@ -32,7 +33,7 @@ class OpenAPIInfoBuilder {
         self.license = license
     }
 
-    func build() -> OpenAPIInfo {
+    func built() -> OpenAPIInfo {
 
         var openAPIContact: OpenAPIContact?
         if let apiContact = self.contact {

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for server information stored in `servers` part of OpenAPI.
 class OpenAPIServersBuilder {
 
     let servers: [APIServer]
@@ -15,7 +16,7 @@ class OpenAPIServersBuilder {
         self.servers = servers
     }
 
-    func build() -> [OpenAPIServer] {
+    func built() -> [OpenAPIServer] {
         var openAPIServers: [OpenAPIServer] = []
 
         for server in self.servers {

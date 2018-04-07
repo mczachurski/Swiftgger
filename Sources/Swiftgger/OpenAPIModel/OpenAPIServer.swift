@@ -7,7 +7,7 @@
 
 import Foundation
 
-// An object representing a Server.
+/// An object representing a Server (address).
 public class OpenAPIServer: Encodable {
 
     public private(set) var url: String

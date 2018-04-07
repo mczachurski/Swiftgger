@@ -7,9 +7,11 @@
 
 import Foundation
 
-// Holds a set of reusable objects for different aspects of the OAS. All objects defined within
-// the components object will have no effect on the API unless they are explicitly referenced
-// from properties outside the components object.
+/**
+    Holds a set of reusable objects for different aspects of the OAS. All objects defined within
+    the components object will have no effect on the API unless they are explicitly referenced
+    from properties outside the components object.
+ */
 public class OpenAPIComponents: Encodable {
     public private(set) var schemas: [String: OpenAPISchema]?
     public private(set) var responses: [String: OpenAPIResponse]?

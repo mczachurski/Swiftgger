@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for object information stored in `components/schemas` part of OpenAPI.
 class OpenAPISchemasBuilder {
 
     let objects: [APIObject]
@@ -15,7 +16,7 @@ class OpenAPISchemasBuilder {
         self.objects = objects
     }
 
-    func build() -> [String: OpenAPISchema] {
+    func built() -> [String: OpenAPISchema] {
 
         var schemas: [String: OpenAPISchema] = [:]
         for object in self.objects where object.object != nil {

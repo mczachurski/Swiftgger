@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about server where API is hosted.
 public class APIServer {
 
     var url: String

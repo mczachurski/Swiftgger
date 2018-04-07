@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Describes a single API operation on a path.
+/// Describes a single API operation on a path.
 public class OpenAPIOperation: Encodable {
 
     public private(set) var summary: String?

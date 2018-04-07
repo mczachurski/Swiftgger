@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for security information for each HTTP action.
 class OpenAPISecurityBuilder {
     let authorizations: [APIAuthorizationType]?
 
@@ -14,7 +15,7 @@ class OpenAPISecurityBuilder {
         self.authorizations = authorizations
     }
 
-    func build() -> [String: OpenAPISecurityScheme] {
+    func built() -> [String: OpenAPISecurityScheme] {
 
         var openAPISecuritySchema: [String: OpenAPISecurityScheme] = [:]
 

@@ -1,11 +1,10 @@
 import XCTest
 @testable import Swiftgger
 
-// swiftlint:disable force_try
-
-/*
+/**
     Tests for info part of OpenAPI schema (/info).
 
+    ```
     "info": {
         "title": "Sample Pet Store App",
         "description": "This is a sample server for a pet store.",
@@ -21,6 +20,7 @@ import XCTest
         },
         "version": "1.0.1"
     }
+    ```
  */
 class OpenAPIInfoBuilderTests: XCTestCase {
 
@@ -34,7 +34,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("Title", openAPIDocument.info.title)
@@ -50,7 +50,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("1.0.0", openAPIDocument.info.version)
@@ -66,7 +66,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("Description", openAPIDocument.info.description)
@@ -83,7 +83,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("Terms of service", openAPIDocument.info.termsOfService)
@@ -100,7 +100,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("John Doe", openAPIDocument.info.contact?.name)
@@ -117,7 +117,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("john.doe@email.com", openAPIDocument.info.contact?.email)
@@ -134,7 +134,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual(URL(string: "http://contact.url/"), openAPIDocument.info.contact?.url)
@@ -151,7 +151,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual("MIT", openAPIDocument.info.license?.name)
@@ -168,7 +168,7 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertEqual(URL(string: "http://mit.license"), openAPIDocument.info.license?.url)

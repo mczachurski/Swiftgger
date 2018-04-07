@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Set of request methods to indicate the desired action to be performed for a given resource.
 public enum APIHttpMethod {
     case options
     case get

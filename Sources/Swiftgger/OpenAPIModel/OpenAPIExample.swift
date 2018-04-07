@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Object with example description.
+/// Object with example description.
 public class OpenAPIExample: Encodable {
 
     public private(set) var ref: String?

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about API license.
 public class APILicense {
 
     var name: String

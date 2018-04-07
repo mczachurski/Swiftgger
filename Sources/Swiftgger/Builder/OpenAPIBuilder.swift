@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for OpenAPI documentation.
 public class OpenAPIBuilder {
 
     var title: String
@@ -21,6 +22,19 @@ public class OpenAPIBuilder {
     var servers: [APIServer] = []
     var objects: [APIObject] = []
 
+    /**
+        Initializes a instance of OpenAPI documentation builder.
+
+        - Parameters:
+     
+            - title: Title of API
+            - version: Versio of API
+            - description: Description of API
+            - termsOfService: Terms of service
+            - contact: Terms of service
+            - license: Terms of service
+            - authorizations: Terms of service
+     */
     public init(
         title: String,
         version: String,
@@ -39,22 +53,48 @@ public class OpenAPIBuilder {
         self.authorizations = authorizations
     }
 
-    public func addController(_ controller: APIController) -> OpenAPIBuilder {
+    /**
+        Add new controller to the OpenAPI description.
+
+        - Parameter controller: Information about controller.
+
+        - Returns: Same OpenAPI builder.
+    */
+    public func add(_ controller: APIController) -> OpenAPIBuilder {
         self.controllers.append(controller)
         return self
     }
 
-    public func addServer(_ server: APIServer) -> OpenAPIBuilder {
+    /**
+        Add new server information to the OpenAPI description.
+
+        - Parameter server: Information about server.
+
+        - Returns: Same OpenAPI builder.
+    */
+    public func add(_ server: APIServer) -> OpenAPIBuilder {
         self.servers.append(server)
         return self
     }
 
-    public func addObjects(_ objects: [APIObject]) -> OpenAPIBuilder {
+    /**
+        Add new objects to the OpenAPI description.
+
+        - Parameter objects: List of objects which will be added to the OpenAPI description.
+
+        - Returns: Same OpenAPI builder.
+    */
+    public func add(_ objects: [APIObject]) -> OpenAPIBuilder {
         self.objects.append(contentsOf: objects)
         return self
     }
 
-    public func build() throws -> OpenAPIDocument {
+    /**
+        Method which is responsible for build OpenAPI document.
+
+        - Parameter: Object with OpenAPI specification.
+    */
+    public func built() -> OpenAPIDocument {
 
         // Create basic controller information (info).
         let openAPIInfoBuilder = OpenAPIInfoBuilder(title: self.title,
@@ -63,27 +103,27 @@ public class OpenAPIBuilder {
                                              termsOfService: self.termsOfService,
                                              contact: self.contact,
                                              license: self.license)
-        let info = openAPIInfoBuilder.build()
+        let info = openAPIInfoBuilder.built()
 
         // Create information about tags (controllers).
         let openAPITagsBuilder = OpenAPITagsBuilder(controllers: self.controllers)
-        let tags = openAPITagsBuilder.build()
+        let tags = openAPITagsBuilder.built()
 
         // Create information about security schemas (authorizations).
         let openAPISecurityBuilder = OpenAPISecurityBuilder(authorizations: self.authorizations)
-        let openAPISecuritySchemas = openAPISecurityBuilder.build()
+        let openAPISecuritySchemas = openAPISecurityBuilder.built()
 
         // Create information about servers (requessts will be send to them).
         let openAPIServersBuilder = OpenAPIServersBuilder(servers: servers)
-        let openAPIServers = openAPIServersBuilder.build()
+        let openAPIServers = openAPIServersBuilder.built()
 
         // Create information about schemas (objects).
         let openAPISchemasBuilder = OpenAPISchemasBuilder(objects: self.objects)
-        let schemas = openAPISchemasBuilder.build()
+        let schemas = openAPISchemasBuilder.built()
 
         // Create information about paths (actions).
         let openAPIPathsBuilder = OpenAPIPathsBuilder(controllers: self.controllers, authorizations: self.authorizations)
-        let paths = openAPIPathsBuilder.build()
+        let paths = openAPIPathsBuilder.built()
 
         let components = OpenAPIComponents(schemas: schemas, securitySchemes: openAPISecuritySchemas)
         return OpenAPIDocument(info: info, paths: paths, servers: openAPIServers, tags: tags, components: components)

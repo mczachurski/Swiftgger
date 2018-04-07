@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Allows configuration of the supported OAuth Flows.
+/// Allows configuration of the supported OAuth Flows.
 public class OpenAPIOAuthFlows: Encodable {
 
     public private(set) var implicit: OpenAPIOAuthFlow?

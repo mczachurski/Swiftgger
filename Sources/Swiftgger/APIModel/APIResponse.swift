@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about HTTP response.
 public class APIResponse {
     var code: String
     var description: String

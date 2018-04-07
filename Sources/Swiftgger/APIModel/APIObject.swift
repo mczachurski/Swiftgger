@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about (request/response) Swift object.
 public class APIObject {
     var object: Any?
 

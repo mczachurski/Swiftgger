@@ -8,12 +8,10 @@
 import XCTest
 @testable import Swiftgger
 
-// swiftlint:disable force_try
-
-/*
-
+/**
     Tests for security schemes list (/components/securitySchemes).
 
+    ```
     components: {
         "securitySchemes" : {
             "auth_jwt" : {
@@ -25,6 +23,7 @@ import XCTest
             }
         }
     }
+    ```
  */
 class OpenAPISecurityBuilderTests: XCTestCase {
 
@@ -39,7 +38,7 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         let securitySchema = openAPIDocument.components?.securitySchemes!["auth_basic"]
@@ -59,7 +58,7 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         )
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         let securitySchema = openAPIDocument.components?.securitySchemes!["auth_jwt"]
@@ -78,13 +77,13 @@ class OpenAPISecurityBuilderTests: XCTestCase {
             description: "Description",
             authorizations: [.jwt(description: "JWT authorization")]
         )
-        .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", authorization: true)
             ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_jwt"], "Bearer authorization should be enabled")
@@ -99,14 +98,14 @@ class OpenAPISecurityBuilderTests: XCTestCase {
             version: "1.0.0",
             description: "Description",
             authorizations: [.basic(description: "Basic authorization")]
-            )
-            .addController(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals", summary: "Action summary",
-                          description: "Action description", authorization: true)
-                ]))
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", authorization: true)
+            ]))
 
         // Act.
-        let openAPIDocument = try! openAPIBuilder.build()
+        let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_basic"], "Basic authorization should be enabled")

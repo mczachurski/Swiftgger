@@ -7,6 +7,13 @@
 
 import Foundation
 
+/**
+    Kind of authorization.
+
+    - anonymous: Access without any authorization.
+    - basic: Basic authorization.
+    - jwt: Bearer (JWT token) authorization.
+ */
 public enum APIAuthorizationType {
     case anonymous
     case basic(description: String)

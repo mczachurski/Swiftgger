@@ -7,7 +7,7 @@
 
 import Foundation
 
-// A single encoding definition applied to a single schema property.
+/// A single encoding definition applied to a single schema property.
 public class OpenAPIEncoding: Encodable {
 
     public private(set) var contentType: String?

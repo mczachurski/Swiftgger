@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for security information stored in `components/securitySchemas` part of OpenAPI.
 class OpenAPISecuritySchemasBuilder {
 
     let authorizations: [APIAuthorizationType]?
@@ -17,7 +18,7 @@ class OpenAPISecuritySchemasBuilder {
         self.authorizations = authorizations
     }
 
-    func build() -> [[String: [String]]]? {
+    func built() -> [[String: [String]]]? {
 
         var securitySchemas: [[String: [String]]]? = nil
 

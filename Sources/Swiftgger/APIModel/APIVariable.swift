@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Variables used in request parameters.
 public class APIVariable {
 
     var name: String

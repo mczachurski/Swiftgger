@@ -7,7 +7,14 @@
 
 import Foundation
 
-// Enum with possible parameters locations.
+/**
+    Enum with possible parameters locations.
+
+    - query: Parameter in URL query.
+    - header: Parameter in request header.
+    - path: Parameter in URL path.
+    - cookie: Parameter in cookie.
+ */
 public enum APILocation: String, Encodable {
     case query
     case header

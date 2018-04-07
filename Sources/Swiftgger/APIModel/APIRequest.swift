@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Information about HTTP request.
 public class APIRequest {
     var object: AnyClass?
     var description: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-// Allows referencing an external resource for extended documentation.
+/// Allows referencing an external resource for extended documentation.
 public class OpenAPIExternalDocumentation: Encodable {
 
     public private(set) var url: String

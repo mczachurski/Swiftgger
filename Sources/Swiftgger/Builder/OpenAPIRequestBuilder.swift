@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for requests information stored in `paths` part of OpenAPI.
 class OpenAPIRequestBuilder {
 
     let request: APIRequest?
@@ -15,7 +16,7 @@ class OpenAPIRequestBuilder {
         self.request = request
     }
 
-    func build() -> OpenAPIRequestBody? {
+    func built() -> OpenAPIRequestBody? {
 
         guard let apiRequest = request, let objectRequest = apiRequest.object else {
             return nil

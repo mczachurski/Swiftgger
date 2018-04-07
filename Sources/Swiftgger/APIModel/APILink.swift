@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Link to external documentation.
 public class APILink {
 
     var url: String

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for information about specific operation which is stored in `paths` part of OpenAPI.
 class OpenAPIOperationBuilder {
 
     let controllerName: String
@@ -19,19 +20,19 @@ class OpenAPIOperationBuilder {
         self.authorizations = authorizations
     }
 
-    func build() -> OpenAPIOperation {
+    func built() -> OpenAPIOperation {
 
         let openAPIParametersBuilder = OpenAPIParametersBuilder(parameters: action.parameters)
-        let apiParameters = openAPIParametersBuilder.build()
+        let apiParameters = openAPIParametersBuilder.built()
 
         let openAPIRequestBuilder = OpenAPIRequestBuilder(request: action.request)
-        let requestBody = openAPIRequestBuilder.build()
+        let requestBody = openAPIRequestBuilder.built()
 
         let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: action.responses)
-        let openAPIResponses = openAPIResponsesBuilder.build()
+        let openAPIResponses = openAPIResponsesBuilder.built()
 
         let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: action.authorization, authorizations: self.authorizations)
-        let securitySchemas = openAPISecuritySchemasBuilder.build()
+        let securitySchemas = openAPISecuritySchemasBuilder.built()
 
         let openAPIOperation = OpenAPIOperation(
             summary: action.summary,

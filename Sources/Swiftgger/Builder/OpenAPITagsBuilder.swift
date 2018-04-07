@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for general information about controllers stored in `tags` part of OpenAPI.
 class OpenAPITagsBuilder {
 
     let controllers: [APIController]
@@ -15,7 +16,7 @@ class OpenAPITagsBuilder {
         self.controllers = controllers
     }
 
-    func build() -> [OpenAPITag] {
+    func built() -> [OpenAPITag] {
 
         var tags: [OpenAPITag] = []
         for controller in controllers {

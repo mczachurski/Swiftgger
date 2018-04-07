@@ -7,8 +7,10 @@
 
 import Foundation
 
-// The object provides metadata about the API. The metadata MAY be used by the clients if needed,
-// and MAY be presented in editing or documentation generation tools for convenience.
+/**
+    The object provides metadata about the API. The metadata MAY be used by the clients if needed,
+    and MAY be presented in editing or documentation generation tools for convenience.
+ */
 public class OpenAPIInfo: Encodable {
 
     public private(set) var title: String

@@ -7,7 +7,9 @@
 
 import Foundation
 
+/// Basic information about controller with list of actions.
 public class APIController {
+
     var name: String
     var description: String
     var link: APILink?

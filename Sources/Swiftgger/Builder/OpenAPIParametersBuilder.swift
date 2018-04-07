@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Builder for request's parameter which is stored in specific operation (`paths` part of OpenAPI).
 class OpenAPIParametersBuilder {
 
     let parameters: [APIParameter]?
@@ -15,7 +16,7 @@ class OpenAPIParametersBuilder {
         self.parameters = parameters
     }
 
-    func build() -> [OpenAPIParameter]? {
+    func built() -> [OpenAPIParameter]? {
 
         guard let apiParameters = parameters else {
             return nil
