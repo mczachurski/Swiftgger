@@ -14,7 +14,7 @@ Swiftgger support Swift Package Manager. You have to add to your `Package.swift`
 let package = Package(
     name: "YourApp",
     dependencies: [
-        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.0.2")
+        .package(url: "https://github.com/mczachurski/Swiftgger", from: "1.1.0")
     ],
     targets: [
         .target(name: "YourApp", dependencies: ["Swiftgger"]),
