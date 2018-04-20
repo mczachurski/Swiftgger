@@ -13,14 +13,14 @@ public class OpenAPIExample: Encodable {
     public private(set) var ref: String?
     public private(set) var summary: String?
     public private(set) var description: String?
-    public private(set) var value: Any?
+    public private(set) var value: String?
     public private(set) var externalValue: String?
 
     init(ref: String) {
         self.ref = ref
     }
 
-    init(summary: String? = nil, description: String? = nil, value: Any? = nil, externalValue: String? = nil) {
+    init(summary: String? = nil, description: String? = nil, value: String? = nil, externalValue: String? = nil) {
         self.summary = summary
         self.description = description
         self.value = value
