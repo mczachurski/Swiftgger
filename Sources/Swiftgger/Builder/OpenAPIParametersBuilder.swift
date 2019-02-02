@@ -31,7 +31,8 @@ class OpenAPIParametersBuilder {
                 description: apiParameter.description,
                 required: apiParameter.required,
                 deprecated: apiParameter.deprecated,
-                allowEmptyValue: apiParameter.allowEmptyValue
+                allowEmptyValue: apiParameter.allowEmptyValue,
+                schema: OpenAPISchema(type: "string")
             )
 
             openApiParameters.append(openAPIParameter)
