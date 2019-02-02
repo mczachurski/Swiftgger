@@ -15,6 +15,7 @@ public class APIParameter {
     var required: Bool = false
     var deprecated: Bool = false
     var allowEmptyValue: Bool = false
+    var dataType: APIDataType = APIDataType.string
 
     public init(
         name: String,
@@ -22,7 +23,8 @@ public class APIParameter {
         description: String? = nil,
         required: Bool = false,
         deprecated: Bool = false,
-        allowEmptyValue: Bool = false
+        allowEmptyValue: Bool = false,
+        dataType: APIDataType = APIDataType.string
     ) {
         self.name = name
         self.parameterLocation = parameterLocation
@@ -30,5 +32,6 @@ public class APIParameter {
         self.required = required
         self.deprecated = deprecated
         self.allowEmptyValue = allowEmptyValue
+        self.dataType = dataType
     }
 }
