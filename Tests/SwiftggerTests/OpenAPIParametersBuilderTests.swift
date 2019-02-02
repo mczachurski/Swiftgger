@@ -183,7 +183,7 @@ class OpenAPIParametersBuilderTests: XCTestCase {
             .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
                 APIAction(method: .get, route: "/animals", summary: "Action summary",
                           description: "Action description", parameters: [
-                            APIParameter(name: "animalId", parameterLocation: .path)
+                            APIParameter(name: "animalId", parameterLocation: .query)
                     ])
                 ]))
 
@@ -191,7 +191,7 @@ class OpenAPIParametersBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertEqual(.path, openAPIDocument.paths["/animals"]?.get?.parameters?.first?.parameterLocation)
+        XCTAssertEqual(APILocation.query, openAPIDocument.paths["/animals"]?.get?.parameters?.first?.parameterLocation)
     }
 
     func testParameterEmptyValueShouldBeAddedToOpenAPIDocument() {
