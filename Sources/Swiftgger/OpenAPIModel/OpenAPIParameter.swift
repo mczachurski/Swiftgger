@@ -20,6 +20,7 @@ public class OpenAPIParameter: Encodable {
     public private(set) var required: Bool = false
     public private(set) var deprecated: Bool = false
     public private(set) var allowEmptyValue: Bool = false
+    public private(set) var schema: OpenAPISchema?
 
     init(ref: String) {
         self.ref = ref
@@ -31,7 +32,8 @@ public class OpenAPIParameter: Encodable {
         description: String? = nil,
         required: Bool = false,
         deprecated: Bool = false,
-        allowEmptyValue: Bool = false
+        allowEmptyValue: Bool = false,
+        schema: OpenAPISchema
     ) {
         self.name = name
         self.parameterLocation = parameterLocation
@@ -39,6 +41,7 @@ public class OpenAPIParameter: Encodable {
         self.required = required
         self.deprecated = deprecated
         self.allowEmptyValue = allowEmptyValue
+        self.schema = schema
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -49,5 +52,6 @@ public class OpenAPIParameter: Encodable {
         case required
         case deprecated
         case allowEmptyValue
+        case schema
     }
 }

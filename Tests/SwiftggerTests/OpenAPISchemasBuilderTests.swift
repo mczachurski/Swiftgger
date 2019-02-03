@@ -38,7 +38,8 @@ struct Spaceship {
                  "type": "object",
                  "properties": {
                      "age": {
-                         "type": "int",
+                         "type": "integer",
+                         "format": "int64"
                      },
                      "name": {
                         "type": "string"
@@ -74,7 +75,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"], "Schema name not exists")
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"], "Schema name not exists")
     }
 
     func testSchemaTypeShouldBeTranslatedToOpenAPIDocument() {
@@ -93,7 +94,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertEqual("object", openAPIDocument.components?.schemas!["Vehicle"]?.type)
+        XCTAssertEqual("object", openAPIDocument.components?.schemas?["Vehicle"]?.type)
     }
 
     func testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument() {
@@ -112,9 +113,9 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"], "String property not exists in schema")
-        XCTAssertEqual("string", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"]?.type)
-        XCTAssertEqual("Ford", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["name"]?.example)
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["name"], "String property not exists in schema")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["name"]?.type)
+        XCTAssertEqual("Ford", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["name"]?.example)
     }
 
     func testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument() {
@@ -133,9 +134,10 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"], "Integer property not exists in schema")
-        XCTAssertEqual("int", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"]?.type)
-        XCTAssertEqual("21", openAPIDocument.components?.schemas!["Vehicle"]?.properties!["age"]?.example)
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["age"], "Integer property not exists in schema")
+        XCTAssertEqual("integer", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["age"]?.type)
+        XCTAssertEqual("int64", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["age"]?.format)
+        XCTAssertEqual("21", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["age"]?.example)
     }
 
     func testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument() {
@@ -154,7 +156,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssert(openAPIDocument.components?.schemas!["Vehicle"]?.required?.contains("name") == true, "Required property not exists in schema")
+        XCTAssert(openAPIDocument.components?.schemas?["Vehicle"]?.required?.contains("name") == true, "Required property not exists in schema")
     }
 
     func testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument() {
@@ -173,7 +175,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssert(openAPIDocument.components?.schemas!["Vehicle"]?.required?.contains("age") == false, "Not required property exists in schema")
+        XCTAssert(openAPIDocument.components?.schemas?["Vehicle"]?.required?.contains("age") == false, "Not required property exists in schema")
     }
 
     func testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument() {
@@ -192,11 +194,12 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         let openAPIDocument = openAPIBuilder.built()
 
         // Assert.
-        XCTAssertNotNil(openAPIDocument.components?.schemas!["Spaceship"], "Schema name not exists")
-        XCTAssertEqual("string", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["name"]?.type)
-        XCTAssertEqual("Star Trek", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["name"]?.example)
-        XCTAssertEqual("double", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["speed"]?.type)
-        XCTAssertEqual("923211.0", openAPIDocument.components?.schemas!["Spaceship"]?.properties!["speed"]?.example)
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Spaceship"], "Schema name not exists")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["name"]?.type)
+        XCTAssertEqual("Star Trek", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["name"]?.example)
+        XCTAssertEqual("number", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["speed"]?.type)
+        XCTAssertEqual("double", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["speed"]?.format)
+        XCTAssertEqual("923211.0", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["speed"]?.example)
     }
 
     static var allTests = [

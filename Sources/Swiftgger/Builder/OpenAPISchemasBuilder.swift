@@ -42,13 +42,38 @@ class OpenAPISchemasBuilder {
 
         var array:  [(name: String, type: OpenAPIObjectProperty)] = []
         for property in properties {
-            let someType = type(of: unwrap(property.value))
-            let typeName = String(describing: someType)
-            let example = String(describing: unwrap(property.value))
-            array.append((name: property.label!, type: OpenAPIObjectProperty(type: typeName.lowercased(), example: example)))
+            let unwrapped = unwrap(property.value)
+            let dataType = makeAPIDataType(fromSwiftValue: unwrapped)
+            let example = String(describing: unwrapped)
+            let objectProperty = OpenAPIObjectProperty(type: dataType.type, format: dataType.format, example: example)
+            array.append((name: property.label ?? "", type: objectProperty))
         }
 
         return array
+    }
+
+    /// Infer OpenAPI Data Type from Swift value type
+    /// (nested types or collections not supported at the moment)
+    ///
+    /// - Parameter value: Swift property value to analyze
+    /// - Returns: Most appropriate OpenAPI Data Type
+    private func makeAPIDataType(fromSwiftValue value: Any) -> APIDataType {
+        switch value {
+        case is Int32:
+            return .int32
+        case is Int:
+            return .int64
+        case is Float:
+            return .float
+        case is Double:
+            return .double
+        case is Bool:
+            return .boolean
+        case is Date:
+            return .dateTime
+        default:
+            return .string
+        }
     }
 
     private func getRequiredProperties(properties: Mirror.Children) -> [String] {
