@@ -28,6 +28,13 @@ struct Spaceship {
     }
 }
 
+enum Base {
+  enum Branch {
+    class ClassItem {}
+    struct StructItem {}
+  }
+}
+
 /**
     Tests for schames part of OpenAPI standard (/components/schemas).
 
@@ -202,6 +209,28 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertEqual("923211.0", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["speed"]?.example)
     }
 
+    func testChainedSchemaTypeShouldBeTranslatedToOpenAPiDocument() {
+
+      // Arrange.
+      let openAPIBuilder = OpenAPIBuilder(
+        title: "Title",
+        version: "1.0.0",
+        description: "Description"
+        )
+        .add([
+          APIObject(object: Base.Branch.ClassItem()),
+          APIObject(object: Base.Branch.StructItem())
+          ])
+
+      // Act.
+      let openAPIDocument = openAPIBuilder.built()
+
+      // Assert.
+      XCTAssertNotNil(openAPIDocument.components?.schemas?["Base.Branch.ClassItem"], "Class Schema name not exists")
+      XCTAssertNotNil(openAPIDocument.components?.schemas?["Base.Branch.StructItem"], "Struct Schema name not exists")
+
+    }
+
     static var allTests = [
         ("testSchemaNameShouldBeTranslatedToOpenAPIDocument", testSchemaNameShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaTypeShouldBeTranslatedToOpenAPIDocument", testSchemaTypeShouldBeTranslatedToOpenAPIDocument),
@@ -209,6 +238,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         ("testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument", testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument", testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument),
-        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument)
+        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument),
+        ("testChainedSchemaTypeShouldBeTranslatedToOpenAPiDocument", testChainedSchemaTypeShouldBeTranslatedToOpenAPiDocument)
     ]
 }

@@ -26,9 +26,19 @@ class OpenAPISchemasBuilder {
         return schemas
     }
 
+    private func resolveName(for object: Any) -> String {
+      var typeName: String = ""
+      dump(type(of: object), to: &typeName)
+      typeName = String(typeName.split(separator: " ")[1])
+      var nameSegments = typeName.split(separator: ".")
+      _ = nameSegments.removeFirst()
+      return nameSegments.joined(separator: ".")
+    }
+
     private func add(object: Any, toSchemas schemas: inout [String: OpenAPISchema]) {
+
         let requestMirror: Mirror = Mirror(reflecting: object)
-        let mirrorObjectType = String(describing: requestMirror.subjectType)
+        let mirrorObjectType = resolveName(for: object)
 
         if schemas[mirrorObjectType] == nil {
             let required = self.getRequiredProperties(properties: requestMirror.children)
