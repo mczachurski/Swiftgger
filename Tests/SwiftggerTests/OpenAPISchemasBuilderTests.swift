@@ -202,6 +202,24 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertEqual("923211.0", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["speed"]?.example)
     }
 
+    func testSchemaWithCustomNameShouldHaveCorrectNameinOenAPIDocument() {
+      // Arrange.
+      let openAPIBuilder = OpenAPIBuilder(
+        title: "Title",
+        version: "1.0.0",
+        description: "Description"
+        )
+        .add([
+          APIObject(object: Spaceship(name: "Star Trek", speed: 923211), customName: "CustomSpaceship")
+          ])
+
+      // Act.
+      let openAPIDocument = openAPIBuilder.built()
+
+      // Assert.
+      XCTAssertNotNil(openAPIDocument.components?.schemas?["CustomSpaceship"], "Custom Schema name not exists")
+    }
+
     static var allTests = [
         ("testSchemaNameShouldBeTranslatedToOpenAPIDocument", testSchemaNameShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaTypeShouldBeTranslatedToOpenAPIDocument", testSchemaTypeShouldBeTranslatedToOpenAPIDocument),
@@ -209,6 +227,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         ("testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument", testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument),
         ("testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument", testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument),
-        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument)
+        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument),
+        ("testSchemaWithCustomNameShouldHaveCorrectNameinOenAPIDocument", testSchemaWithCustomNameShouldHaveCorrectNameinOenAPIDocument)
     ]
 }

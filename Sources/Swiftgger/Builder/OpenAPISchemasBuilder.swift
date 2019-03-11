@@ -20,15 +20,15 @@ class OpenAPISchemasBuilder {
 
         var schemas: [String: OpenAPISchema] = [:]
         for object in self.objects where object.object != nil {
-            add(object: object.object!, toSchemas: &schemas)
+          add(object: object.object!, withCustomName: object.customName, toSchemas: &schemas)
         }
 
         return schemas
     }
 
-    private func add(object: Any, toSchemas schemas: inout [String: OpenAPISchema]) {
+  private func add(object: Any, withCustomName customName: String?, toSchemas schemas: inout [String: OpenAPISchema]) {
         let requestMirror: Mirror = Mirror(reflecting: object)
-        let mirrorObjectType = String(describing: requestMirror.subjectType)
+        let mirrorObjectType = customName ?? String(describing: requestMirror.subjectType)
 
         if schemas[mirrorObjectType] == nil {
             let required = self.getRequiredProperties(properties: requestMirror.children)
