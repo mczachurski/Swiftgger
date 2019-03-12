@@ -11,32 +11,26 @@ import Foundation
 class OpenAPIRequestBuilder {
 
     let request: APIRequest?
-    let customSchemaNames: [String: String]
+    let objects: [APIObject]
 
-    init(request: APIRequest?, customSchemaNames: [String: String]) {
+    init(request: APIRequest?, objects: [APIObject]) {
         self.request = request
-        self.customSchemaNames = customSchemaNames
+        self.objects = objects
     }
 
     func built() -> OpenAPIRequestBody? {
 
-        guard let apiRequest = request, let objectRequest = apiRequest.object else {
+        guard let apiRequest = request, let apiRequestObject = apiRequest.object else {
             return nil
         }
 
-        let objectTypeReference = self.objectReference(for: objectRequest)
-        let mediaType = OpenAPIMediaType(schema: OpenAPISchema(ref: objectTypeReference))
-
         let contentType = apiRequest.contentType ?? "application/json"
+
+        let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiRequestObject)
+        let mediaType = openAPIMediaTypeBuilder.built()
+
         let requestBody = OpenAPIRequestBody(description: apiRequest.description, content: [contentType: mediaType])
 
         return requestBody
-    }
-
-    func objectReference(for type: Any.Type) -> String {
-        var mirrorObjectType = String(describing: type)
-        mirrorObjectType = customSchemaNames[mirrorObjectType] ?? mirrorObjectType
-        let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
-        return objectTypeReference
     }
 }

@@ -19,8 +19,8 @@ class OpenAPISchemasBuilder {
     func built() -> [String: OpenAPISchema] {
 
         var schemas: [String: OpenAPISchema] = [:]
-        for object in self.objects where object.object != nil {
-          add(object: object.object!, withCustomName: object.customName, toSchemas: &schemas)
+        for object in self.objects {
+            add(object: object.object, withCustomName: object.customName, toSchemas: &schemas)
         }
 
         return schemas

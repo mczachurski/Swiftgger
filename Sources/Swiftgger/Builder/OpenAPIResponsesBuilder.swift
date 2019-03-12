@@ -11,11 +11,11 @@ import Foundation
 class OpenAPIResponsesBuilder {
 
     let responses: [APIResponse]?
-    let customSchemaNames: [String: String]
+    let objects: [APIObject]
 
-    init(responses: [APIResponse]?, customSchemaNames: [String: String]) {
+    init(responses: [APIResponse]?, objects: [APIObject]) {
         self.responses = responses
-        self.customSchemaNames = customSchemaNames
+        self.objects = objects
     }
 
     func built() -> [String: OpenAPIResponse]? {
@@ -28,34 +28,26 @@ class OpenAPIResponsesBuilder {
 
         for apiResponse in apiResponses {
 
-            var objectTypeReference: String? = nil
+            var apiResponseObject: Any.Type? = nil
             var isArray: Bool = false
 
-            if let apiResponseObject = apiResponse.object {
-                objectTypeReference = self.objectReference(for: apiResponseObject)
-            }
-
-            if let apiResponseArray = apiResponse.array {
+            if apiResponse.object != nil {
+                apiResponseObject = apiResponse.object
+            } else if apiResponse.array != nil {
                 isArray = true
-                objectTypeReference = self.objectReference(for: apiResponseArray)
+                apiResponseObject = apiResponse.array
             }
 
-            if objectTypeReference != nil {
-
-                var openAPISchema: OpenAPISchema?
-                if isArray {
-                    let objectInArraySchema = OpenAPISchema(ref: objectTypeReference!)
-                    openAPISchema = OpenAPISchema(type: "array", items: objectInArraySchema)
-                } else {
-                    openAPISchema = OpenAPISchema(ref: objectTypeReference!)
-                }
+            if apiResponseObject != nil {
 
                 let contentType = apiResponse.contentType ?? "application/json"
-                let openAPIResponseSchema = OpenAPIMediaType(schema: openAPISchema)
+
+                let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiResponseObject!, isArray: isArray)
+                let mediaType = openAPIMediaTypeBuilder.built()
 
                 let openAPIResponse = OpenAPIResponse(
                     description: apiResponse.description,
-                    content: [contentType: openAPIResponseSchema]
+                    content: [contentType: mediaType]
                 )
 
                 openAPIResponses[apiResponse.code] = openAPIResponse
@@ -66,12 +58,5 @@ class OpenAPIResponsesBuilder {
         }
 
         return openAPIResponses
-    }
-
-    func objectReference(for type: Any.Type) -> String {
-        var mirrorObjectType = String(describing: type)
-        mirrorObjectType = customSchemaNames[mirrorObjectType] ?? mirrorObjectType
-        let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
-        return objectTypeReference
     }
 }

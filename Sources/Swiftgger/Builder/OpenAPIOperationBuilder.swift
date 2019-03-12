@@ -13,13 +13,13 @@ class OpenAPIOperationBuilder {
     let controllerName: String
     let action: APIAction
     let authorizations: [APIAuthorizationType]?
-    let customSchemaNames: [String: String]
+    let objects: [APIObject]
 
-    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, customSchemaNames: [String: String]) {
+    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, objects: [APIObject]) {
         self.controllerName = controllerName
         self.action = action
         self.authorizations = authorizations
-        self.customSchemaNames = customSchemaNames
+        self.objects = objects
     }
 
     func built() -> OpenAPIOperation {
@@ -27,13 +27,14 @@ class OpenAPIOperationBuilder {
         let openAPIParametersBuilder = OpenAPIParametersBuilder(parameters: action.parameters)
         let apiParameters = openAPIParametersBuilder.built()
 
-        let openAPIRequestBuilder = OpenAPIRequestBuilder(request: action.request, customSchemaNames: customSchemaNames)
+        let openAPIRequestBuilder = OpenAPIRequestBuilder(request: action.request, objects: objects)
         let requestBody = openAPIRequestBuilder.built()
 
-        let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: action.responses, customSchemaNames: customSchemaNames)
+        let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: action.responses, objects: objects)
         let openAPIResponses = openAPIResponsesBuilder.built()
 
-        let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: action.authorization, authorizations: self.authorizations)
+        let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: action.authorization,
+                                                                        authorizations: authorizations)
         let securitySchemas = openAPISecuritySchemasBuilder.built()
 
         let openAPIOperation = OpenAPIOperation(
