@@ -120,12 +120,26 @@ public class OpenAPIBuilder {
         // Create information about schemas (objects).
         let openAPISchemasBuilder = OpenAPISchemasBuilder(objects: self.objects)
         let schemas = openAPISchemasBuilder.built()
+        let customSchemaNames = generateCustomNameMapping(from: self.objects)
 
         // Create information about paths (actions).
-        let openAPIPathsBuilder = OpenAPIPathsBuilder(controllers: self.controllers, authorizations: self.authorizations)
+        let openAPIPathsBuilder = OpenAPIPathsBuilder(controllers: self.controllers, authorizations: self.authorizations, customSchemaNames: customSchemaNames)
         let paths = openAPIPathsBuilder.built()
 
         let components = OpenAPIComponents(schemas: schemas, securitySchemes: openAPISecuritySchemas)
         return OpenAPIDocument(info: info, paths: paths, servers: openAPIServers, tags: tags, components: components)
+    }
+
+    private func generateCustomNameMapping(from objects: [APIObject]) -> [String: String] {      
+      var result: [String: String] = [:]
+      objects.forEach {
+        guard let object = $0.object,
+              let customName = $0.customName else {
+            return
+        }
+        let defaultName = String(describing: type(of: object))
+        result[defaultName] = customName
+      }
+      return result
     }
 }

@@ -11,9 +11,11 @@ import Foundation
 class OpenAPIRequestBuilder {
 
     let request: APIRequest?
+    let customSchemaNames: [String: String]
 
-    init(request: APIRequest?) {
+    init(request: APIRequest?, customSchemaNames: [String: String]) {
         self.request = request
+        self.customSchemaNames = customSchemaNames
     }
 
     func built() -> OpenAPIRequestBody? {
@@ -32,7 +34,8 @@ class OpenAPIRequestBuilder {
     }
 
     func objectReference(for type: Any.Type) -> String {
-        let mirrorObjectType = String(describing: type)
+        var mirrorObjectType = String(describing: type)
+        mirrorObjectType = customSchemaNames[mirrorObjectType] ?? mirrorObjectType
         let objectTypeReference = "#/components/schemas/\(mirrorObjectType)"
         return objectTypeReference
     }

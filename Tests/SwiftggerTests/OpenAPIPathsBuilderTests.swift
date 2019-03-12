@@ -579,6 +579,32 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         XCTAssertEqual("Parameter description", openAPIDocument.paths["/animals/{id}"]?.get?.parameters![0].description)
     }
 
+    func testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument() {
+
+      // Arrange.
+      let openAPIBuilder = OpenAPIBuilder(
+        title: "Title",
+        version: "1.0.0",
+        description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+          APIAction(method: .get, route: "/animals", summary: "Action summary",
+                    description: "Action description", responses: [
+                      APIResponse(code: "200", description: "Response description", object: Animal.self)
+            ]
+          )
+          ]))
+        .add([
+          APIObject(object: Animal(name: "Dog", age: 21), customName: "CustomAnimal")
+          ])
+
+      // Act.
+      let openAPIDocument = openAPIBuilder.built()
+
+      // Assert.
+      XCTAssertEqual("#/components/schemas/CustomAnimal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
+    }
+
     static var allTests = [
         ("testActionRouteShouldBeAddedToOpenAPIDocument", testActionRouteShouldBeAddedToOpenAPIDocument),
         ("testActionMethodShouldBeAddedToOpenAPIDocument", testActionMethodShouldBeAddedToOpenAPIDocument),
@@ -600,6 +626,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         ("testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument", testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument),
         ("testActionParameterNameShouldBeAddedToOpenAPIDocument", testActionParameterNameShouldBeAddedToOpenAPIDocument),
         ("testActionParameterLocationShouldBeAddedToOpenAPIDocument", testActionParameterLocationShouldBeAddedToOpenAPIDocument),
-        ("testActionParameterDescriptionShouldBeAddedToOpenAPIDocument", testActionParameterDescriptionShouldBeAddedToOpenAPIDocument)
+        ("testActionParameterDescriptionShouldBeAddedToOpenAPIDocument", testActionParameterDescriptionShouldBeAddedToOpenAPIDocument),
+        ("testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument", testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument)
     ]
 }
