@@ -21,7 +21,7 @@ class OpenAPITagsBuilder {
         var tags: [OpenAPITag] = []
         for controller in controllers {
 
-            var openAPIExternalDocumentation: OpenAPIExternalDocumentation? = nil
+            var openAPIExternalDocumentation: OpenAPIExternalDocumentation?
             if let externalLink = controller.link {
                 openAPIExternalDocumentation = OpenAPIExternalDocumentation(
                     url: externalLink.url,

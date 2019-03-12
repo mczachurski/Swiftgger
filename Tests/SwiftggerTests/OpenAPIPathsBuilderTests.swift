@@ -627,6 +627,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         ("testActionParameterNameShouldBeAddedToOpenAPIDocument", testActionParameterNameShouldBeAddedToOpenAPIDocument),
         ("testActionParameterLocationShouldBeAddedToOpenAPIDocument", testActionParameterLocationShouldBeAddedToOpenAPIDocument),
         ("testActionParameterDescriptionShouldBeAddedToOpenAPIDocument", testActionParameterDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument", testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument)
+        ("testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument",
+            testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument)
     ]
 }

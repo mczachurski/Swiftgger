@@ -28,7 +28,7 @@ class OpenAPIResponsesBuilder {
 
         for apiResponse in apiResponses {
 
-            var apiResponseObject: Any.Type? = nil
+            var apiResponseObject: Any.Type?
             var isArray: Bool = false
 
             if apiResponse.object != nil {

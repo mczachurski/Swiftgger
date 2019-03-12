@@ -20,7 +20,7 @@ class OpenAPISecuritySchemasBuilder {
 
     func built() -> [[String: [String]]]? {
 
-        var securitySchemas: [[String: [String]]]? = nil
+        var securitySchemas: [[String: [String]]]?
 
         if self.authorization && self.authorizations != nil {
             securitySchemas = []
