@@ -137,8 +137,7 @@ public class OpenAPIBuilder {
               let customName = $0.customName else {
             return
         }
-        let mirror = Mirror(reflecting: object)
-        let defaultName = String(describing: mirror.subjectType)
+        let defaultName = String(describing: type(of: object))
         result[defaultName] = customName
       }
       return result
