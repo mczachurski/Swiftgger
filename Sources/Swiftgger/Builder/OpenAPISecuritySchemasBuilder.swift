@@ -11,11 +11,13 @@ import Foundation
 class OpenAPISecuritySchemasBuilder {
 
     let authorizations: [APIAuthorizationType]?
+    let headers: [APIHeader]?
     let authorization: Bool
 
-    init(authorization: Bool, authorizations: [APIAuthorizationType]?) {
+    init(authorization: Bool, authorizations: [APIAuthorizationType]?, headers: [APIHeader]?) {
         self.authorization = authorization
         self.authorizations = authorizations
+        self.headers = headers
     }
 
     func built() -> [[String: [String]]]? {
@@ -35,9 +37,24 @@ class OpenAPISecuritySchemasBuilder {
                     var securityDict: [String: [String]] = [:]
                     securityDict["auth_jwt"] = []
                     securitySchemas!.append(securityDict)
+                case .bearer(description: _):
+                    var securityDict: [String: [String]] = [:]
+                    securityDict["auth_bearer"] = []
+                    securitySchemas!.append(securityDict)
                 case .anonymous:
                     break
                 }
+            }
+        }
+
+        if let headers = self.headers {
+            if securitySchemas == nil {
+                securitySchemas = []
+            }
+            for header in headers {
+                var securityDict: [String: [String]] = [:]
+                securityDict[header.scheme] = [header.value]
+                securitySchemas!.append(securityDict)
             }
         }
 

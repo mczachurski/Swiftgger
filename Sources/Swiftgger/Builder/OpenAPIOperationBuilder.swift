@@ -14,33 +14,35 @@ class OpenAPIOperationBuilder {
     let action: APIAction
     let authorizations: [APIAuthorizationType]?
     let objects: [APIObject]
+    let headers: [APIHeader]?
 
-    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, objects: [APIObject]) {
+    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, objects: [APIObject], headers: [APIHeader]?) {
         self.controllerName = controllerName
         self.action = action
         self.authorizations = authorizations
         self.objects = objects
+        self.headers = headers
     }
 
     func built() -> OpenAPIOperation {
 
-        let openAPIParametersBuilder = OpenAPIParametersBuilder(parameters: action.parameters)
+        let openAPIParametersBuilder = OpenAPIParametersBuilder(parameters: self.action.parameters)
         let apiParameters = openAPIParametersBuilder.built()
 
-        let openAPIRequestBuilder = OpenAPIRequestBuilder(request: action.request, objects: objects)
+        let openAPIRequestBuilder = OpenAPIRequestBuilder(request: self.action.request, objects: self.objects)
         let requestBody = openAPIRequestBuilder.built()
 
-        let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: action.responses, objects: objects)
+        let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: self.action.responses, objects: self.objects)
         let openAPIResponses = openAPIResponsesBuilder.built()
 
-        let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: action.authorization,
-                                                                        authorizations: authorizations)
+        let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: self.action.authorization,
+                                                                          authorizations: self.authorizations, headers: self.headers)
         let securitySchemas = openAPISecuritySchemasBuilder.built()
 
         let openAPIOperation = OpenAPIOperation(
-            summary: action.summary,
-            description: action.description,
-            tags: [controllerName],
+            summary: self.action.summary,
+            description: self.action.description,
+            tags: [self.controllerName],
             parameters: apiParameters,
             requestBody: requestBody,
             responses: openAPIResponses,

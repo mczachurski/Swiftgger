@@ -18,4 +18,17 @@ public enum APIAuthorizationType {
     case anonymous
     case basic(description: String)
     case jwt(description: String)
+    case bearer(description: String)
+}
+
+public struct APIHeader {
+    let scheme: String
+    let value: String
+    let description: String?
+
+    public init(scheme: String, value: String, description: String?) {
+        self.scheme = scheme
+        self.value = value
+        self.description = description
+    }
 }

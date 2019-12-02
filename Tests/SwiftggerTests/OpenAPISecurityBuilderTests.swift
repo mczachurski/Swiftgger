@@ -47,7 +47,7 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("Basic authorization", securitySchema?.description)
     }
 
-    func testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
+    func testJWTAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -68,7 +68,7 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("JWT authorization", securitySchema?.description)
     }
 
-    func testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
+    func testJWTAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
 
         // Arrange.
         let openAPIBuilder = OpenAPIBuilder(
@@ -77,10 +77,10 @@ class OpenAPISecurityBuilderTests: XCTestCase {
             description: "Description",
             authorizations: [.jwt(description: "JWT authorization")]
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", authorization: true)
-            ]))
+            .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                    APIAction(method: .get, route: "/animals", summary: "Action summary",
+                        description: "Action description", authorization: true)
+                    ]))
 
         // Act.
         let openAPIDocument = openAPIBuilder.built()
@@ -99,10 +99,10 @@ class OpenAPISecurityBuilderTests: XCTestCase {
             description: "Description",
             authorizations: [.basic(description: "Basic authorization")]
         )
-        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-            APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", authorization: true)
-            ]))
+            .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                    APIAction(method: .get, route: "/animals", summary: "Action summary",
+                        description: "Action description", authorization: true)
+                    ]))
 
         // Act.
         let openAPIDocument = openAPIBuilder.built()
@@ -111,10 +111,54 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_basic"], "Basic authorization should be enabled")
     }
 
+    func testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [.bearer(description: "Bearer authorization")]
+        )
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        let securitySchema = openAPIDocument.components?.securitySchemes!["auth_bearer"]
+        XCTAssertEqual("http", securitySchema?.type)
+        XCTAssertEqual("bearer", securitySchema?.scheme)
+        XCTAssertEqual("Bearer authorization", securitySchema?.description)
+    }
+
+    func testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [.bearer(description: "Bearer authorization")]
+        )
+            .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+                    APIAction(method: .get, route: "/animals", summary: "Action summary",
+                        description: "Action description", authorization: true)
+                    ]))
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_bearer"], "Bearer authorization should be enabled")
+
+    }
+
     static var allTests = [
         ("testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument),
+        ("testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
+        ("testJWTAuthorizationsShouldBeTranslatedToOpenAPIDocument", testJWTAuthorizationsShouldBeTranslatedToOpenAPIDocument),
+        ("testJWTAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testJWTAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
         ("testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument),
-        ("testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
-        ("testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument)
+        ("testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument)
     ]
 }

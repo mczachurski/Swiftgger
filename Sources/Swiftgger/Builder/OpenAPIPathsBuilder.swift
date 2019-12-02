@@ -12,11 +12,13 @@ class OpenAPIPathsBuilder {
     let controllers: [APIController]
     let authorizations: [APIAuthorizationType]?
     let objects: [APIObject]
+    let headers: [APIHeader]?
 
-    init(controllers: [APIController], authorizations: [APIAuthorizationType]?, objects: [APIObject]) {
+    init(controllers: [APIController], authorizations: [APIAuthorizationType]?, objects: [APIObject], headers: [APIHeader]?) {
         self.controllers = controllers
         self.authorizations = authorizations
         self.objects = objects
+        self.headers = headers
     }
 
     func built() -> [String: OpenAPIPathItem] {
@@ -28,7 +30,7 @@ class OpenAPIPathsBuilder {
                 let openAPIOperationBuilder = OpenAPIOperationBuilder(controllerName: controller.name,
                                                                     action: action,
                                                                     authorizations: self.authorizations,
-                                                                    objects: self.objects)
+                                                                    objects: self.objects, headers: self.headers)
                 let openAPIOperation = openAPIOperationBuilder.built()
 
                 if let pathItem = paths[action.route] {

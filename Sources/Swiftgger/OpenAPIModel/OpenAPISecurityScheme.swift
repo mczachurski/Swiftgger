@@ -18,7 +18,7 @@ public class OpenAPISecurityScheme: Encodable {
     public private(set) var type: String?
     public private(set) var description: String?
     public private(set) var name: String?
-    public private(set) var parameterLocation: APILocation = APILocation.path
+    public private(set) var parameterLocation: APILocation? = nil
     public private(set) var scheme: String?
     public private(set) var bearerFormat: String?
     public private(set) var flows: OpenAPIOAuthFlows?
@@ -32,7 +32,7 @@ public class OpenAPISecurityScheme: Encodable {
         type: String? = nil,
         description: String? = nil,
         name: String? = nil,
-        parameterLocation: APILocation = APILocation.path,
+        parameterLocation: APILocation? = nil,
         scheme: String? = nil,
         bearerFormat: String? = nil,
         flows: OpenAPIOAuthFlows? = nil,

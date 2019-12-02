@@ -17,6 +17,7 @@ public class OpenAPIBuilder {
     var contact: APIContact?
     var license: APILicense?
     var authorizations: [APIAuthorizationType]?
+    var headers: [APIHeader]?
 
     var controllers: [APIController] = []
     var servers: [APIServer] = []
@@ -42,7 +43,8 @@ public class OpenAPIBuilder {
         termsOfService: String? = nil,
         contact: APIContact? = nil,
         license: APILicense? = nil,
-        authorizations: [APIAuthorizationType]? = nil
+        authorizations: [APIAuthorizationType]? = nil,
+        headers: [APIHeader]? = nil
     ) {
         self.title = title
         self.version = version
@@ -51,6 +53,7 @@ public class OpenAPIBuilder {
         self.contact = contact
         self.license = license
         self.authorizations = authorizations
+        self.headers = headers
     }
 
     /**
@@ -110,7 +113,7 @@ public class OpenAPIBuilder {
         let tags = openAPITagsBuilder.built()
 
         // Create information about security schemas (authorizations).
-        let openAPISecurityBuilder = OpenAPISecurityBuilder(authorizations: self.authorizations)
+        let openAPISecurityBuilder = OpenAPISecurityBuilder(authorizations: self.authorizations, headers: self.headers)
         let openAPISecuritySchemas = openAPISecurityBuilder.built()
 
         // Create information about servers (requessts will be send to them).
@@ -124,7 +127,7 @@ public class OpenAPIBuilder {
         // Create information about paths (actions).
         let openAPIPathsBuilder = OpenAPIPathsBuilder(controllers: self.controllers,
                                                     authorizations: self.authorizations,
-                                                    objects: self.objects)
+                                                    objects: self.objects, headers: self.headers)
         let paths = openAPIPathsBuilder.built()
 
         let components = OpenAPIComponents(schemas: schemas, securitySchemes: openAPISecuritySchemas)
