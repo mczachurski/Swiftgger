@@ -18,4 +18,5 @@ public enum APIAuthorizationType {
     case anonymous
     case basic(description: String)
     case jwt(description: String)
+    case apiKey(description: String)
 }

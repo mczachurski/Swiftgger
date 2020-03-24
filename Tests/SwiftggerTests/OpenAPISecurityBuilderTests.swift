@@ -46,6 +46,26 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("basic", securitySchema?.scheme)
         XCTAssertEqual("Basic authorization", securitySchema?.description)
     }
+    
+    func testApiKeyAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [.apiKey(description: "Api key authorization")]
+        )
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        let securitySchema = openAPIDocument.components?.securitySchemes!["api_key"]
+        XCTAssertEqual("apiKey", securitySchema?.type)
+        XCTAssertEqual(nil, securitySchema?.scheme)
+        XCTAssertEqual("Api key authorization", securitySchema?.description)
+    }
 
     func testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
 
@@ -110,11 +130,34 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_basic"], "Basic authorization should be enabled")
     }
+    
+    func testApiKeyAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [.apiKey(description: "Api key authorization")]
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", authorization: true)
+            ]))
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["api_key"], "Api key authorization should be enabled")
+    }
 
     static var allTests = [
         ("testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument),
         ("testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument),
         ("testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
-        ("testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument)
+        ("testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
+        ("testApiKeyAuthorizationsShouldBeTranslatedToOpenAPIDocument", testApiKeyAuthorizationsShouldBeTranslatedToOpenAPIDocument),
+        ("testApiKeyAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testApiKeyAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument)
     ]
 }
