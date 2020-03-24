@@ -71,8 +71,14 @@ class OpenAPISchemasBuilder {
             return .boolean
         case is Date:
             return .dateTime
-        default:
+        case is String:
             return .string
+        default:
+            let className = String(describing: value)
+            if let className = className.components(separatedBy: ".").last {
+                return APIDataType(type: className, format: nil)
+            }
+            return APIDataType(type: className, format: nil)
         }
     }
 
