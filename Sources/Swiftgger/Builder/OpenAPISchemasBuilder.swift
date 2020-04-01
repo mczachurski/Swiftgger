@@ -74,7 +74,7 @@ class OpenAPISchemasBuilder {
         case is String:
             return .string
         default:
-            let className = String(describing: value)
+            let className = String(describing: type(of: self))
             if let className = className.components(separatedBy: ".").last {
                 return APIDataType(type: className, format: nil)
             }
