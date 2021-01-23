@@ -113,6 +113,27 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("https://oauth2.com", securitySchema?.flows?.implicit?.authorizationUrl)
         XCTAssertEqual("https://oauth2.com/token", securitySchema?.flows?.implicit?.tokenUrl)
     }
+    
+    func testOpenIdAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [
+                .openId(description: "OpenIdConnect authorization", openIdConnectUrl: "https//opeind.com")
+            ]
+        )
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        let securitySchema = openAPIDocument.components?.securitySchemes!["openId"]
+        XCTAssertEqual("openIdConnect", securitySchema?.type)
+        XCTAssertEqual("https//opeind.com", securitySchema?.openIdConnectUrl)
+    }
 
     func testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
 
@@ -201,5 +222,28 @@ class OpenAPISecurityBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["oauth2"], "OAuth2 authorization should be enabled")
+    }
+    
+    func testOpenIdAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [
+                .openId(description: "OpenIdConnect authorization", openIdConnectUrl: "https//opeind.com")
+            ]
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", authorization: true)
+            ]))
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["openId"], "OpenId authorization should be enabled")
     }
 }

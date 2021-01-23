@@ -80,6 +80,12 @@ class OpenAPISecurityBuilder {
                                                        flows: openAPIOAuthFlows)
 
                 openAPISecuritySchema["oauth2"] = oauth2Auth
+            case .openId(description: let description, openIdConnectUrl: let openIdConnectUrl):
+                let openIdAuth = OpenAPISecurityScheme(type: "openIdConnect",
+                                                       description: description,
+                                                       openIdConnectUrl: openIdConnectUrl)
+                openAPISecuritySchema["openId"] = openIdAuth
+                break
             case .anonymous:
                 break
             }
