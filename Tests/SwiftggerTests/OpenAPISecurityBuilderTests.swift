@@ -110,11 +110,4 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["auth_basic"], "Basic authorization should be enabled")
     }
-
-    static var allTests = [
-        ("testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationsShouldBeTranslatedToOpenAPIDocument),
-        ("testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument),
-        ("testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument),
-        ("testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument", testBasicAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument)
-    ]
 }

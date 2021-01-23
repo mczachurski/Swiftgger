@@ -1,0 +1,15 @@
+name: Build
+
+on: push
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Build
+      run: swift build --enable-test-discovery
+    - name: Tests
+      run: swift test --enable-test-discovery

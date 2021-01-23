@@ -1,6 +1,9 @@
 # Swiftgger
 
-[![Build Status](https://travis-ci.org/mczachurski/Swiftgger.svg?branch=master)](https://travis-ci.org/mczachurski/Swiftgger) [![codecov](https://codecov.io/gh/mczachurski/Swiftgger/branch/master/graph/badge.svg)](https://codecov.io/gh/mczachurski/Swiftgger) [![codebeat badge](https://codebeat.co/badges/44f41b51-3cb9-441b-84fa-8506c3011214)](https://codebeat.co/projects/github-com-mczachurski-swiftgger-master) [![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](ttps://developer.apple.com/swift/) [![Platforms OS X | Linux](https://img.shields.io/badge/Platforms-OS%20X%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/) 
+![Build Status](https://github.com/mczachurski/Swiftgger/workflows/Build/badge.svg)
+[![Swift 5.2](https://img.shields.io/badge/Swift-5.2-orange.svg?style=flat)](ttps://developer.apple.com/swift/)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
+[![Platforms macOS | Linux](https://img.shields.io/badge/Platforms-macOS%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 
 Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject). Library is generating objects tree which you can serialize to JSON and return by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's especially helpful during API testing.
 
@@ -14,7 +17,7 @@ Swiftgger support Swift Package Manager. You have to add to your `Package.swift`
 let package = Package(
     name: "YourApp",
     dependencies: [
-        .package(url: "https://github.com/mczachurski/Swiftgger.git", from: "1.2.1")
+        .package(url: "https://github.com/mczachurski/Swiftgger.git", from: "1.4.0")
     ],
     targets: [
         .target(name: "YourApp", dependencies: ["Swiftgger"]),

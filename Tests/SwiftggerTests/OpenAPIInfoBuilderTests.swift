@@ -173,14 +173,4 @@ class OpenAPIInfoBuilderTests: XCTestCase {
         // Assert.
         XCTAssertEqual(URL(string: "http://mit.license"), openAPIDocument.info.license?.url)
     }
-
-    static var allTests = [
-        ("testAPITitleShouldBeTranslatedToOpenAPIDocument", testAPITitleShouldBeTranslatedToOpenAPIDocument),
-        ("testAPIVersionShouldBeTranslatedToOpenAPIDocument", testAPIVersionShouldBeTranslatedToOpenAPIDocument),
-        ("testAPIDescriptionShouldBeTranslatedToOpenAPIDocument", testAPIDescriptionShouldBeTranslatedToOpenAPIDocument),
-        ("testAPITermsOfServiceShouldBeTranslatedToOpenAPIDocument", testAPITermsOfServiceShouldBeTranslatedToOpenAPIDocument),
-        ("testAPIContactNameShouldBeTranslatedToOpenAPIDocument", testAPIContactNameShouldBeTranslatedToOpenAPIDocument),
-        ("testAPIContactEmailShouldBeTranslatedToOpenAPIDocument", testAPIContactEmailShouldBeTranslatedToOpenAPIDocument),
-        ("testAPIContactUrlShouldBeTranslatedToOpenAPIDocument", testAPIContactUrlShouldBeTranslatedToOpenAPIDocument)
-    ]
 }
