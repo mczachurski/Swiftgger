@@ -20,4 +20,5 @@ public enum APIAuthorizationType {
     case jwt(description: String)
     case apiKey(description: String)
     case oauth2(description: String, flows: [APIAuthorizationOAuth2Type])
+    case openId(description: String, openIdConnectUrl: String)
 }

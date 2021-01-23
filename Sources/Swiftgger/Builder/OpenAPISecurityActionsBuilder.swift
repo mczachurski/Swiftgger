@@ -26,25 +26,28 @@ class OpenAPISecurityActionsBuilder {
             securitySchemas = []
             
             for authorization in self.authorizations! {
+                
+                var authorizationName: String?
+                
                 switch authorization {
                 case .basic(description: _):
-                    var securityDict: [String: [String]] = [:]
-                    securityDict["auth_basic"] = []
-                    securitySchemas!.append(securityDict)
+                    authorizationName = "auth_basic"
                 case .jwt(description: _):
-                    var securityDict: [String: [String]] = [:]
-                    securityDict["auth_jwt"] = []
-                    securitySchemas!.append(securityDict)
+                    authorizationName = "auth_jwt"
                 case .apiKey:
-                    var securityDict: [String: [String]] = [:]
-                    securityDict["api_key"] = []
-                    securitySchemas!.append(securityDict)
+                    authorizationName = "api_key"
                 case .oauth2(description: _, flows: _):
-                    var securityDict: [String: [String]] = [:]
-                    securityDict["oauth2"] = []
-                    securitySchemas!.append(securityDict)
+                    authorizationName = "oauth2"
+                case .openId(description: _, openIdConnectUrl: _):
+                    authorizationName = "openId"
                 case .anonymous:
                     break
+                }
+                
+                if let authorizationName = authorizationName {
+                    var securityDict: [String: [String]] = [:]
+                    securityDict[authorizationName] = []
+                    securitySchemas!.append(securityDict)
                 }
             }
         }
