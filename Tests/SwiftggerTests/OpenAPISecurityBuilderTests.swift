@@ -87,6 +87,32 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("jwt", securitySchema?.bearerFormat)
         XCTAssertEqual("JWT authorization", securitySchema?.description)
     }
+    
+    func testOAuth2AuthorizationsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [
+                .oauth2(description: "OAuth authorization", flows: [
+                    .implicit(APIAuthorizationFlow(authorizationUrl: "https://oauth2.com", tokenUrl: "https://oauth2.com/token", scopes: [:]))
+                ])
+            ]
+        )
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        let securitySchema = openAPIDocument.components?.securitySchemes!["oauth2"]
+        XCTAssertEqual("oauth2", securitySchema?.type)
+        XCTAssertNotNil(securitySchema?.flows)
+        XCTAssertNotNil(securitySchema?.flows?.implicit)
+        XCTAssertEqual("https://oauth2.com", securitySchema?.flows?.implicit?.authorizationUrl)
+        XCTAssertEqual("https://oauth2.com/token", securitySchema?.flows?.implicit?.tokenUrl)
+    }
 
     func testBearerAuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
 
@@ -150,5 +176,30 @@ class OpenAPISecurityBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["api_key"], "Api key authorization should be enabled")
+    }
+    
+    func testOAuth2AuthorizationForActionsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [
+                .oauth2(description: "OAuth authorization", flows: [
+                    .implicit(APIAuthorizationFlow(authorizationUrl: "https://oauth2.com", tokenUrl: "https://oauth2.com/token", scopes: [:]))
+                ])
+            ]
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", authorization: true)
+            ]))
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.paths["/animals"]?.get?.security![0]["oauth2"], "OAuth2 authorization should be enabled")
     }
 }

@@ -1,5 +1,5 @@
 //
-//  OpenAPISecuritySchemasBuilder.swift
+//  OpenAPISecurityActionsBuilder.swift
 //  Swiftgger
 //
 //  Created by Marcin Czachurski on 25.03.2018.
@@ -7,8 +7,8 @@
 
 import Foundation
 
-/// Builder for security information stored in `components/securitySchemas` part of OpenAPI.
-class OpenAPISecuritySchemasBuilder {
+/// Builder for security information for each HTTP action.
+class OpenAPISecurityActionsBuilder {
     
     let authorizations: [APIAuthorizationType]?
     let authorization: Bool
@@ -38,6 +38,10 @@ class OpenAPISecuritySchemasBuilder {
                 case .apiKey:
                     var securityDict: [String: [String]] = [:]
                     securityDict["api_key"] = []
+                    securitySchemas!.append(securityDict)
+                case .oauth2(description: _, flows: _):
+                    var securityDict: [String: [String]] = [:]
+                    securityDict["oauth2"] = []
                     securitySchemas!.append(securityDict)
                 case .anonymous:
                     break

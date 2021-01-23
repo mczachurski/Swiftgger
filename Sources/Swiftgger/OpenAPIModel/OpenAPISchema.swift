@@ -21,9 +21,12 @@ public class OpenAPISchema: Codable {
         self.ref = ref
     }
 
-    init(type: String? = nil, format: String? = nil,
-         items: OpenAPISchema? = nil, required: [String]? = nil,
-         properties: [(name: String, type: OpenAPIObjectProperty)]? = nil) {
+    init(type: String? = nil,
+         format: String? = nil,
+         items: OpenAPISchema? = nil,
+         required: [String]? = nil,
+         properties: [(name: String, type: OpenAPIObjectProperty)]? = nil
+    ) {
         self.type = type
         self.format = format
         self.items = items
