@@ -19,4 +19,5 @@ public enum APIAuthorizationType {
     case basic(description: String)
     case jwt(description: String)
     case apiKey(description: String)
+    case oauth2(description: String, flows: [APIAuthorizationOAuth2Type])
 }

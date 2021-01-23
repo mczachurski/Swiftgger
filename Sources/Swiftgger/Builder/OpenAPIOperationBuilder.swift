@@ -33,8 +33,8 @@ class OpenAPIOperationBuilder {
         let openAPIResponsesBuilder = OpenAPIResponsesBuilder(responses: action.responses, objects: objects)
         let openAPIResponses = openAPIResponsesBuilder.built()
 
-        let openAPISecuritySchemasBuilder = OpenAPISecuritySchemasBuilder(authorization: action.authorization,
-                                                                        authorizations: authorizations)
+        let openAPISecuritySchemasBuilder = OpenAPISecurityActionsBuilder(authorization: action.authorization,
+                                                                         authorizations: authorizations)
         let securitySchemas = openAPISecuritySchemasBuilder.built()
 
         let openAPIOperation = OpenAPIOperation(
