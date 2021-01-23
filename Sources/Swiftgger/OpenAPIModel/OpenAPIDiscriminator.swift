@@ -13,7 +13,7 @@ import Foundation
     The discriminator is a specific object in a schema which is used to inform the consumer
     of the specification of an alternative schema based on the value associated with it.
  */
-public class OpenAPIDiscriminator: Encodable {
+public class OpenAPIDiscriminator: Codable {
 
     public private(set) var propertyName: String
     public private(set) var mapping: [String: String]?

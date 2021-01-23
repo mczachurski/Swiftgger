@@ -12,7 +12,7 @@ import Foundation
     The presence of a link does not guarantee the caller's ability to successfully invoke it,
     rather it provides a known relationship and traversal mechanism between responses and other operations.
  */
-public class OpenAPILink: Encodable {
+public class OpenAPILink: Codable {
 
     public private(set) var ref: String?
     public private(set) var operationRef: String?

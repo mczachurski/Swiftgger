@@ -1,0 +1,860 @@
+{
+   "tags":[
+      {
+         "description":"Controller which returns service health information.",
+         "name":"Health"
+      },
+      {
+         "description":"Controller for managing tasks.",
+         "name":"Tasks"
+      },
+      {
+         "description":"Controller for managing users.",
+         "name":"Users"
+      },
+      {
+         "description":"Controller for managing user accout (registering/signing in/password).",
+         "name":"Account"
+      },
+      {
+         "description":"Controller for OpenAPI metadata",
+         "name":"OpenAPI"
+      }
+   ],
+   "servers":[
+      {
+         "url":"http://localhost:8181",
+         "description":"Main server"
+      },
+      {
+         "url":"http://localhost:{port}/{basePath}",
+         "variables":{
+            "basePath":{
+               "description":"Base path to the server API",
+               "default":"v1"
+            },
+            "port":{
+               "default":"80",
+               "description":"Port to the API",
+               "enum":[
+                  "80",
+                  "443"
+               ]
+            }
+         },
+         "description":"Secure server"
+      }
+   ],
+   "info":{
+      "license":{
+         "url":"http://mit.license",
+         "name":"MIT"
+      },
+      "title":"Tasker server",
+      "contact":{
+         "email":"john.doe@some-email.org",
+         "url":"http://example-domain.com/@john",
+         "name":"John Doe"
+      },
+      "termsOfService":"http://example.com/terms/",
+      "version":"1.0.0",
+      "description":"This is a sample server for task server application. Authorization is done by `JWT` token. You can register in the system, then sign-in and use token from response for authorization."
+   },
+   "components":{
+      "schemas":{
+         "ValidationErrorResponseDto":{
+            "properties":{
+               "errors":{
+                  "example":"[\"property\": \"Information about error.\"]",
+                  "type":"dictionary<string, string>"
+               },
+               "message":{
+                  "example":"Object is invalid",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "message",
+               "errors"
+            ],
+            "type":"object"
+         },
+         "UserDto":{
+            "properties":{
+               "email":{
+                  "example":"email@test.com",
+                  "type":"string"
+               },
+               "createDate":{
+                  "example":"2021-01-23 11:48:00 +0000",
+                  "type":"date"
+               },
+               "isLocked":{
+                  "example":"false",
+                  "type":"bool"
+               },
+               "name":{
+                  "example":"John Doe",
+                  "type":"string"
+               },
+               "id":{
+                  "example":"BAE63FDC-A633-4D3A-BD7D-A51EC87B071F",
+                  "type":"uuid"
+               },
+               "roles":{
+                  "example":"nil",
+                  "type":"optional<array<string>>"
+               }
+            },
+            "required":[
+               "name",
+               "email",
+               "isLocked"
+            ],
+            "type":"object"
+         },
+         "RegisterUserDto":{
+            "properties":{
+               "email":{
+                  "example":"john.doe@email.com",
+                  "type":"string"
+               },
+               "createDate":{
+                  "example":"2021-01-23 11:48:00 +0000",
+                  "type":"date"
+               },
+               "isLocked":{
+                  "example":"false",
+                  "type":"bool"
+               },
+               "password":{
+                  "example":"fds",
+                  "type":"string"
+               },
+               "id":{
+                  "example":"80E8CE27-6AC9-4C38-B83F-2A2C53A24129",
+                  "type":"uuid"
+               },
+               "name":{
+                  "example":"John Doe",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "name",
+               "email",
+               "isLocked",
+               "password"
+            ],
+            "type":"object"
+         },
+         "HealthStatusDto":{
+            "properties":{
+               "message":{
+                  "example":"I'm fine and running!",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "message"
+            ],
+            "type":"object"
+         },
+         "SignInDto":{
+            "properties":{
+               "email":{
+                  "example":"john.doe@email.com",
+                  "type":"string"
+               },
+               "password":{
+                  "example":"234efsge",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "email",
+               "password"
+            ],
+            "type":"object"
+         },
+         "TaskDto":{
+            "properties":{
+               "createDate":{
+                  "example":"2021-01-23 11:48:00 +0000",
+                  "type":"date"
+               },
+               "isFinished":{
+                  "example":"true",
+                  "type":"bool"
+               },
+               "id":{
+                  "example":"DA9D17D1-9C27-4E96-AD3D-DF232C7E8680",
+                  "type":"uuid"
+               },
+               "name":{
+                  "example":"Net task",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "name",
+               "isFinished"
+            ],
+            "type":"object"
+         },
+         "JwtTokenResponseDto":{
+            "properties":{
+               "token":{
+                  "example":"13r4qtfrq4t5egrf4qt5tgrfw45tgrafsdfgty54twgrthg",
+                  "type":"string"
+               }
+            },
+            "required":[
+               "token"
+            ],
+            "type":"object"
+         }
+      },
+      "securitySchemes":{
+         "auth_jwt":{
+            "type":"http",
+            "bearerFormat":"jwt",
+            "scheme":"bearer",
+            "description":"You can get token from *sign-in* action from *Account* controller.",
+            "in":"header"
+         }
+      }
+   },
+   "openapi":"3.0.1",
+   "paths":{
+      "/openapi":{
+         "get":{
+            "tags":[
+               "OpenAPI"
+            ],
+            "deprecated":false,
+            "description":"Action for getting OpenAPI document.",
+            "summary":"OpenAPI endpoint"
+         }
+      },
+      "/users":{
+         "get":{
+            "tags":[
+               "Users"
+            ],
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "items":{
+                              "$ref":"#/components/schemas/UserDto"
+                           },
+                           "type":"array"
+                        }
+                     }
+                  },
+                  "description":"List of users"
+               }
+            },
+            "deprecated":false,
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for getting all users from server",
+            "summary":"All users"
+         },
+         "post":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/UserDto"
+                     }
+                  }
+               },
+               "description":"Object with user information.",
+               "required":false
+            },
+            "summary":"New user",
+            "deprecated":false,
+            "tags":[
+               "Users"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for adding new user to the server",
+            "responses":{
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/UserDto"
+                        }
+                     }
+                  },
+                  "description":"User data after adding to the system"
+               },
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"There was issues during adding new user"
+               },
+               "401":{
+                  "description":"User not authorized"
+               }
+            }
+         }
+      },
+      "/account/sign-in":{
+         "post":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/SignInDto"
+                     }
+                  }
+               },
+               "description":"Object for signing in user.",
+               "required":false
+            },
+            "tags":[
+               "Account"
+            ],
+            "deprecated":false,
+            "responses":{
+               "404":{
+                  "description":"User credentials are invalid"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/JwtTokenResponseDto"
+                        }
+                     }
+                  },
+                  "description":"Response with user token for authorization"
+               }
+            },
+            "description":"Action for signing in user to the system",
+            "summary":"Signinig in to the system"
+         }
+      },
+      "/health":{
+         "get":{
+            "tags":[
+               "Health"
+            ],
+            "responses":{
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/HealthStatusDto"
+                        }
+                     }
+                  },
+                  "description":"Information about health"
+               }
+            },
+            "deprecated":false,
+            "description":"Action for getting status of health",
+            "summary":"Helth checking"
+         }
+      },
+      "/account/register":{
+         "post":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/RegisterUserDto"
+                     }
+                  }
+               },
+               "description":"Object with registration information.",
+               "required":false
+            },
+            "tags":[
+               "Account"
+            ],
+            "deprecated":false,
+            "responses":{
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"User information are invalid"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/RegisterUserDto"
+                        }
+                     }
+                  },
+                  "description":"Response with user token for authorization"
+               }
+            },
+            "description":"Action for registering new user in system",
+            "summary":"Registering new user"
+         }
+      },
+      "/users/{id}":{
+         "get":{
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"User with entered id not exists"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/UserDto"
+                        }
+                     }
+                  },
+                  "description":"Specific user"
+               }
+            },
+            "summary":"User by id",
+            "deprecated":false,
+            "tags":[
+               "Users"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for getting specific user from server",
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"User id",
+                  "in":"path"
+               }
+            ]
+         },
+         "put":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/UserDto"
+                     }
+                  }
+               },
+               "description":"Object with user information.",
+               "required":false
+            },
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"User with entered id not exists"
+               },
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"There was issues during updating user"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/UserDto"
+                        }
+                     }
+                  },
+                  "description":"User data after adding to the system"
+               }
+            },
+            "deprecated":false,
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"User id",
+                  "in":"path"
+               }
+            ],
+            "tags":[
+               "Users"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for updating specific user in the server",
+            "summary":"Update user"
+         },
+         "delete":{
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"User with entered id not exists"
+               },
+               "200":{
+                  "description":"User was deleted"
+               }
+            },
+            "summary":"Delete user",
+            "deprecated":false,
+            "tags":[
+               "Users"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for deleting user from the database",
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"User id",
+                  "in":"path"
+               }
+            ]
+         }
+      },
+      "/tasks/{id}":{
+         "get":{
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"Task with entered id not exists"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/TaskDto"
+                        }
+                     }
+                  },
+                  "description":"Specific task"
+               }
+            },
+            "summary":"Task by id",
+            "deprecated":false,
+            "tags":[
+               "Tasks"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for getting specific task from server",
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"Task id",
+                  "in":"path"
+               }
+            ]
+         },
+         "put":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/TaskDto"
+                     }
+                  }
+               },
+               "description":"Object with task information.",
+               "required":false
+            },
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"Task with entered id not exists"
+               },
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"There was issues during updating task"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/TaskDto"
+                        }
+                     }
+                  },
+                  "description":"Task data after adding to the system"
+               }
+            },
+            "deprecated":false,
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"Task id",
+                  "in":"path"
+               }
+            ],
+            "tags":[
+               "Tasks"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for updating specific task in the server",
+            "summary":"Update task"
+         },
+         "delete":{
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "404":{
+                  "description":"Task with entered id not exists"
+               },
+               "200":{
+                  "description":"Task was deleted"
+               }
+            },
+            "summary":"Delete task",
+            "deprecated":false,
+            "tags":[
+               "Tasks"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for deleting task from the database",
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"Task id",
+                  "in":"path"
+               }
+            ]
+         }
+      },
+      "/account/change-password":{
+         "post":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/ChangePasswordRequestDto"
+                     }
+                  }
+               },
+               "description":"Object with new user password.",
+               "required":false
+            },
+            "summary":"Changing password",
+            "deprecated":false,
+            "tags":[
+               "Account"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for changing password",
+            "responses":{
+               "200":{
+                  "description":"Password was changed"
+               },
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"There was issues during changing password"
+               },
+               "401":{
+                  "description":"User not authorized"
+               }
+            }
+         }
+      },
+      "/tasks":{
+         "get":{
+            "tags":[
+               "Tasks"
+            ],
+            "responses":{
+               "401":{
+                  "description":"User not authorized"
+               },
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "items":{
+                              "$ref":"#/components/schemas/TaskDto"
+                           },
+                           "type":"array"
+                        }
+                     }
+                  },
+                  "description":"List of users"
+               }
+            },
+            "deprecated":false,
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for getting all tasks from server",
+            "summary":"All tasks"
+         },
+         "post":{
+            "requestBody":{
+               "content":{
+                  "application/json":{
+                     "schema":{
+                        "$ref":"#/components/schemas/TaskDto"
+                     }
+                  }
+               },
+               "description":"Object with task information.",
+               "required":false
+            },
+            "responses":{
+               "200":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/TaskDto"
+                        }
+                     }
+                  },
+                  "description":"Task data after adding to the system"
+               },
+               "400":{
+                  "content":{
+                     "application/json":{
+                        "schema":{
+                           "$ref":"#/components/schemas/ValidationErrorResponseDto"
+                        }
+                     }
+                  },
+                  "description":"There was issues during adding new task"
+               },
+               "401":{
+                  "description":"User not authorized"
+               }
+            },
+            "deprecated":false,
+            "parameters":[
+               {
+                  "name":"id",
+                  "deprecated":false,
+                  "required":true,
+                  "allowEmptyValue":false,
+                  "description":"Task id",
+                  "in":"path"
+               }
+            ],
+            "tags":[
+               "Tasks"
+            ],
+            "security":[
+               {
+                  "auth_jwt":[
+                     
+                  ]
+               }
+            ],
+            "description":"Action for adding new task to the server",
+            "summary":"New task"
+         }
+      }
+   }
+}

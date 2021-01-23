@@ -11,6 +11,7 @@ import Foundation
 class OpenAPISchemasBuilder {
 
     let objects: [APIObject]
+    private var nestedObjects: [Any] = []
 
     init(objects: [APIObject]) {
         self.objects = objects
@@ -21,6 +22,10 @@ class OpenAPISchemasBuilder {
         var schemas: [String: OpenAPISchema] = [:]
         for object in self.objects {
             add(object: object.object, withCustomName: object.customName, toSchemas: &schemas)
+        }
+
+        for nestedObject in self.nestedObjects {
+            add(object: nestedObject, withCustomName: nil, toSchemas: &schemas)
         }
 
         return schemas
@@ -42,11 +47,17 @@ class OpenAPISchemasBuilder {
 
         var array:  [(name: String, type: OpenAPIObjectProperty)] = []
         for property in properties {
+
             let unwrapped = unwrap(property.value)
-            let dataType = makeAPIDataType(fromSwiftValue: unwrapped)
-            let example = String(describing: unwrapped)
-            let objectProperty = OpenAPIObjectProperty(type: dataType.type, format: dataType.format, example: example)
-            array.append((name: property.label ?? "", type: objectProperty))
+            if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+                self.appendProperties(property: property, unwrapped: unwrapped, dataType: dataType, array: &array)
+            } else {
+                if let items = property.value as? Array<Any> {
+                    self.appendItems(property: property, items: items, array: &array)
+                } else {
+                    self.appendReference(property: property, array: &array)
+                }
+            }
         }
 
         return array
@@ -57,7 +68,7 @@ class OpenAPISchemasBuilder {
     ///
     /// - Parameter value: Swift property value to analyze
     /// - Returns: Most appropriate OpenAPI Data Type
-    private func makeAPIDataType(fromSwiftValue value: Any) -> APIDataType {
+    private func makeAPIDataType(fromSwiftValue value: Any) -> APIDataType? {
         switch value {
         case is Int32:
             return .int32
@@ -71,9 +82,46 @@ class OpenAPISchemasBuilder {
             return .boolean
         case is Date:
             return .dateTime
-        default:
+        case is String:
             return .string
+        default:
+            return nil
         }
+    }
+
+    private func appendProperties(property: Mirror.Child,
+                                  unwrapped: Any,
+                                  dataType: APIDataType,
+                                  array: inout [(name: String, type: OpenAPIObjectProperty)]) {
+        let example = String(describing: unwrapped)
+        let objectProperty = OpenAPIObjectProperty(type: dataType.type, format: dataType.format, example: example)
+        array.append((name: property.label ?? "", type: objectProperty))
+    }
+
+    private func appendItems(property: Mirror.Child,
+                             items: Array<Any>,
+                             array: inout [(name: String, type: OpenAPIObjectProperty)]) {
+
+        guard let item = items.first else {
+            return
+        }
+
+        let typeName = String(describing: type(of: item))
+        let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
+        let objectProperty = OpenAPIObjectProperty(items: openApiSchema)
+        array.append((name: property.label ?? "", type: objectProperty))
+
+        self.nestedObjects.append(item)
+    }
+
+    private func appendReference(property: Mirror.Child,
+                                 array: inout [(name: String, type: OpenAPIObjectProperty)]) {
+        let unwrapped = unwrap(property.value)
+        let typeName = String(describing: type(of: unwrapped))
+        let objectProperty = OpenAPIObjectProperty(ref: "#/components/schemas/\(typeName)")
+        array.append((name: property.label ?? "", type: objectProperty))
+
+        self.nestedObjects.append(unwrapped)
     }
 
     private func getRequiredProperties(properties: Mirror.Children) -> [String] {

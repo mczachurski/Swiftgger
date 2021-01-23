@@ -15,7 +15,7 @@ import Foundation
     - path: Parameter in URL path.
     - cookie: Parameter in cookie.
  */
-public enum APILocation: String, Encodable {
+public enum APILocation: String, Codable {
     case query
     case header
     case path

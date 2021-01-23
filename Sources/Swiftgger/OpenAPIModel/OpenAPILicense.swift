@@ -8,7 +8,7 @@
 import Foundation
 
 /// Information about license for the exposed API.
-public class OpenAPILicense: Encodable {
+public class OpenAPILicense: Codable {
 
     public private(set) var name: String
     public private(set) var url: URL?

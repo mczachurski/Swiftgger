@@ -12,7 +12,7 @@ import Foundation
     The path itself is still exposed to the documentation viewer but they will not know which operations
     and parameters are available.
  */
-public class OpenAPIPathItem: Encodable {
+public class OpenAPIPathItem: Codable {
 
     public private(set) var ref: String?
     public private(set) var summary: String?

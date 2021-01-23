@@ -604,30 +604,4 @@ class OpenAPIPathsBuilderTests: XCTestCase {
       // Assert.
       XCTAssertEqual("#/components/schemas/CustomAnimal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
     }
-
-    static var allTests = [
-        ("testActionRouteShouldBeAddedToOpenAPIDocument", testActionRouteShouldBeAddedToOpenAPIDocument),
-        ("testActionMethodShouldBeAddedToOpenAPIDocument", testActionMethodShouldBeAddedToOpenAPIDocument),
-        ("testActionSummaryShouldBeAddedToOpenAPIDocument", testActionSummaryShouldBeAddedToOpenAPIDocument),
-        ("testActionDescriptionShouldBeAddedToOpenAPIDocument", testActionDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testActionCodeResponseShouldBeAddedToOpenAPIDocument", testActionCodeResponseShouldBeAddedToOpenAPIDocument),
-        ("testActionResponseDescriptionShouldBeAddedToOpenAPIDocument", testActionResponseDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testActionResponseContentShouldBeAddedToOpenAPIDocument", testActionResponseContentShouldBeAddedToOpenAPIDocument),
-        ("testActionDefaultResponseContentTypeShouldBeAddedToOpenAPIDocument", testActionDefaultResponseContentTypeShouldBeAddedToOpenAPIDocument),
-        ("testActionCustomResponseContentTypeShouldBeAddedToOpenAPIDocument", testActionCustomResponseContentTypeShouldBeAddedToOpenAPIDocument),
-        ("testActionResponseSchemaShouldBeAddedToOpenAPIDocument", testActionResponseSchemaShouldBeAddedToOpenAPIDocument),
-        ("testActionArrayResponseTypeShouldBeAddedToOpenAPIDocument", testActionArrayResponseTypeShouldBeAddedToOpenAPIDocument),
-        ("testActionObjectResponseReferenceShouldBeAddedToOpenAPIDocument", testActionObjectResponseReferenceShouldBeAddedToOpenAPIDocument),
-        ("testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument", testActionArrayResponseReferenceShouldBeAddedToOpenAPIDocument),
-        ("testActionRequestBodyShouldBeAddedToOpenAPIDocument", testActionRequestBodyShouldBeAddedToOpenAPIDocument),
-        ("testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument", testActionRequestBodyDefaultContentShouldBeAddedToOpenAPIDocument),
-        ("testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument", testActionRequestBodyCustomContentShouldBeAddedToOpenAPIDocument),
-        ("testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument", testActionRequestBodyDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument", testActionObjectRequestReferenceShouldBeAddedToOpenAPIDocument),
-        ("testActionParameterNameShouldBeAddedToOpenAPIDocument", testActionParameterNameShouldBeAddedToOpenAPIDocument),
-        ("testActionParameterLocationShouldBeAddedToOpenAPIDocument", testActionParameterLocationShouldBeAddedToOpenAPIDocument),
-        ("testActionParameterDescriptionShouldBeAddedToOpenAPIDocument", testActionParameterDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument",
-            testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument)
-    ]
 }

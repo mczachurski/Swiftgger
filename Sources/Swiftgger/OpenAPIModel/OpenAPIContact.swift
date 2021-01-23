@@ -8,7 +8,7 @@
 import Foundation
 
 /// Contact information for the exposed API.
-public class OpenAPIContact: Encodable {
+public class OpenAPIContact: Codable {
     public private(set) var name: String?
     public private(set) var url: URL?
     public private(set) var email: String?

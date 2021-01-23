@@ -103,11 +103,4 @@ class OpenAPITagsBuilderTests: XCTestCase {
         // Assert.
         XCTAssertEqual("LinkDescription", openAPIDocument.tags![0].externalDocs?.description)
     }
-
-    static var allTests = [
-        ("testControllerNameShouldBeTranslatedToOpenAPIDocument", testControllerNameShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerDescriptionShouldBeTranslatedToOpenAPIDocument", testControllerDescriptionShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerLinkUrlShouldBeTranslatedToOpenAPIDocument", testControllerLinkUrlShouldBeTranslatedToOpenAPIDocument),
-        ("testControllerLinkDescriptionShouldBeTranslatedToOpenAPIDocument", testControllerLinkDescriptionShouldBeTranslatedToOpenAPIDocument)
-    ]
 }

@@ -281,16 +281,4 @@ class OpenAPIParametersBuilderTests: XCTestCase {
         // Assert.
         XCTAssertEqual("int64", openAPIDocument.paths["/animals"]?.get?.parameters?.first?.schema?.format)
     }
-
-    static var allTests = [
-        ("testParameterShouldBeAddedToOpenAPIDocument", testParameterShouldBeAddedToOpenAPIDocument),
-        ("testParameterNameShouldBeAddedToOpenAPIDocument", testParameterNameShouldBeAddedToOpenAPIDocument),
-        ("testParameterRequiredShouldBeAddedToOpenAPIDocument", testParameterRequiredShouldBeAddedToOpenAPIDocument),
-        ("testParameterDescriptionShouldBeAddedToOpenAPIDocument", testParameterDescriptionShouldBeAddedToOpenAPIDocument),
-        ("testParameterLocationShouldBeAddedToOpenAPIDocument", testParameterLocationShouldBeAddedToOpenAPIDocument),
-        ("testParameterEmptyValueShouldBeAddedToOpenAPIDocument", testParameterEmptyValueShouldBeAddedToOpenAPIDocument),
-        ("testParameterDeprecationShouldBeAddedToOpenAPIDocument", testParameterDeprecationShouldBeAddedToOpenAPIDocument),
-        ("testParameterSchemaTypeShouldBeAddedToOpenAPIDocument", testParameterSchemaTypeShouldBeAddedToOpenAPIDocument),
-        ("testParameterSchemaFormatShouldBeAddedToOpenAPIDocument", testParameterSchemaFormatShouldBeAddedToOpenAPIDocument)
-    ]
 }

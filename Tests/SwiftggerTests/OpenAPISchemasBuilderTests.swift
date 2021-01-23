@@ -11,20 +11,50 @@ import XCTest
 class Vehicle {
     var name: String
     var age: Int?
+    var fuels: [Fuel]?
 
-    init(name: String, age: Int) {
+    init(name: String, age: Int, fuels: [Fuel]? = nil) {
         self.name = name
         self.age = age
+        self.fuels = fuels
+    }
+}
+
+struct Fuel {
+    var level: Int
+    var type: String
+    
+    init(level: Int, type: String) {
+        self.level = level
+        self.type = type
     }
 }
 
 struct Spaceship {
     var name: String
     var speed: Double?
+    var fuel: Fuel?
 
-    init(name: String, speed: Double) {
+    init(name: String, speed: Double, fuel: Fuel? = nil) {
         self.name = name
         self.speed = speed
+        self.fuel = fuel
+    }
+}
+
+class Alien {
+    var spaceship: Spaceship
+
+    init(spaceship: Spaceship) {
+        self.spaceship = spaceship
+    }
+}
+
+class User {
+    var vehicles: [Vehicle]
+
+    init(vehicles: [Vehicle]) {
+        self.vehicles = vehicles
     }
 }
 
@@ -208,10 +238,9 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         title: "Title",
         version: "1.0.0",
         description: "Description"
-        )
-        .add([
+      ).add([
           APIObject(object: Spaceship(name: "Star Trek", speed: 923211), customName: "CustomSpaceship")
-          ])
+      ])
 
       // Act.
       let openAPIDocument = openAPIBuilder.built()
@@ -220,14 +249,77 @@ class OpenAPISchemasBuilderTests: XCTestCase {
       XCTAssertNotNil(openAPIDocument.components?.schemas?["CustomSpaceship"], "Custom Schema name not exists")
     }
 
-    static var allTests = [
-        ("testSchemaNameShouldBeTranslatedToOpenAPIDocument", testSchemaNameShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaTypeShouldBeTranslatedToOpenAPIDocument", testSchemaTypeShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaStringPropertyShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument", testSchemaIntegerPropertyShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument", testSchemaRequiredFieldsShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument", testSchemaNotRequiredFieldsShouldNotBeTranslatedToOpenAPIDocument),
-        ("testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument", testSchemaStructTypeShouldBeTranslatedToOpenAPIDocument),
-        ("testSchemaWithCustomNameShouldHaveCorrectNameinOenAPIDocument", testSchemaWithCustomNameShouldHaveCorrectNameinOenAPIDocument)
-    ]
+    func testSchemaWithNestedObjectsShouldBeTranslatedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+          title: "Title",
+          version: "1.0.0",
+          description: "Description"
+        ).add([
+            APIObject(object: Alien(spaceship: Spaceship(name: "Star Trek", speed: 2122)))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Spaceship"], "Spaceship schema not exists")
+        XCTAssertEqual("#/components/schemas/Spaceship", openAPIDocument.components?.schemas?["Alien"]?.properties?["spaceship"]?.ref)
+    }
+
+    func testSchemaWithNestedArrayOfObjectsShouldBeTranslatedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+          title: "Title",
+          version: "1.0.0",
+          description: "Description"
+        ).add([
+            APIObject(object: User(vehicles: [Vehicle(name: "Star Trek", age: 3)]))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"], "Vehicle schema not exists")
+        XCTAssertEqual("#/components/schemas/Vehicle", openAPIDocument.components?.schemas?["User"]?.properties?["vehicles"]?.items?.ref)
+    }
+
+    func testSchemaWithOptionalNestedObjectsShouldBeTranslatedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+          title: "Title",
+          version: "1.0.0",
+          description: "Description"
+        ).add([
+            APIObject(object: Alien(spaceship: Spaceship(name: "Star Trek", speed: 2122))),
+            APIObject(object: Spaceship(name: "Star Trek", speed: 2122, fuel: Fuel(level: 90, type: "E95")))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Spaceship"]?.properties?["fuel"]?.ref)
+    }
+    
+    func testSchemaWithOptionalNestedArrayOfObjectsShouldBeTranslatedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+          title: "Title",
+          version: "1.0.0",
+          description: "Description"
+        ).add([
+            APIObject(object: User(vehicles: [Vehicle(name: "Star Trek", age: 3)])),
+            APIObject(object: Vehicle(name: "Star Trek", age: 3, fuels: [Fuel(level: 80, type: "GAS")]))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.items?.ref)
+    }
 }

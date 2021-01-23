@@ -172,14 +172,4 @@ class OpenAPIServersBuilderTests: XCTestCase {
         // Assert.
         XCTAssertEqual(2, openAPIDocument.servers![0].variables?.count)
     }
-
-    static var allTests = [
-        ("testServerUrlShouldBeTranslatedToOpenAPIDocument", testServerUrlShouldBeTranslatedToOpenAPIDocument),
-        ("testServerDescriptionShouldBeTranslatedToOpenAPIDocument", testServerDescriptionShouldBeTranslatedToOpenAPIDocument),
-        ("testServerVariableNameShouldBeTranslatedToOpenAPIDocument", testServerVariableNameShouldBeTranslatedToOpenAPIDocument),
-        ("testServerVariableDescriptionShouldBeTranslatedToOpenAPIDocument", testServerVariableDescriptionShouldBeTranslatedToOpenAPIDocument),
-        ("testServerVariableDefaultShouldBeTranslatedToOpenAPIDocument", testServerVariableDefaultShouldBeTranslatedToOpenAPIDocument),
-        ("testServerVariableEnumsShouldBeTranslatedToOpenAPIDocument", testServerVariableEnumsShouldBeTranslatedToOpenAPIDocument),
-        ("testServerVariablesShouldBeTranslatedToOpenAPIDocument", testServerVariablesShouldBeTranslatedToOpenAPIDocument)
-    ]
 }
