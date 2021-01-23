@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -12,6 +12,11 @@ let package = Package(
     ],
     targets: [
         .target(name: "Swiftgger", dependencies: []),
-        .testTarget(name: "SwiftggerTests", dependencies: ["Swiftgger"]),
+        .testTarget(name: "SwiftggerTests",
+                    dependencies: ["Swiftgger"],
+                    resources: [
+                        .process("openapi.json")
+                    ]
+        )
     ]
 )

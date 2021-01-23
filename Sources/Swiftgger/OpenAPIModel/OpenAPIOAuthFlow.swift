@@ -8,7 +8,7 @@
 import Foundation
 
 /// Configuration details for a supported OAuth Flow.
-public class OpenAPIOAuthFlow: Encodable {
+public class OpenAPIOAuthFlow: Codable {
 
     public private(set) var authorizationUrl: String?
     public private(set) var tokenUrl: String?

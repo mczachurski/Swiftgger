@@ -8,7 +8,7 @@
 import Foundation
 
 /// Information about property which exists in schema (input/output) data.
-public class OpenAPIObjectProperty: Encodable {
+public class OpenAPIObjectProperty: Codable {
 
     public private(set) var ref: String?
     public private(set) var type: String?

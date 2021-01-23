@@ -8,7 +8,7 @@
 import Foundation
 
 /// Allows referencing an external resource for extended documentation.
-public class OpenAPIExternalDocumentation: Encodable {
+public class OpenAPIExternalDocumentation: Codable {
 
     public private(set) var url: String
     public private(set) var description: String?

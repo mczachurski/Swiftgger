@@ -12,7 +12,7 @@ import Foundation
     the components object will have no effect on the API unless they are explicitly referenced
     from properties outside the components object.
  */
-public class OpenAPIComponents: Encodable {
+public class OpenAPIComponents: Codable {
     public private(set) var schemas: [String: OpenAPISchema]?
     public private(set) var responses: [String: OpenAPIResponse]?
     public private(set) var parameters: [String: OpenAPIParameter]?

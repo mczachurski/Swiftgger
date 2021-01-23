@@ -12,7 +12,7 @@ import Foundation
     an API key (either as a header or as a query parameter), OAuth2's common flows (implicit, password,
     application and access code) as defined in RFC6749, and OpenID Connect Discovery.
  */
-public class OpenAPISecurityScheme: Encodable {
+public class OpenAPISecurityScheme: Codable {
 
     public private(set) var ref: String?
     public private(set) var type: String?

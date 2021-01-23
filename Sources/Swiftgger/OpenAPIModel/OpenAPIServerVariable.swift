@@ -8,7 +8,7 @@
 import Foundation
 
 /// An object representing a Server Variable for server URL template substitution.
-public class OpenAPIServerVariable: Encodable {
+public class OpenAPIServerVariable: Codable {
 
     public private(set) var defaultValue: String
     public private(set) var enumValues: [String]?

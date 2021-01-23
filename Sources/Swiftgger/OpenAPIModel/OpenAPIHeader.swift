@@ -8,7 +8,7 @@
 import Foundation
 
 /// Information about additional headers supported by API server.
-public class OpenAPIHeader: Encodable {
+public class OpenAPIHeader: Codable {
 
     public private(set) var ref: String?
     public private(set) var name: String?

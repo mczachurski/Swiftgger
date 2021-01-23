@@ -8,8 +8,8 @@
 import Foundation
 
 /// This is the root document object of the OpenAPI document.
-public class OpenAPIDocument: Encodable {
-    public let openapi = "3.0.1"
+public class OpenAPIDocument: Codable {
+    public private(set) var openapi = "3.0.1"
 
     public private(set) var info: OpenAPIInfo
     public private(set) var paths: [String: OpenAPIPathItem]

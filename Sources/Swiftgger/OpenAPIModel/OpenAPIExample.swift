@@ -8,7 +8,7 @@
 import Foundation
 
 /// Object with example description.
-public class OpenAPIExample: Encodable {
+public class OpenAPIExample: Codable {
 
     public private(set) var ref: String?
     public private(set) var summary: String?
