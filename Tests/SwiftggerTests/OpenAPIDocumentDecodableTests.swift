@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  OpenAPIDocumentDecodableTests.swift
+//  SwiftggerTests
 //
 //  Created by Marcin Czachurski on 23/01/2021.
 //

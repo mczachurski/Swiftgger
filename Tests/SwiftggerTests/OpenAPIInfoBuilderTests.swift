@@ -1,3 +1,10 @@
+//
+//  OpenAPIInfoBuilderTests.swift
+//  SwiftggerTests
+//
+//  Created by Marcin Czachurski on 26.03.2018.
+//
+
 import XCTest
 @testable import Swiftgger
 

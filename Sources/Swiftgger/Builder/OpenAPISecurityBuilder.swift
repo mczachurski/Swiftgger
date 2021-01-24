@@ -40,11 +40,11 @@ class OpenAPISecurityBuilder {
                                                     scheme: "bearer",
                                                     bearerFormat: "jwt")
                 openAPISecuritySchema["auth_jwt"] = jwtAuth
-            case .apiKey(description: let description):
+            case .apiKey(description: let description, keyName: let keyName, location: let location):
                 let apiKeyAuth = OpenAPISecurityScheme(type: "apiKey",
                                                        description: description,
-                                                       name: "X-API-KEY",
-                                                       parameterLocation: .header)
+                                                       name: keyName ?? "X-API-KEY",
+                                                       parameterLocation: location ?? .header)
                 openAPISecuritySchema["api_key"] = apiKeyAuth
             case .oauth2(description: let description, flows: let flows):
                 

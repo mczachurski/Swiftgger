@@ -27,13 +27,13 @@ public class OpenAPIBuilder {
 
         - Parameters:
      
-            - title: Title of API
-            - version: Versio of API
-            - description: Description of API
-            - termsOfService: Terms of service
-            - contact: Terms of service
-            - license: Terms of service
-            - authorizations: Terms of service
+            - title: Title of API.
+            - version: Versio of API.
+            - description: Description of API.
+            - termsOfService: Terms of service.
+            - contact: Contact information.
+            - license: Information about license.
+            - authorizations: List of authorization methods.
      */
     public init(
         title: String,

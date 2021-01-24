@@ -65,6 +65,30 @@ class OpenAPISecurityBuilderTests: XCTestCase {
         XCTAssertEqual("apiKey", securitySchema?.type)
         XCTAssertEqual(nil, securitySchema?.scheme)
         XCTAssertEqual("Api key authorization", securitySchema?.description)
+        XCTAssertEqual(APILocation.header, securitySchema?.parameterLocation)
+        XCTAssertEqual("X-API-KEY", securitySchema?.name)
+    }
+    
+    func testApiKeyAuthorizationsWithCustomParametersShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description",
+            authorizations: [.apiKey(description: "Api key authorization", keyName: "api_header", location: .query)]
+        )
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        let securitySchema = openAPIDocument.components?.securitySchemes!["api_key"]
+        XCTAssertEqual("apiKey", securitySchema?.type)
+        XCTAssertEqual(nil, securitySchema?.scheme)
+        XCTAssertEqual("Api key authorization", securitySchema?.description)
+        XCTAssertEqual(APILocation.query, securitySchema?.parameterLocation)
+        XCTAssertEqual("api_header", securitySchema?.name)
     }
 
     func testBearerAuthorizationsShouldBeTranslatedToOpenAPIDocument() {
