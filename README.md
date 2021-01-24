@@ -5,7 +5,7 @@
 [![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 [![Platforms macOS | Linux](https://img.shields.io/badge/Platforms-macOS%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 
-Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#securitySchemeObject). Library is generating objects tree which you can serialize to JSON and return by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's especially helpful during API testing.
+Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.mdt). Library is generating objects tree which you can serialize to JSON and return by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's especially helpful during API testing.
 
 ![swagger](Images/screen-02.png)
 

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AnyCodable
 
 /// Builder for object information stored in `components/schemas` part of OpenAPI.
 class OpenAPISchemasBuilder {
@@ -48,15 +49,34 @@ class OpenAPISchemasBuilder {
         var array:  [(name: String, type: OpenAPIObjectProperty)] = []
         for property in properties {
 
+            // Simple value type (also unwrapped optionals).
             let unwrapped = unwrap(property.value)
             if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
-                self.appendProperties(property: property, unwrapped: unwrapped, dataType: dataType, array: &array)
-            } else {
-                if let items = property.value as? Array<Any> {
-                    self.appendItems(property: property, items: items, array: &array)
-                } else {
-                    self.appendReference(property: property, array: &array)
-                }
+                self.append(dataType: dataType, property: property, unwrapped: unwrapped, array: &array)
+                continue
+            }
+            
+            // Non optional or initialized array (array which contains any data).
+            if let items = property.value as? Array<Any> {
+                self.append(items: items, property: property, array: &array)
+                continue
+            }
+            
+            // Non optional or initialized object.
+            if self.isInitialized(object: unwrapped) {
+                self.append(reference: property, array: &array)
+                continue
+            }
+            
+            // Optional and not initialized object.
+            if let typeName = self.getTypeName(from: unwrapped) {
+                self.append(typeName: typeName, property: property, array: &array)
+                continue
+            }
+            
+            // Optional and not initialized arrays.
+            if let typeName = self.getArrayTypeName(from: unwrapped) {
+                self.append(arrayName: typeName, property: property, array: &array)
             }
         }
 
@@ -89,19 +109,20 @@ class OpenAPISchemasBuilder {
         }
     }
 
-    private func appendProperties(property: Mirror.Child,
-                                  unwrapped: Any,
-                                  dataType: APIDataType,
-                                  array: inout [(name: String, type: OpenAPIObjectProperty)]) {
-        let example = String(describing: unwrapped)
+    private func append(dataType: APIDataType,
+                        property: Mirror.Child,
+                        unwrapped: Any,
+                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+    ) {
+        let example = AnyCodable(unwrapped)
         let objectProperty = OpenAPIObjectProperty(type: dataType.type, format: dataType.format, example: example)
         array.append((name: property.label ?? "", type: objectProperty))
     }
 
-    private func appendItems(property: Mirror.Child,
-                             items: Array<Any>,
-                             array: inout [(name: String, type: OpenAPIObjectProperty)]) {
-
+    private func append(items: Array<Any>,
+                        property: Mirror.Child,
+                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+    ) {
         guard let item = items.first else {
             return
         }
@@ -114,14 +135,33 @@ class OpenAPISchemasBuilder {
         self.nestedObjects.append(item)
     }
 
-    private func appendReference(property: Mirror.Child,
-                                 array: inout [(name: String, type: OpenAPIObjectProperty)]) {
-        let unwrapped = unwrap(property.value)
+    private func append(reference: Mirror.Child,
+                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+    ) {
+        let unwrapped = unwrap(reference.value)
         let typeName = String(describing: type(of: unwrapped))
         let objectProperty = OpenAPIObjectProperty(ref: "#/components/schemas/\(typeName)")
-        array.append((name: property.label ?? "", type: objectProperty))
+        array.append((name: reference.label ?? "", type: objectProperty))
 
         self.nestedObjects.append(unwrapped)
+    }
+    
+    private func append(typeName: String,
+                        property: Mirror.Child,
+                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+    ) {
+
+        let objectProperty = OpenAPIObjectProperty(ref: "#/components/schemas/\(typeName)")
+        array.append((name: property.label ?? "", type: objectProperty))
+    }
+    
+    private func append(arrayName: String,
+                        property: Mirror.Child,
+                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+    ) {
+        let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(arrayName)")
+        let objectProperty = OpenAPIObjectProperty(items: openApiSchema)
+        array.append((name: property.label ?? "", type: objectProperty))
     }
 
     private func getRequiredProperties(properties: Mirror.Children) -> [String] {
@@ -142,11 +182,50 @@ class OpenAPISchemasBuilder {
         guard mirror.displayStyle == .optional, let first = mirror.children.first else {
             return any
         }
+
         return first.value
     }
 
     private func isOptional<T>(_ any: T) -> Bool {
         let mirror = Mirror(reflecting: any)
         return mirror.displayStyle == .optional
+    }
+    
+    private func isInitialized<T>(object any: T) -> Bool {
+        let mirror = Mirror(reflecting: any)
+
+        return mirror.displayStyle == .struct
+            || mirror.displayStyle == .class
+            || mirror.displayStyle == .enum
+    }
+    
+    private func getTypeName(from any: Any) -> String? {
+        let typeName = String(describing: type(of: any))
+        
+        let pattern = "^Optional<(?<type>\\w+)>$"
+        return self.match(pattern: pattern, in: typeName)
+    }
+
+    private func getArrayTypeName(from any: Any) -> String? {
+        let typeName = String(describing: type(of: any))
+        
+        let pattern = "^Optional<Array<(?<type>\\w+)>>$"
+        return self.match(pattern: pattern, in: typeName)
+    }
+    
+    private func match(pattern: String, in text: String) -> String? {
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+
+        if let match = regex?.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.utf8.count)) {
+            guard match.numberOfRanges == 2 else {
+                return nil
+            }
+            
+            if let typeRange = Range(match.range(at: 1), in: text) {
+                return String(text[typeRange])
+            }
+        }
+
+        return nil
     }
 }
