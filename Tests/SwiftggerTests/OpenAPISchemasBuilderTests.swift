@@ -8,15 +8,31 @@
 import XCTest
 @testable import Swiftgger
 
+
+@propertyWrapper final class Flag<Value> {
+    let name: String
+    var wrappedValue: Value
+
+    fileprivate init(name: String, defaultValue: Value) {
+        self.name = name
+        self.wrappedValue = defaultValue
+    }
+}
+
 class Vehicle {
     var name: String
     var age: Int?
     var fuels: [Fuel]?
 
-    init(name: String, age: Int, fuels: [Fuel]? = nil) {
+    @Flag(name: "feature1", defaultValue: "ws") var wrappedString: String?
+    @Flag(name: "feature2", defaultValue: nil) var wrappedFuel: Fuel?
+
+    init(name: String, age: Int, fuels: [Fuel]? = nil, wrappedString: String? = nil, wrappedFuel: Fuel? = nil) {
         self.name = name
         self.age = age
         self.fuels = fuels
+        self.wrappedString = wrappedString
+        self.wrappedFuel = wrappedFuel
     }
 }
 
@@ -359,5 +375,45 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
         XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.items?.ref)
+    }
+    
+    func testSchemaPropertyWrapperForStringShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "First name"))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedString"], "Wrapped string property not exists in schema")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedString"]?.type)
+    }
+    
+    func testSchemaPropertyWrapperForStructShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedFuel: Fuel(level: 1, type: "")))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedFuel"], "Wrapped struct property not exists in schema")
+        XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedFuel"]?.ref)
     }
 }

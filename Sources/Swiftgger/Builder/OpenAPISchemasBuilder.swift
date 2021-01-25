@@ -45,42 +45,51 @@ class OpenAPISchemasBuilder {
     }
 
     private func getAllProperties(properties: Mirror.Children) -> [(name: String, type: OpenAPIObjectProperty)] {
-
         var array:  [(name: String, type: OpenAPIObjectProperty)] = []
         for property in properties {
-
-            // Simple value type (also unwrapped optionals).
-            let unwrapped = unwrap(property.value)
-            if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
-                self.append(dataType: dataType, property: property, unwrapped: unwrapped, array: &array)
-                continue
-            }
             
-            // Non optional or initialized array (array which contains any data).
-            if let items = property.value as? Array<Any> {
-                self.append(items: items, property: property, array: &array)
-                continue
-            }
+            // Eventually extract property from property wrapper.
+            let unwrappedProperty = self.getWrappedProperty(property: property)
             
-            // Non optional or initialized object.
-            if self.isInitialized(object: unwrapped) {
-                self.append(reference: property, array: &array)
-                continue
-            }
-            
-            // Optional and not initialized object.
-            if let typeName = self.getTypeName(from: unwrapped) {
-                self.append(typeName: typeName, property: property, array: &array)
-                continue
-            }
-            
-            // Optional and not initialized arrays.
-            if let typeName = self.getArrayTypeName(from: unwrapped) {
-                self.append(arrayName: typeName, property: property, array: &array)
-            }
+            // Append property with correct type to array.
+            self.appendProperty(property: unwrappedProperty, array: &array)
         }
 
         return array
+    }
+    
+    private func appendProperty(property: Mirror.Child, array: inout [(name: String, type: OpenAPIObjectProperty)]) {
+
+        // Simple value type (also unwrapped optionals).
+        let unwrapped = unwrap(property.value)
+        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+            self.append(dataType: dataType, property: property, unwrapped: unwrapped, array: &array)
+            return
+        }
+        
+        // Non optional or initialized array (array which contains any data).
+        if let items = property.value as? Array<Any> {
+            self.append(items: items, property: property, array: &array)
+            return
+        }
+        
+        // Non optional or initialized object.
+        if self.isInitialized(object: unwrapped) {
+            self.append(reference: property, array: &array)
+            return
+        }
+        
+        // Optional and not initialized object.
+        if let typeName = self.getTypeName(from: unwrapped) {
+            self.append(typeName: typeName, property: property, array: &array)
+            return
+        }
+        
+        // Optional and not initialized arrays.
+        if let typeName = self.getArrayTypeName(from: unwrapped) {
+            self.append(arrayName: typeName, property: property, array: &array)
+            return
+        }
     }
 
     /// Infer OpenAPI Data Type from Swift value type
@@ -211,6 +220,20 @@ class OpenAPISchemasBuilder {
         
         let pattern = "^Optional<Array<(?<type>\\w+)>>$"
         return self.match(pattern: pattern, in: typeName)
+    }
+    
+    private func getWrappedProperty(property: Mirror.Child) -> Mirror.Child {
+        let mirrored = Mirror(reflecting: property.value)
+        let propertyWrapped = mirrored.children.first { (child) -> Bool in
+            child.label == "wrappedValue"
+        }
+        
+        if let propertyUnwrapped = propertyWrapped {
+            let propertyLabel = property.label?.trimmingCharacters(in: CharacterSet.init(charactersIn: "_"))
+            return (label: propertyLabel, value: propertyUnwrapped.value)
+        }
+        
+        return property
     }
     
     private func match(pattern: String, in text: String) -> String? {

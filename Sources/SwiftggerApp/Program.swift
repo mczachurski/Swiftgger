@@ -44,7 +44,7 @@ class Program {
                       summary: "GET action for downloading specific vehicle.",
                       description: "Single vehicle",
                       parameters: [
-                        APIParameter(name: "id")
+                        APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
                       responses: [
                         APIResponse(code: "200", description: "List of vehicles", object: Vehicle.self, contentType: "application/json"),
@@ -69,7 +69,7 @@ class Program {
                       summary: "PUT action for updating existing vehicle.",
                       description: "Update vehicle",
                       parameters: [
-                        APIParameter(name: "id")
+                        APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
                       request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
                       responses: [
@@ -84,7 +84,7 @@ class Program {
                       summary: "DELETE action for deleting specific vehicle.",
                       description: "Delete vehicle",
                       parameters: [
-                        APIParameter(name: "id")
+                        APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
                       responses: [
                         APIResponse(code: "200", description: "Success"),
