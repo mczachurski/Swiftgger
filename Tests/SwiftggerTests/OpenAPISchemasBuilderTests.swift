@@ -24,10 +24,10 @@ class Vehicle {
     var age: Int?
     var fuels: [Fuel]?
 
-    @Flag(name: "feature1", defaultValue: "ws") var wrappedString: String?
+    @Flag(name: "feature1", defaultValue: "ws") var wrappedString: String
     @Flag(name: "feature2", defaultValue: nil) var wrappedFuel: Fuel?
 
-    init(name: String, age: Int, fuels: [Fuel]? = nil, wrappedString: String? = nil, wrappedFuel: Fuel? = nil) {
+    init(name: String, age: Int, wrappedString: String, fuels: [Fuel]? = nil, wrappedFuel: Fuel? = nil) {
         self.name = name
         self.age = age
         self.fuels = fuels
@@ -114,7 +114,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -133,7 +133,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -152,7 +152,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -173,7 +173,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -195,7 +195,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -214,7 +214,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something"))
         ])
 
         // Act.
@@ -290,7 +290,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           version: "1.0.0",
           description: "Description"
         ).add([
-            APIObject(object: User(vehicles: [Vehicle(name: "Star Trek", age: 3)]))
+            APIObject(object: User(vehicles: [Vehicle(name: "Star Trek", age: 3, wrappedString: "something")]))
         ])
 
         // Act.
@@ -327,7 +327,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           version: "1.0.0",
           description: "Description"
         ).add([
-            APIObject(object: Vehicle(name: "Star Trek", age: 3, fuels: [Fuel(level: 10, type: "GAS")]))
+            APIObject(object: Vehicle(name: "Star Trek", age: 3, wrappedString: "something", fuels: [Fuel(level: 10, type: "GAS")]))
         ])
 
         // Act.
@@ -365,7 +365,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           version: "1.0.0",
           description: "Description"
         ).add([
-            APIObject(object: Vehicle(name: "Star Trek", age: 3)),
+            APIObject(object: Vehicle(name: "Star Trek", age: 3, wrappedString: "something")),
             APIObject(object: Fuel(level: 10, type: "GAS"))
         ])
 
@@ -395,6 +395,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedString"], "Wrapped string property not exists in schema")
         XCTAssertEqual("string", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedString"]?.type)
+        XCTAssert(openAPIDocument.components?.schemas?["Vehicle"]?.required?.contains("wrappedString") == true, "Required property not exists in schema")
     }
     
     func testSchemaPropertyWrapperForStructShouldBeTranslatedToOpenAPIDocument() {
@@ -406,7 +407,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedFuel: Fuel(level: 1, type: "")))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something", wrappedFuel: Fuel(level: 1, type: "")))
         ])
         
         // Act.

@@ -177,8 +177,13 @@ class OpenAPISchemasBuilder {
         var array: [String] = []
 
         for property in properties {
-            if !isOptional(property.value) {
-                array.append(property.label!)
+            
+            // Eventually extract property from property wrapper.
+            let unwrappedProperty = self.getWrappedProperty(property: property)
+            
+            // Append to list of required non optional properties.
+            if !isOptional(unwrappedProperty.value) {
+                array.append(unwrappedProperty.label!)
             }
         }
 
