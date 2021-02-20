@@ -5,7 +5,7 @@
 [![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 [![Platforms macOS | Linux](https://img.shields.io/badge/Platforms-macOS%20%7C%20Linux%20-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
 
-Swiftgger is simple library which generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md). Library is generating objects tree which you can serialize to JSON and return by your API endpoint. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/). Thanks to this you have GUI which shows you exactly how your API looks like and you can use that GUI to execute actions (requests). It's especially helpful during API testing.
+Swiftgger is a Swift library which can generate output compatible with [OpenAPI version 3.0.1](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md). You can describe your API using Swiftgger classes and expose OpenAPI definition by endpoint in your API. URL to that endpoint can be used in [Swagger UI](https://swagger.io/swagger-ui/).
 
 ![swagger](Images/screen-02.png)
 
@@ -24,9 +24,7 @@ let package = Package(
         .testTarget(name: "YourAppTests", dependencies: ["YourApp"])
     ]
 )
-```
-
-Then you have to run: `swift build` command. 
+``` 
 
 ## How to use it
 
@@ -50,7 +48,7 @@ let openAPIBuilder = OpenAPIBuilder(
 
 We can use `openAPIBuilder` object if we want to specify list of controllers and actions.
 
-### Controllers
+### Controllers (tags/groups)
 
 Adding information about controller is pretty simple. We have to execute `add` method on `OpenAPIBuilder` object.
 
@@ -60,7 +58,7 @@ openAPIBuilder.add(
 )
 ```
 
-### Actions
+### Actions (paths/endpoints)
 
 Each controller can have list of actions (routes) with name, description, response and requests information.
 
@@ -202,9 +200,9 @@ When you prepared configuration for all your controllers/actions then you have t
 let document = try openAPIBuilder.built()
 ```
 
-Object `document` stores information about your API and it's compatible with OpenAPI standard. Now you have to serialize that object to JSON and expose by additional endpoint in your API application for GUI (client) applications.
+Object `document` stores information about your API and it's compatible with OpenAPI standard. Now you have to serialize that object to JSON and expose by additional endpoint in your API application. That JSON (endpoint) can by consume by any OpenAPI compatible client applications.
 
-Swagger UI is great tool which visualize for example request model, parameters etc.
+[Swagger UI](https://swagger.io/swagger-ui/) is great tool which visualize for example request model, parameters etc.
 
 ![user in swagger 1](Images/screen-01.png)
 
