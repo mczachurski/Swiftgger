@@ -228,7 +228,7 @@ Tasker server Swagger UI: [https://taskerswift-swagger.azurewebsites.net/](https
 
 ## Swiftgger generator
 
-`swiftgger-generator` is a simple application which can generate Swift files based on OpenAPI definition.  Application generates files for model class and HTTP client services for each controller (group). Command line arguments:
+`swiftgger-generator` is a simple application which can generate Swift files based on OpenAPI definition.  Application generates files for model classes and HTTP client services for each controller (group). Command line arguments:
 
 ```bash
 swiftgger-generator: [command_option] [-f jsonFile] [-u url] [-o path]")

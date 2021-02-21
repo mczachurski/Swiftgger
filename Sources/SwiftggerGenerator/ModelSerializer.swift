@@ -10,6 +10,18 @@ import Foundation
 import Swiftgger
 
 class ModelSerializer {
+    
+    private let classTemplate =
+"""
+import Foundation
+
+class {{name}} {
+    {{properties}}
+}
+"""
+    
+    private let propertyTemplate = "    public {{name}}: {{type}}{{isRequired}}\n"
+    
     func generate(openApiDocument: OpenAPIDocument, outputPath: String) throws {
         
         guard let schemas = openApiDocument.components?.schemas else {
@@ -18,42 +30,29 @@ class ModelSerializer {
         
         for (key, value) in schemas {
             let definition = self.generateClass(name: key, schema: value)
-            try self.createFile(name: key, content: definition, outputPath: outputPath)
+            try definition.saveTo(fileName: key, andPath: outputPath)
         }
-    }
-    
-    private func createFile(name: String, content: String, outputPath: String) throws {
-        guard let data = content.data(using: .utf8) else {
-            throw SwiftggerError.dataNotDownloaded
-        }
-        
-        let location = URL(fileURLWithPath: "\(outputPath)/\(name).swift")
-        try data.write(to: location)
     }
     
     private func generateClass(name: String, schema: OpenAPISchema) -> String {
-        var definition =
-"""
-import Foundation
-
-class \(name) {
-
-"""
-
+        var propertiesString = String.empty
+        
         if let properties = schema.properties {
-            for (key, value) in properties {
-                let isRequired = self.isRequired(required: schema.required, property: key)
-                let property = self.generateProperty(name: key, property: value, isRequired: isRequired)
-                definition = definition + property
+            for (propertyName, property) in properties {
+                let isRequired = self.isRequired(required: schema.required, property: propertyName)
+                let property = self.generateProperty(name: propertyName, property: property, isRequired: isRequired)
+
+                propertiesString = propertiesString + property
             }
         }
 
-        definition = definition +
-"""
-}
-"""
-
-        return definition
+        propertiesString = propertiesString.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        var classString = self.classTemplate
+        classString = classString.replacingOccurrences(of: "{{name}}", with: name)
+        classString = classString.replacingOccurrences(of: "{{properties}}", with: propertiesString)
+        
+        return classString
     }
     
     private func isRequired(required: [String]?, property: String) -> Bool {
@@ -61,57 +60,13 @@ class \(name) {
     }
     
     private func generateProperty(name: String, property: OpenAPISchema, isRequired: Bool) -> String {
-        let type = self.getType(property: property)
-        return "    public \(name): \(type)\(isRequired ? "" : "?")\n"
-    }
-    
-    private func getType(property: OpenAPISchema) -> String {
-        if let additionalProperties = property.additionalProperties {
-            if let ref = additionalProperties.ref {
-                let type = ref.deletingPrefix("#/components/schemas/")
-                return "[String: \(type)]"
-            } else {
-                let type = self.getType(type: additionalProperties.type, format: additionalProperties.format)
-                return "[String: \(type)]"
-            }
-        }
-        else if let items = property.items {
-            if let ref = items.ref {
-                let type = ref.deletingPrefix("#/components/schemas/")
-                return "[\(type)]"
-            } else {
-                let type = self.getType(type: items.type, format: items.format)
-                return "[\(type)]"
-            }
-        } else {
-            if let ref = property.ref {
-                let type = ref.deletingPrefix("#/components/schemas/")
-                return type
-            } else {
-                return self.getType(type: property.type, format: property.format)
-            }
-        }
-    }
-    
-    private func getType(type: String?, format: String?) -> String {
-                
-        switch type {
-        case "boolean":
-            return "Bool"
-        case "integer":
-            return "Int"
-        case "number":
-            if format == "float" {
-                return "Float"
-            }
-            
-            return "Double"
-        default:
-            if format == "date" {
-                return "Date"
-            }
-
-            return "String"
-        }
+        let type = property.getType()
+        
+        var propertyString = self.propertyTemplate
+        propertyString = propertyString.replacingOccurrences(of: "{{name}}", with: name)
+        propertyString = propertyString.replacingOccurrences(of: "{{type}}", with: type)
+        propertyString = propertyString.replacingOccurrences(of: "{{isRequired}}", with: isRequired ? "" : "?")
+        
+        return propertyString
     }
 }

@@ -12,6 +12,7 @@ import Swiftgger
 class Program {
     let consoleIO = ConsoleIO()
     let modelSerializer = ModelSerializer()
+    let httpClientGenerator = HttpClientGenerator()
 
     var inputPath: String = ""
     var inputUrl: String = ""
@@ -29,6 +30,7 @@ class Program {
             let openApiDocument = try JSONDecoder().decode(OpenAPIDocument.self, from: data)
             
             try self.modelSerializer.generate(openApiDocument: openApiDocument, outputPath: self.outputPath)
+            try self.httpClientGenerator.generate(openApiDocument: openApiDocument, outputPath: self.outputPath)
 
         } catch (let error as SwiftggerError) {
             self.consoleIO.writeMessage("Unexpected error occurs: \(error.message)", to: .error)
