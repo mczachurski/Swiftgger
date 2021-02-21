@@ -65,8 +65,10 @@
          "ValidationErrorResponseDto":{
             "properties":{
                "errors":{
-                  "example":"[\"property\": \"Information about error.\"]",
-                  "type":"dictionary<string, string>"
+                  "type":"object",
+                  "additionalProperties":{
+                      "type":"string"
+                  }
                },
                "message":{
                   "example":"Object is invalid",
@@ -87,11 +89,12 @@
                },
                "createDate":{
                   "example":"2021-01-23 11:48:00 +0000",
-                  "type":"date"
+                  "type" : "string",
+                  "format" : "date-time"
                },
                "isLocked":{
                   "example":"false",
-                  "type":"bool"
+                  "type":"boolean"
                },
                "name":{
                   "example":"John Doe",
@@ -99,11 +102,12 @@
                },
                "id":{
                   "example":"BAE63FDC-A633-4D3A-BD7D-A51EC87B071F",
-                  "type":"uuid"
+                  "type":"string"
                },
                "roles":{
-                  "example":"nil",
-                  "type":"optional<array<string>>"
+                   "items":{
+                      "type":"string"
+                   }
                }
             },
             "required":[
@@ -121,11 +125,12 @@
                },
                "createDate":{
                   "example":"2021-01-23 11:48:00 +0000",
-                  "type":"date"
+                  "type" : "string",
+                  "format" : "date-time"
                },
                "isLocked":{
                   "example":"false",
-                  "type":"bool"
+                  "type":"boolean"
                },
                "password":{
                   "example":"fds",
@@ -133,7 +138,7 @@
                },
                "id":{
                   "example":"80E8CE27-6AC9-4C38-B83F-2A2C53A24129",
-                  "type":"uuid"
+                  "type":"string"
                },
                "name":{
                   "example":"John Doe",
@@ -181,20 +186,30 @@
             "properties":{
                "createDate":{
                   "example":"2021-01-23 11:48:00 +0000",
-                  "type":"date"
+                  "type" : "string",
+                  "format" : "date-time"
                },
                "isFinished":{
                   "example":"true",
-                  "type":"bool"
+                  "type":"boolean"
                },
                "id":{
                   "example":"DA9D17D1-9C27-4E96-AD3D-DF232C7E8680",
-                  "type":"uuid"
+                  "type":"string"
                },
                "name":{
                   "example":"Net task",
                   "type":"string"
-               }
+               },
+               "user":{
+                   "$ref":"#\/components\/schemas\/UserDto"
+               },
+               "subtasks":{
+                  "type":"object",
+                  "additionalProperties":{
+                      "$ref":"#\/components\/schemas\/TaskDto"
+                  }
+               },
             },
             "required":[
                "name",

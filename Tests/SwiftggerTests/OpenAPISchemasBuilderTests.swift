@@ -39,10 +39,14 @@ class Vehicle {
 struct Fuel {
     var level: Int
     var type: String
+    var parameters: [String]
+    var tags: [String: String]?
     
-    init(level: Int, type: String) {
+    init(level: Int, type: String, parameters: [String], tags: [String: String]? = nil) {
         self.level = level
         self.type = type
+        self.parameters = parameters
+        self.tags = tags
     }
 }
 
@@ -68,9 +72,11 @@ class Alien {
 
 class User {
     var vehicles: [Vehicle]
+    var family: [String: Alien]?
 
-    init(vehicles: [Vehicle]) {
+    init(vehicles: [Vehicle], family: [String: Alien]? = nil) {
         self.vehicles = vehicles
+        self.family = family
     }
 }
 
@@ -309,7 +315,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           description: "Description"
         ).add([
             APIObject(object: Alien(spaceship: Spaceship(name: "Star Trek", speed: 2122))),
-            APIObject(object: Spaceship(name: "Star Trek", speed: 2122, fuel: Fuel(level: 90, type: "E95")))
+            APIObject(object: Spaceship(name: "Star Trek", speed: 2122, fuel: Fuel(level: 90, type: "E95", parameters: ["power"])))
         ])
 
         // Act.
@@ -327,7 +333,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           version: "1.0.0",
           description: "Description"
         ).add([
-            APIObject(object: Vehicle(name: "Star Trek", age: 3, wrappedString: "something", fuels: [Fuel(level: 10, type: "GAS")]))
+            APIObject(object: Vehicle(name: "Star Trek", age: 3, wrappedString: "something", fuels: [Fuel(level: 10, type: "GAS", parameters: ["power"])]))
         ])
 
         // Act.
@@ -347,7 +353,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         ).add([
             APIObject(object: Alien(spaceship: Spaceship(name: "Star Trek", speed: 2122))),
             APIObject(object: Spaceship(name: "Star Trek", speed: 2122)),
-            APIObject(object: Fuel(level: 90, type: "E95"))
+            APIObject(object: Fuel(level: 90, type: "E95", parameters: ["power"]))
         ])
 
         // Act.
@@ -366,7 +372,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
           description: "Description"
         ).add([
             APIObject(object: Vehicle(name: "Star Trek", age: 3, wrappedString: "something")),
-            APIObject(object: Fuel(level: 10, type: "GAS"))
+            APIObject(object: Fuel(level: 10, type: "GAS", parameters: ["power"]))
         ])
 
         // Act.
@@ -407,7 +413,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something", wrappedFuel: Fuel(level: 1, type: "")))
+            APIObject(object: Vehicle(name: "Ford", age: 21, wrappedString: "something", wrappedFuel: Fuel(level: 1, type: "", parameters: ["power"])))
         ])
         
         // Act.
@@ -416,5 +422,67 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedFuel"], "Wrapped struct property not exists in schema")
         XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["wrappedFuel"]?.ref)
+    }
+    
+    func testSchemaWithArrayOfStringShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Fuel(level: 1, type: "", parameters: ["power"]))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["Fuel"]?.properties?["parameters"]?.items?.type)
+    }
+    
+    func testSchemaWithDictionaryOfStringShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Fuel(level: 1, type: "", parameters: ["power"], tags: ["key": "value"]))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("object", openAPIDocument.components?.schemas?["Fuel"]?.properties?["tags"]?.type)
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["Fuel"]?.properties?["tags"]?.additionalProperties?.type)
+    }
+    
+    func testSchemaWithDictionaryOfObjectsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: User(vehicles: [], family: ["Fred": Alien(spaceship: Spaceship(name: "", speed: 12))]))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["User"], "Fuel schema not exists")
+        XCTAssertEqual("object", openAPIDocument.components?.schemas?["User"]?.properties?["family"]?.type)
+        XCTAssertEqual("#/components/schemas/Alien", openAPIDocument.components?.schemas?["User"]?.properties?["family"]?.additionalProperties?.ref)
     }
 }

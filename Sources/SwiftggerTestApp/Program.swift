@@ -1,6 +1,6 @@
 //
 //  Program.swift
-//  SwiftggerApp
+//  SwiftggerTestApp
 //
 //  Created by Marcin Czachurski on 21/10/2021.
 //  Copyright © 2021 Marcin Czachurski. All rights reserved.
@@ -26,8 +26,16 @@ class Program {
             ]
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21)),
-            APIObject(object: Fuel(level: 90, type: "GAS"))
+            APIObject(object: Vehicle(name: "Ford",
+                                      age: 21,
+                                      fuels: nil,
+                                      currentFuel: nil,
+                                      hasEngine: false,
+                                      tags: ["key": "value"],
+                                      dictionary: [
+                                        "somethinf" : Fuel(level: 1, type: "GAS", productionDate: Date(), parameters: ["power"])
+                                      ])),
+            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power"]))
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [
             APIAction(method: .get,

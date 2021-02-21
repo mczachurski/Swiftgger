@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AnyCodable
 
 /// The Schema Object allows the definition of input and output data types.
 public class OpenAPISchema: Codable {
@@ -15,8 +16,10 @@ public class OpenAPISchema: Codable {
     public private(set) var format: String?
     public private(set) var items: OpenAPISchema?
     public private(set) var required: [String]?
-    public private(set) var properties: [String: OpenAPIObjectProperty]?
-
+    public private(set) var properties: [String: OpenAPISchema]?
+    public private(set) var example: AnyCodable?
+    public private(set) var additionalProperties: OpenAPISchema?
+    
     init(ref: String) {
         self.ref = ref
     }
@@ -25,12 +28,16 @@ public class OpenAPISchema: Codable {
          format: String? = nil,
          items: OpenAPISchema? = nil,
          required: [String]? = nil,
-         properties: [(name: String, type: OpenAPIObjectProperty)]? = nil
+         properties: [(name: String, type: OpenAPISchema)]? = nil,
+         example: AnyCodable? = nil,
+         additionalProperties: OpenAPISchema? = nil
     ) {
         self.type = type
         self.format = format
         self.items = items
         self.required = required
+        self.example = example
+        self.additionalProperties = additionalProperties
 
         if let typeProperies = properties {
             self.properties = [:]
@@ -47,5 +54,7 @@ public class OpenAPISchema: Codable {
         case items
         case required
         case properties
+        case example
+        case additionalProperties
     }
 }
