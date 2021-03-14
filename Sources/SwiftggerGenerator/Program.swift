@@ -13,6 +13,7 @@ class Program {
     let consoleIO = ConsoleIO()
     let modelSerializer = ModelSerializer()
     let httpClientGenerator = HttpClientGenerator()
+    let templateFileGenerator = TemplateFileGenerator()
 
     var inputPath: String = ""
     var inputUrl: String = ""
@@ -31,7 +32,8 @@ class Program {
             
             try self.modelSerializer.generate(openApiDocument: openApiDocument, outputPath: self.outputPath)
             try self.httpClientGenerator.generate(openApiDocument: openApiDocument, outputPath: self.outputPath)
-
+            try self.templateFileGenerator.generate(outputPath: self.outputPath)
+ 
         } catch (let error as SwiftggerError) {
             self.consoleIO.writeMessage("Unexpected error occurs: \(error.message)", to: .error)
             return false

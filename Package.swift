@@ -15,7 +15,11 @@ let package = Package(
     ],
     targets: [
         .target(name: "Swiftgger", dependencies: ["AnyCodable"]),
-        .target(name: "SwiftggerGenerator", dependencies: ["Swiftgger"]),
+        .target(name: "SwiftggerGenerator",
+                dependencies: ["Swiftgger"],
+                resources: [
+                    .process("URLSession.template")
+                ]),
         .target(name: "SwiftggerTestApp", dependencies: ["Swiftgger"]),
         .testTarget(name: "SwiftggerTests",
                     dependencies: ["Swiftgger"],

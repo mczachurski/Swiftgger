@@ -37,10 +37,43 @@ class {{name}} {
         {{description}}
         Operation path: {{path}}
      */
-    func {{name}}(){{result}} {
+    func {{name}}Sync({{parametersSync}}{{requestBodySync}}) throws -> HttpResult<{{result}}> {
+        let url = baseUrl.appendingPathComponent("{{pathWithParameters}}")
+        var request = URLRequest(url: url)
+        request.httpMethod = "{{httpMethod}}"{{encodeSync}}
+        
+        return try URLSession.shared.callSync({{result}}.Self, request: request)
     }
 
+    /**
+        {{summary}}
 
+        {{description}}
+        Operation path: {{path}}
+     */
+    func {{name}}Async({{parametersAsync}}{{requestBodyAsync}}completitionHandler: @escaping HttpResultCallback<{{result}}>) -> URLSessionDataTask {
+        let url = baseUrl.appendingPathComponent("{{pathWithParameters}}")
+        var request = URLRequest(url: url)
+        request.httpMethod = "{{httpMethod}}"{{encodeAsync}}
+
+        return URLSession.shared.callAsync({{result}}.Self, request: request, completitionHandler: completitionHandler)
+    }
+
+"""
+    
+    private let encodeSyncTemplate =
+"""
+        request.httpBody = try JSONEncoder().encode(object)
+"""
+
+    private let encodeAsyncTemplate =
+"""
+        do {
+            request.httpBody = try JSONEncoder().encode(object)
+        }
+        catch {
+            completitionHandler(Result.failure(error))
+        }
 """
     
     func generate(openApiDocument: OpenAPIDocument, outputPath: String) throws {
@@ -60,7 +93,35 @@ class {{name}} {
         for (path, value) in openApiDocument.paths {
             if let operation = value.get, let tags = operation.tags {
                 if tags.contains(tag.name) {
-                    let method = self.generateMethod(path: path, operation: operation)
+                    let method = self.generateMethod(path: path, httpMethod: "GET", operation: operation)
+                    methodsString = methodsString + method
+                }
+            }
+            
+            if let operation = value.post, let tags = operation.tags {
+                if tags.contains(tag.name) {
+                    let method = self.generateMethod(path: path, httpMethod: "POST", operation: operation)
+                    methodsString = methodsString + method
+                }
+            }
+            
+            if let operation = value.put, let tags = operation.tags {
+                if tags.contains(tag.name) {
+                    let method = self.generateMethod(path: path, httpMethod: "PUT", operation: operation)
+                    methodsString = methodsString + method
+                }
+            }
+            
+            if let operation = value.delete, let tags = operation.tags {
+                if tags.contains(tag.name) {
+                    let method = self.generateMethod(path: path, httpMethod: "DELETE", operation: operation)
+                    methodsString = methodsString + method
+                }
+            }
+            
+            if let operation = value.patch, let tags = operation.tags {
+                if tags.contains(tag.name) {
+                    let method = self.generateMethod(path: path, httpMethod: "PATCH", operation: operation)
                     methodsString = methodsString + method
                 }
             }
@@ -76,17 +137,29 @@ class {{name}} {
         return classString
     }
     
-    private func generateMethod(path: String, operation: OpenAPIOperation) -> String {
+    private func generateMethod(path: String, httpMethod: String, operation: OpenAPIOperation) -> String {
         let methodName = getMethodName(operation: operation)
-        let methodResult = getMethodResult(operation: operation)
+        let methodResultType = getMethodResultType(operation: operation)
+        let parameters = getParametersList(operation: operation)
+        let requestBody = getRequestBody(operation: operation)
+        let pathWithParameters = path.replacingOccurrences(of: "{", with: "\\(").replacingOccurrences(of: "}", with: ")")
 
         var methodString = self.methodTemplate
         methodString = methodString.replacingOccurrences(of: "{{summary}}", with: operation.summary ?? String.empty)
         methodString = methodString.replacingOccurrences(of: "{{description}}", with: operation.description ?? String.empty)
         methodString = methodString.replacingOccurrences(of: "{{path}}", with: path)
+        methodString = methodString.replacingOccurrences(of: "{{pathWithParameters}}", with: pathWithParameters)
         methodString = methodString.replacingOccurrences(of: "{{name}}", with: methodName)
-        methodString = methodString.replacingOccurrences(of: "{{result}}", with: methodResult)
-
+        methodString = methodString.replacingOccurrences(of: "{{result}}", with: methodResultType ?? "Void")
+        methodString = methodString.replacingOccurrences(of: "{{parametersSync}}",
+                                                         with: (requestBody == nil) ? parameters.trimmingCharacters(in: CharacterSet.init(charactersIn: ", ")) : parameters)
+        methodString = methodString.replacingOccurrences(of: "{{parametersAsync}}", with: parameters)
+        methodString = methodString.replacingOccurrences(of: "{{requestBodyAsync}}", with: requestBody != nil ? "\(requestBody!), " : "")
+        methodString = methodString.replacingOccurrences(of: "{{requestBodySync}}", with: requestBody ?? "")
+        methodString = methodString.replacingOccurrences(of: "{{encodeSync}}", with: requestBody != nil ? "\n\(encodeSyncTemplate)" : "")
+        methodString = methodString.replacingOccurrences(of: "{{encodeAsync}}", with: requestBody != nil ? "\n\n\(encodeAsyncTemplate)" : "")
+        methodString = methodString.replacingOccurrences(of: "{{httpMethod}}", with: httpMethod)
+        
         return methodString
     }
     
@@ -108,15 +181,6 @@ class {{name}} {
         return methodName
     }
     
-    private func getMethodResult(operation: OpenAPIOperation) -> String {
-        let methodResultType = getMethodResultType(operation: operation)
-        guard let methodResult = methodResultType else {
-            return String.empty
-        }
-        
-        return " -> Result<\(methodResult), Error>"
-    }
-    
     private func getMethodResultType(operation: OpenAPIOperation) -> String? {
         guard let responses = operation.responses else {
             return nil
@@ -132,6 +196,31 @@ class {{name}} {
             if let mediaType = successResponse.content?["application/json"], let schema = mediaType.schema {
                 return schema.getType()
             }
+        }
+        
+        return nil
+    }
+    
+    private func getParametersList(operation: OpenAPIOperation) -> String {
+        guard let parameters = operation.parameters else {
+            return String.empty
+        }
+        
+        var parametersList = String.empty
+        parameters.forEach { (parameter) in
+            guard let parameterName = parameter.name else {
+                return
+            }
+            
+            parametersList = parametersList + "\(parameterName): String, "
+        }
+        
+        return parametersList
+    }
+    
+    private func getRequestBody(operation: OpenAPIOperation) -> String? {
+        if let mediaType = operation.requestBody?.content?["application/json"], let schema = mediaType.schema {
+            return "object: \(schema.getType())"
         }
         
         return nil

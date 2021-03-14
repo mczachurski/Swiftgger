@@ -15,7 +15,7 @@ class ModelSerializer {
 """
 import Foundation
 
-class {{name}} {
+class {{name}}: Codable {
     {{properties}}
 }
 """
