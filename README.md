@@ -9,6 +9,16 @@ Swiftgger is a Swift library which can generate output compatible with [OpenAPI 
 
 ![swagger](Images/screen-02.png)
 
+Also you can user Swiftgger to generate Swift files based on OpenAPI definition file. Example usage:
+
+```swift
+$ swiftgger-generator -u http://localhost:8000/openapi.json -o ../output
+```
+
+Above command will generate Swift files with model classes and HTTP client services.
+
+> This feature is under development now.
+
 ## Getting started
 
 Swiftgger support Swift Package Manager. You have to add to your `Package.swift` file information about Swiftgger. Below is a simple example.
@@ -217,6 +227,24 @@ More examples you can find in my other GitHub [project](https://github.com/mczac
 Tasker server OpenAPI JSON: [https://taskerswift.azurewebsites.net/openapi](https://taskerswift.azurewebsites.net/openapi)
 
 Tasker server Swagger UI: [https://taskerswift-swagger.azurewebsites.net/](https://taskerswift-swagger.azurewebsites.net/)
+
+## Swiftgger generator
+
+`swiftgger-generator` is a simple application which can generate Swift files based on OpenAPI definition.  Application generates files for model classes and HTTP client services for each controller (group). Command line arguments:
+
+```bash
+swiftgger-generator: [command_option] [-f jsonFile] [-u url] [-o path]")
+Command options are:
+ -h            show this message and exit
+ -v            show program version and exit
+ -f            input .json file with OpenAPI description
+ -u            input URL which returns .json with OpenAPI description
+ -o            output directory (default is 'output')
+```
+
+**TODO:**
+[ ] Client services generation
+[ ] Infromation how to use generated HTTP client services
 
 ## License
 

@@ -44,8 +44,8 @@ class OpenAPISchemasBuilder {
         }
     }
 
-    private func getAllProperties(properties: Mirror.Children) -> [(name: String, type: OpenAPIObjectProperty)] {
-        var array:  [(name: String, type: OpenAPIObjectProperty)] = []
+    private func getAllProperties(properties: Mirror.Children) -> [(name: String, type: OpenAPISchema)] {
+        var array:  [(name: String, type: OpenAPISchema)] = []
         for property in properties {
             
             // Eventually extract property from property wrapper.
@@ -58,7 +58,7 @@ class OpenAPISchemasBuilder {
         return array
     }
     
-    private func appendProperty(property: Mirror.Child, array: inout [(name: String, type: OpenAPIObjectProperty)]) {
+    private func appendProperty(property: Mirror.Child, array: inout [(name: String, type: OpenAPISchema)]) {
 
         // Simple value type (also unwrapped optionals).
         let unwrapped = unwrap(property.value)
@@ -70,6 +70,11 @@ class OpenAPISchemasBuilder {
         // Non optional or initialized array (array which contains any data).
         if let items = property.value as? Array<Any> {
             self.append(items: items, property: property, array: &array)
+            return
+        }
+        
+        if let items = property.value as? Dictionary<String, Any> {
+            self.append(dictionary: items, property: property, array: &array)
             return
         }
         
@@ -113,6 +118,8 @@ class OpenAPISchemasBuilder {
             return .dateTime
         case is String:
             return .string
+        case is UUID:
+            return .uuid
         default:
             return nil
         }
@@ -121,35 +128,68 @@ class OpenAPISchemasBuilder {
     private func append(dataType: APIDataType,
                         property: Mirror.Child,
                         unwrapped: Any,
-                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+                        array: inout [(name: String, type: OpenAPISchema)]
     ) {
-        let example = AnyCodable(unwrapped)
-        let objectProperty = OpenAPIObjectProperty(type: dataType.type, format: dataType.format, example: example)
+        let exampleValue = self.convertBasedOnValueType(unwrapped)
+        let example = AnyCodable(exampleValue)
+        let objectProperty = OpenAPISchema(type: dataType.type, format: dataType.format, example: example)
         array.append((name: property.label ?? "", type: objectProperty))
     }
 
     private func append(items: Array<Any>,
                         property: Mirror.Child,
-                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+                        array: inout [(name: String, type: OpenAPISchema)]
     ) {
         guard let item = items.first else {
             return
         }
 
-        let typeName = String(describing: type(of: item))
-        let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
-        let objectProperty = OpenAPIObjectProperty(items: openApiSchema)
-        array.append((name: property.label ?? "", type: objectProperty))
+        let unwrapped = unwrap(item)
+        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+            let openApiSchema = OpenAPISchema(type: dataType.type, format: dataType.format)
+            let objectProperty = OpenAPISchema(items: openApiSchema)
 
-        self.nestedObjects.append(item)
+            array.append((name: property.label ?? "", type: objectProperty))
+        } else {
+            let typeName = String(describing: type(of: item))
+            let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
+            let objectProperty = OpenAPISchema(items: openApiSchema)
+
+            array.append((name: property.label ?? "", type: objectProperty))
+            self.nestedObjects.append(item)
+        }
+    }
+    
+    private func append(dictionary: Dictionary<String, Any>,
+                        property: Mirror.Child,
+                        array: inout [(name: String, type: OpenAPISchema)]
+    ) {
+        guard let item = dictionary.first else {
+            return
+        }
+        
+        let unwrapped = unwrap(item.value)
+        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+            let additionalProperties = OpenAPISchema(type: dataType.type, format: dataType.format)
+            let objectProperty = OpenAPISchema(type: "object", additionalProperties: additionalProperties)
+
+            array.append((name: property.label ?? "", type: objectProperty))
+        } else {
+            let typeName = String(describing: type(of: item.value))
+            let additionalProperties = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
+            let objectProperty = OpenAPISchema(type: "object", additionalProperties: additionalProperties)
+
+            array.append((name: property.label ?? "", type: objectProperty))
+            self.nestedObjects.append(item.value)
+        }
     }
 
     private func append(reference: Mirror.Child,
-                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+                        array: inout [(name: String, type: OpenAPISchema)]
     ) {
         let unwrapped = unwrap(reference.value)
         let typeName = String(describing: type(of: unwrapped))
-        let objectProperty = OpenAPIObjectProperty(ref: "#/components/schemas/\(typeName)")
+        let objectProperty = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
         array.append((name: reference.label ?? "", type: objectProperty))
 
         self.nestedObjects.append(unwrapped)
@@ -157,19 +197,19 @@ class OpenAPISchemasBuilder {
     
     private func append(typeName: String,
                         property: Mirror.Child,
-                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+                        array: inout [(name: String, type: OpenAPISchema)]
     ) {
 
-        let objectProperty = OpenAPIObjectProperty(ref: "#/components/schemas/\(typeName)")
+        let objectProperty = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
         array.append((name: property.label ?? "", type: objectProperty))
     }
     
     private func append(arrayName: String,
                         property: Mirror.Child,
-                        array: inout [(name: String, type: OpenAPIObjectProperty)]
+                        array: inout [(name: String, type: OpenAPISchema)]
     ) {
         let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(arrayName)")
-        let objectProperty = OpenAPIObjectProperty(items: openApiSchema)
+        let objectProperty = OpenAPISchema(items: openApiSchema)
         array.append((name: property.label ?? "", type: objectProperty))
     }
 
@@ -198,6 +238,14 @@ class OpenAPISchemasBuilder {
         }
 
         return first.value
+    }
+    
+    private func convertBasedOnValueType(_ any: Any) -> Any {
+        if let uuid = any as? UUID {
+            return uuid.uuidString
+        }
+        
+        return any
     }
 
     private func isOptional<T>(_ any: T) -> Bool {

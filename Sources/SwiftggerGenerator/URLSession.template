@@ -1,0 +1,65 @@
+import Foundation
+
+public struct HttpResponse<T: Decodable> {
+    let object: T?
+    let reponse: URLResponse?
+}
+
+extension URLSession {
+    
+    typealias HttpResult<T: Decodable> = Result<HttpResponse<T>, Error>
+    typealias HttpResultCallback<T: Decodable> = (Result<HttpResponse<T>, Error>) -> Void
+        
+    func callSync<T>(_ type: T.Type, request: URLRequest) throws -> HttpResult<T> where T : Decodable {
+        var data: Data?
+        var response: URLResponse?
+        var callError: Error?
+
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let dataTask = self.dataTask(with: request) {
+            data = $0
+            response = $1
+            callError = $2
+
+            semaphore.signal()
+        }
+        dataTask.resume()
+
+        _ = semaphore.wait(timeout: .distantFuture)
+
+        if let callError = callError {
+            return Result.failure(callError)
+        } else {
+            let object = try self.decode(type, from: data)
+            return Result.success(HttpResponse(object: object, reponse: response))
+        }
+    }
+    
+    func callAsync<T>(_ type: T.Type,
+                      request: URLRequest,
+                      completitionHandler: @escaping HttpResultCallback<T>) -> URLSessionDataTask where T : Decodable {
+        return self.dataTask(with: request) {
+            if let callError = $2 {
+                completitionHandler(Result.failure(callError))
+            } else {
+                do {
+                    let object = try self.decode(type, from: $0)
+                    completitionHandler(Result.success(HttpResponse(object: object, reponse: $1)))
+                }
+                catch {
+                    completitionHandler(Result.failure(error))
+                }
+            }
+        }
+    }
+    
+    private func decode<T>(_ type: T.Type, from data: Data?) throws -> T? where T : Decodable {
+        guard let data = data else {
+            return nil
+        }
+        
+        let object = try JSONDecoder().decode(T.self, from: data)
+        return object
+    }
+}

@@ -1,6 +1,6 @@
 //
 //  Program.swift
-//  SwiftggerApp
+//  SwiftggerTestApp
 //
 //  Created by Marcin Czachurski on 21/10/2021.
 //  Copyright © 2021 Marcin Czachurski. All rights reserved.
@@ -26,14 +26,24 @@ class Program {
             ]
         )
         .add([
-            APIObject(object: Vehicle(name: "Ford", age: 21)),
-            APIObject(object: Fuel(level: 90, type: "GAS"))
+            APIObject(object: Vehicle(name: "Ford",
+                                      age: 21,
+                                      fuels: nil,
+                                      currentFuel: nil,
+                                      hasEngine: false,
+                                      tags: ["key": "value"],
+                                      dictionary: [
+                                        "somethinf" : Fuel(level: 1, type: "GAS", productionDate: Date(), parameters: ["power"])
+                                      ],
+                                      keyId: UUID(),
+                                      uuidIds: [UUID(), UUID(), UUID()])),
+            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power"]))
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [
             APIAction(method: .get,
                       route: "/vehicles",
-                      summary: "GET action for downloading list of vehicles.",
-                      description: "List of vehicles",
+                      summary: "Get list of vehicles",
+                      description: "GET action for downloading list of vehicles.",
                       responses: [
                         APIResponse(code: "200", description: "List of vehicles", array: Vehicle.self, contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized")
@@ -41,8 +51,8 @@ class Program {
             ),
             APIAction(method: .get,
                       route: "/vehicles/{id}",
-                      summary: "GET action for downloading specific vehicle.",
-                      description: "Single vehicle",
+                      summary: "Get single vehicle",
+                      description: "GET action for downloading specific vehicle.",
                       parameters: [
                         APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
@@ -55,8 +65,8 @@ class Program {
             ),
             APIAction(method: .post,
                       route: "/vehicles",
-                      summary: "POST action for creating new vehicle.",
-                      description: "New vehicle",
+                      summary: "Create new vehicle",
+                      description: "POST action for creating new vehicle.",
                       request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
                       responses: [
                         APIResponse(code: "201", description: "Created vehicles", object: Vehicle.self, contentType: "application/json"),
@@ -66,8 +76,8 @@ class Program {
             ),
             APIAction(method: .put,
                       route: "/vehicles/{id}",
-                      summary: "PUT action for updating existing vehicle.",
-                      description: "Update vehicle",
+                      summary: "Update vehicle",
+                      description: "PUT action for updating existing vehicle.",
                       parameters: [
                         APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
@@ -81,8 +91,8 @@ class Program {
             ),
             APIAction(method: .delete,
                       route: "/vehicles/{id}",
-                      summary: "DELETE action for deleting specific vehicle.",
-                      description: "Delete vehicle",
+                      summary: "Delete vehicle",
+                      description: "DELETE action for deleting specific vehicle.",
                       parameters: [
                         APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
