@@ -23,4 +23,5 @@ public struct APIDataType {
     public static let date = APIDataType(type: "string", format: "date")
     public static let dateTime = APIDataType(type: "string", format: "date-time")
     public static let password = APIDataType(type: "string", format: "password")
+    public static let uuid = APIDataType(type: "string", format: "uuid")
 }

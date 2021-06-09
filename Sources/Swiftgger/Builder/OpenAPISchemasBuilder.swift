@@ -118,6 +118,8 @@ class OpenAPISchemasBuilder {
             return .dateTime
         case is String:
             return .string
+        case is UUID:
+            return .uuid
         default:
             return nil
         }
@@ -128,7 +130,8 @@ class OpenAPISchemasBuilder {
                         unwrapped: Any,
                         array: inout [(name: String, type: OpenAPISchema)]
     ) {
-        let example = AnyCodable(unwrapped)
+        let exampleValue = self.convertBasedOnValueType(unwrapped)
+        let example = AnyCodable(exampleValue)
         let objectProperty = OpenAPISchema(type: dataType.type, format: dataType.format, example: example)
         array.append((name: property.label ?? "", type: objectProperty))
     }
@@ -235,6 +238,14 @@ class OpenAPISchemasBuilder {
         }
 
         return first.value
+    }
+    
+    private func convertBasedOnValueType(_ any: Any) -> Any {
+        if let uuid = any as? UUID {
+            return uuid.uuidString
+        }
+        
+        return any
     }
 
     private func isOptional<T>(_ any: T) -> Bool {

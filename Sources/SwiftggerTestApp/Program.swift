@@ -34,7 +34,9 @@ class Program {
                                       tags: ["key": "value"],
                                       dictionary: [
                                         "somethinf" : Fuel(level: 1, type: "GAS", productionDate: Date(), parameters: ["power"])
-                                      ])),
+                                      ],
+                                      keyId: UUID(),
+                                      uuidIds: [UUID(), UUID(), UUID()])),
             APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power"]))
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [

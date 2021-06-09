@@ -17,6 +17,8 @@ $ swiftgger-generator -u http://localhost:8000/openapi.json -o ../output
 
 Above command will generate Swift files with model classes and HTTP client services.
 
+> This feature is under development now.
+
 ## Getting started
 
 Swiftgger support Swift Package Manager. You have to add to your `Package.swift` file information about Swiftgger. Below is a simple example.
@@ -240,7 +242,9 @@ Command options are:
  -o            output directory (default is 'output')
 ```
 
-[TODO] Infromation how to use generated HTTP client services.
+**TODO:**
+[ ] Client services generation
+[ ] Infromation how to use generated HTTP client services
 
 ## License
 

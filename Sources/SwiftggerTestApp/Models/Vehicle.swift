@@ -16,6 +16,8 @@ class Vehicle {
     var hasEngine: Bool?
     var tags: [String: String]?
     var dictionary: [String: Fuel]?
+    var keyId: UUID?
+    var uuidIds: [UUID]?
 
     init(name: String,
          age: Int,
@@ -23,7 +25,9 @@ class Vehicle {
          currentFuel: Fuel? = nil,
          hasEngine: Bool? = nil,
          tags: [String: String]? = nil,
-         dictionary: [String: Fuel]? = nil
+         dictionary: [String: Fuel]? = nil,
+         keyId: UUID? = nil,
+         uuidIds: [UUID]? = nil
     ) {
         self.name = name
         self.age = age
@@ -32,5 +36,7 @@ class Vehicle {
         self.hasEngine = hasEngine
         self.tags = tags
         self.dictionary = dictionary
+        self.keyId = keyId
+        self.uuidIds = uuidIds
     }
 }

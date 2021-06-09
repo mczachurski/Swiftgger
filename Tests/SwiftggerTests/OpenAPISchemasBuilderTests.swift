@@ -31,6 +31,7 @@ class Vehicle {
         self.name = name
         self.age = age
         self.fuels = fuels
+        
         self.wrappedString = wrappedString
         self.wrappedFuel = wrappedFuel
     }
@@ -77,6 +78,16 @@ class User {
     init(vehicles: [Vehicle], family: [String: Alien]? = nil) {
         self.vehicles = vehicles
         self.family = family
+    }
+}
+
+class VehicleKeys {
+    var singleId: UUID
+    var arrayIds: [UUID]
+    
+    init(singleId: UUID, arrayIds: [UUID]) {
+        self.singleId = singleId
+        self.arrayIds = arrayIds
     }
 }
 
@@ -484,5 +495,27 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertNotNil(openAPIDocument.components?.schemas?["User"], "Fuel schema not exists")
         XCTAssertEqual("object", openAPIDocument.components?.schemas?["User"]?.properties?["family"]?.type)
         XCTAssertEqual("#/components/schemas/Alien", openAPIDocument.components?.schemas?["User"]?.properties?["family"]?.additionalProperties?.ref)
+    }
+    
+    func testSchemaWithUUIDProperyShouldBeTranslatedToOpenApiDocument() {
+        // Arrange.
+        let singleId = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: VehicleKeys(singleId: singleId, arrayIds: [UUID(), UUID()]))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["VehicleKeys"], "VehicleKeys schema not exists")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.type)
+        XCTAssertEqual("uuid", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.format)
+        XCTAssertEqual("E621E1F8-C36C-495A-93FC-0C247A3E6E5F", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.example)
     }
 }
