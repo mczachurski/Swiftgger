@@ -110,7 +110,7 @@ APIAction(method: .get, route: "/version",
 APIAction(method: .post, route: "/users",
     summary: "Adding new user",
     description: "Action for adding new user to the server",
-    request: APIRequest(object: userDto, description: "Object with user information."),
+    request: APIRequest(type: .object(UserDto.self), description: "Object with user information."),
     responses: [
         APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
         APIResponse(code: "400", description: "There was issues during adding new user", type: .object(ValidationErrorResponseDto.self)),
@@ -171,7 +171,7 @@ let openAPIBuilder = OpenAPIBuilder(
         APIAction(method: .post, route: "/users",
             summary: "Adding new user",
             description: "Action for adding new user to the server",
-            request: APIRequest(object: UserDto.self, description: "Object with user information."),
+            request: APIRequest(type: .object(UserDto.self), description: "Object with user information."),
             responses: [
                 APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
                 APIResponse(code: "400", description: "There was issues during adding new user", type: .object(ValidationErrorResponseDto.self)),
@@ -185,7 +185,7 @@ let openAPIBuilder = OpenAPIBuilder(
             parameters: [
                 APIParameter(name: "id", description: "User id", required: true)
             ],
-            request: APIRequest(object: UserDto.self, description: "Object with user information."),
+            request: APIRequest(type: .object(UserDto.self), description: "Object with user information."),
             responses: [
                 APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
                 APIResponse(code: "400", description: "There was issues during updating user", type: .object(ValidationErrorResponseDto.self)),

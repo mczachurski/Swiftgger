@@ -20,13 +20,13 @@ class OpenAPIRequestBuilder {
 
     func built() -> OpenAPIRequestBody? {
 
-        guard let apiRequest = request, let apiRequestObject = apiRequest.object else {
+        guard let apiRequest = request, let apiRequestType = apiRequest.type else {
             return nil
         }
 
         let contentType = apiRequest.contentType ?? "application/json"
 
-        let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: .object(apiRequestObject))
+        let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiRequestType)
         let mediaType = openAPIMediaTypeBuilder.built()
 
         let requestBody = OpenAPIRequestBody(description: apiRequest.description, content: [contentType: mediaType])

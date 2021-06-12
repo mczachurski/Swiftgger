@@ -85,7 +85,7 @@ class Program {
                       route: "/vehicles",
                       summary: "Create new vehicle",
                       description: "POST action for creating new vehicle.",
-                      request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
+                      request: APIRequest(type: .object(Vehicle.self), description: "New vehicle", contentType: "application/json"),
                       responses: [
                         APIResponse(code: "201", description: "Created vehicles", type: .object(Vehicle.self), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized"),
@@ -99,7 +99,7 @@ class Program {
                       parameters: [
                         APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
-                      request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
+                      request: APIRequest(type: .object(Vehicle.self), description: "New vehicle", contentType: "application/json"),
                       responses: [
                         APIResponse(code: "200", description: "Updated vehicles", type: .object(Vehicle.self), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized"),
@@ -121,6 +121,15 @@ class Program {
                         APIResponse(code: "404", description: "NotFound")
                       ],
                       authorization: true
+            ),
+            APIAction(method: .get,
+                      route: "/echo",
+                      summary: "Send text",
+                      description: "GET action for printing request in response body",
+                      request: APIRequest(type: .value("Hello world!"), description: "Echo text", contentType: "application/text"),
+                      responses: [
+                        APIResponse(code: "200", description: "List of vehicles", type: .value("(Response) Hello world!"), contentType: "application/text")
+                      ]
             )
         ]))
 
