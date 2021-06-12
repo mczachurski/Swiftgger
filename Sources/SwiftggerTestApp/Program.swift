@@ -41,11 +41,29 @@ class Program {
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [
             APIAction(method: .get,
+                      route: "/version/ownername",
+                      summary: "Get vehicle owner name",
+                      description: "GET action for downloading vehicle owner name.",
+                      responses: [
+                        APIResponse(code: "200", description: "Vehicle owner name", type: .value("John doe"), contentType: "application/text"),
+                        APIResponse(code: "401", description: "Unauthorized")
+                      ]
+            ),
+            APIAction(method: .get,
+                      route: "/version/certificates",
+                      summary: "Get vehicle certificates",
+                      description: "GET action for downloading vehicle certificates.",
+                      responses: [
+                        APIResponse(code: "200", description: "Vehicle certificates", type: .value(["EURO 6", "ABS"]), contentType: "application/json"),
+                        APIResponse(code: "401", description: "Unauthorized")
+                      ]
+            ),
+            APIAction(method: .get,
                       route: "/vehicles",
                       summary: "Get list of vehicles",
                       description: "GET action for downloading list of vehicles.",
                       responses: [
-                        APIResponse(code: "200", description: "List of vehicles", array: Vehicle.self, contentType: "application/json"),
+                        APIResponse(code: "200", description: "List of vehicles", type: .object(Vehicle.self, asCollection: true), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized")
                       ]
             ),
@@ -57,7 +75,7 @@ class Program {
                         APIParameter(name: "id", description: "Vehicle id", required: true)
                       ],
                       responses: [
-                        APIResponse(code: "200", description: "List of vehicles", object: Vehicle.self, contentType: "application/json"),
+                        APIResponse(code: "200", description: "List of vehicles", type: .object(Vehicle.self), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized"),
                         APIResponse(code: "403", description: "Forbidden"),
                         APIResponse(code: "404", description: "NotFound")
@@ -69,7 +87,7 @@ class Program {
                       description: "POST action for creating new vehicle.",
                       request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
                       responses: [
-                        APIResponse(code: "201", description: "Created vehicles", object: Vehicle.self, contentType: "application/json"),
+                        APIResponse(code: "201", description: "Created vehicles", type: .object(Vehicle.self), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized"),
                         APIResponse(code: "403", description: "Forbidden")
                       ]
@@ -83,7 +101,7 @@ class Program {
                       ],
                       request: APIRequest(object: Vehicle.self, description: "New vehicle", contentType: "application/json"),
                       responses: [
-                        APIResponse(code: "200", description: "Updated vehicles", object: Vehicle.self, contentType: "application/json"),
+                        APIResponse(code: "200", description: "Updated vehicles", type: .object(Vehicle.self), contentType: "application/json"),
                         APIResponse(code: "401", description: "Unauthorized"),
                         APIResponse(code: "403", description: "Forbidden"),
                         APIResponse(code: "404", description: "NotFound")

@@ -37,7 +37,7 @@ class OpenAPISchemasBuilder {
         let mirrorObjectType = customName ?? String(describing: requestMirror.subjectType)
 
         if schemas[mirrorObjectType] == nil {
-            let required = self.getRequiredProperties(properties: requestMirror.children)
+            let required = MirrorHelper.getRequiredProperties(properties: requestMirror.children)
             let properties = self.getAllProperties(properties: requestMirror.children)
             let requestSchema = OpenAPISchema(type: "object", required: required, properties: properties)
             schemas[mirrorObjectType] = requestSchema
@@ -49,7 +49,7 @@ class OpenAPISchemasBuilder {
         for property in properties {
             
             // Eventually extract property from property wrapper.
-            let unwrappedProperty = self.getWrappedProperty(property: property)
+            let unwrappedProperty = MirrorHelper.getWrappedProperty(property: property)
             
             // Append property with correct type to array.
             self.appendProperty(property: unwrappedProperty, array: &array)
@@ -61,8 +61,8 @@ class OpenAPISchemasBuilder {
     private func appendProperty(property: Mirror.Child, array: inout [(name: String, type: OpenAPISchema)]) {
 
         // Simple value type (also unwrapped optionals).
-        let unwrapped = unwrap(property.value)
-        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+        let unwrapped = MirrorHelper.unwrap(property.value)
+        if let dataType = APIDataType(fromSwiftValue: unwrapped) {
             self.append(dataType: dataType, property: property, unwrapped: unwrapped, array: &array)
             return
         }
@@ -79,49 +79,21 @@ class OpenAPISchemasBuilder {
         }
         
         // Non optional or initialized object.
-        if self.isInitialized(object: unwrapped) {
+        if MirrorHelper.isInitialized(object: unwrapped) {
             self.append(reference: property, array: &array)
             return
         }
         
         // Optional and not initialized object.
-        if let typeName = self.getTypeName(from: unwrapped) {
+        if let typeName = MirrorHelper.getTypeName(from: unwrapped) {
             self.append(typeName: typeName, property: property, array: &array)
             return
         }
         
         // Optional and not initialized arrays.
-        if let typeName = self.getArrayTypeName(from: unwrapped) {
+        if let typeName = MirrorHelper.getArrayTypeName(from: unwrapped) {
             self.append(arrayName: typeName, property: property, array: &array)
             return
-        }
-    }
-
-    /// Infer OpenAPI Data Type from Swift value type
-    /// (nested types or collections not supported at the moment)
-    ///
-    /// - Parameter value: Swift property value to analyze
-    /// - Returns: Most appropriate OpenAPI Data Type
-    private func makeAPIDataType(fromSwiftValue value: Any) -> APIDataType? {
-        switch value {
-        case is Int32:
-            return .int32
-        case is Int:
-            return .int64
-        case is Float:
-            return .float
-        case is Double:
-            return .double
-        case is Bool:
-            return .boolean
-        case is Date:
-            return .dateTime
-        case is String:
-            return .string
-        case is UUID:
-            return .uuid
-        default:
-            return nil
         }
     }
 
@@ -130,7 +102,7 @@ class OpenAPISchemasBuilder {
                         unwrapped: Any,
                         array: inout [(name: String, type: OpenAPISchema)]
     ) {
-        let exampleValue = self.convertBasedOnValueType(unwrapped)
+        let exampleValue = MirrorHelper.convertBasedOnValueType(unwrapped)
         let example = AnyCodable(exampleValue)
         let objectProperty = OpenAPISchema(type: dataType.type, format: dataType.format, example: example)
         array.append((name: property.label ?? "", type: objectProperty))
@@ -144,8 +116,8 @@ class OpenAPISchemasBuilder {
             return
         }
 
-        let unwrapped = unwrap(item)
-        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+        let unwrapped = MirrorHelper.unwrap(item)
+        if let dataType = APIDataType(fromSwiftValue: unwrapped) {
             let openApiSchema = OpenAPISchema(type: dataType.type, format: dataType.format)
             let objectProperty = OpenAPISchema(items: openApiSchema)
 
@@ -168,8 +140,8 @@ class OpenAPISchemasBuilder {
             return
         }
         
-        let unwrapped = unwrap(item.value)
-        if let dataType = makeAPIDataType(fromSwiftValue: unwrapped) {
+        let unwrapped = MirrorHelper.unwrap(item.value)
+        if let dataType = APIDataType(fromSwiftValue: unwrapped) {
             let additionalProperties = OpenAPISchema(type: dataType.type, format: dataType.format)
             let objectProperty = OpenAPISchema(type: "object", additionalProperties: additionalProperties)
 
@@ -187,7 +159,7 @@ class OpenAPISchemasBuilder {
     private func append(reference: Mirror.Child,
                         array: inout [(name: String, type: OpenAPISchema)]
     ) {
-        let unwrapped = unwrap(reference.value)
+        let unwrapped = MirrorHelper.unwrap(reference.value)
         let typeName = String(describing: type(of: unwrapped))
         let objectProperty = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
         array.append((name: reference.label ?? "", type: objectProperty))
@@ -211,97 +183,5 @@ class OpenAPISchemasBuilder {
         let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(arrayName)")
         let objectProperty = OpenAPISchema(items: openApiSchema)
         array.append((name: property.label ?? "", type: objectProperty))
-    }
-
-    private func getRequiredProperties(properties: Mirror.Children) -> [String] {
-        var array: [String] = []
-
-        for property in properties {
-            
-            // Eventually extract property from property wrapper.
-            let unwrappedProperty = self.getWrappedProperty(property: property)
-            
-            // Append to list of required non optional properties.
-            if !isOptional(unwrappedProperty.value) {
-                array.append(unwrappedProperty.label!)
-            }
-        }
-
-        return array
-    }
-
-    private func unwrap<T>(_ any: T) -> Any {
-
-        let mirror = Mirror(reflecting: any)
-        guard mirror.displayStyle == .optional, let first = mirror.children.first else {
-            return any
-        }
-
-        return first.value
-    }
-    
-    private func convertBasedOnValueType(_ any: Any) -> Any {
-        if let uuid = any as? UUID {
-            return uuid.uuidString
-        }
-        
-        return any
-    }
-
-    private func isOptional<T>(_ any: T) -> Bool {
-        let mirror = Mirror(reflecting: any)
-        return mirror.displayStyle == .optional
-    }
-    
-    private func isInitialized<T>(object any: T) -> Bool {
-        let mirror = Mirror(reflecting: any)
-
-        return mirror.displayStyle == .struct
-            || mirror.displayStyle == .class
-            || mirror.displayStyle == .enum
-    }
-    
-    private func getTypeName(from any: Any) -> String? {
-        let typeName = String(describing: type(of: any))
-        
-        let pattern = "^Optional<(?<type>\\w+)>$"
-        return self.match(pattern: pattern, in: typeName)
-    }
-
-    private func getArrayTypeName(from any: Any) -> String? {
-        let typeName = String(describing: type(of: any))
-        
-        let pattern = "^Optional<Array<(?<type>\\w+)>>$"
-        return self.match(pattern: pattern, in: typeName)
-    }
-    
-    private func getWrappedProperty(property: Mirror.Child) -> Mirror.Child {
-        let mirrored = Mirror(reflecting: property.value)
-        let propertyWrapped = mirrored.children.first { (child) -> Bool in
-            child.label == "wrappedValue"
-        }
-        
-        if let propertyUnwrapped = propertyWrapped {
-            let propertyLabel = property.label?.trimmingCharacters(in: CharacterSet.init(charactersIn: "_"))
-            return (label: propertyLabel, value: propertyUnwrapped.value)
-        }
-        
-        return property
-    }
-    
-    private func match(pattern: String, in text: String) -> String? {
-        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-
-        if let match = regex?.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.utf8.count)) {
-            guard match.numberOfRanges == 2 else {
-                return nil
-            }
-            
-            if let typeRange = Range(match.range(at: 1), in: text) {
-                return String(text[typeRange])
-            }
-        }
-
-        return nil
     }
 }

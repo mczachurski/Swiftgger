@@ -26,7 +26,7 @@ class OpenAPIRequestBuilder {
 
         let contentType = apiRequest.contentType ?? "application/json"
 
-        let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiRequestObject)
+        let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: .object(apiRequestObject))
         let mediaType = openAPIMediaTypeBuilder.built()
 
         let requestBody = OpenAPIRequestBody(description: apiRequest.description, content: [contentType: mediaType])

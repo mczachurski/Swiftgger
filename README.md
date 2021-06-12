@@ -36,6 +36,8 @@ let package = Package(
 )
 ``` 
 
+> Swiftgger requires at least version 5.3 of Swift.
+
 ## How to use it
 
 Unfortunately Swift is not perfect in *reflection* (introspection) and a lot of settings we have to do manually. 
@@ -72,7 +74,7 @@ openAPIBuilder.add(
 
 Each controller can have list of actions (routes) with name, description, response and requests information.
 
-**Get by id action**
+**Get by id action (object in response)**
 
 ```swift
 APIAction(method: .get, route: "/users/{id}",
@@ -82,13 +84,24 @@ APIAction(method: .get, route: "/users/{id}",
         APIParameter(name: "id", description: "User id", required: true)
     ],
     responses: [
-        APIResponse(code: "200", description: "Specific user", object: UserDto.self),
+        APIResponse(code: "200", description: "Specific user", type: .object(UserDto.self),
         APIResponse(code: "404", description: "User with entered id not exists"),
         APIResponse(code: "401", description: "User not authorized")
     ],
     authorization: true
 )
+```
 
+**Get action (value type in response)**
+
+```swift
+APIAction(method: .get, route: "/version",
+    summary: "Getting system version",
+    description: "Action for getting application current version",
+    responses: [
+        APIResponse(code: "200", description: "Specific user", type: .value("1.0.0")
+    ]
+)
 ```
 
 **Post action**
@@ -99,8 +112,8 @@ APIAction(method: .post, route: "/users",
     description: "Action for adding new user to the server",
     request: APIRequest(object: userDto, description: "Object with user information."),
     responses: [
-        APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
-        APIResponse(code: "400", description: "There was issues during adding new user", object: ValidationErrorResponseDto.self),
+        APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
+        APIResponse(code: "400", description: "There was issues during adding new user", type: .object(ValidationErrorResponseDto.self)),
         APIResponse(code: "401", description: "User not authorized")
     ],
     authorization: true
@@ -137,7 +150,7 @@ let openAPIBuilder = OpenAPIBuilder(
             summary: "Getting all users",
             description: "Action for getting all users from server",
             responses: [
-                APIResponse(code: "200", description: "List of users", object: UserDto.self),
+                APIResponse(code: "200", description: "List of users", type: .object(UserDto.self)),
                 APIResponse(code: "401", description: "User not authorized")
             ],
             authorization: true
@@ -149,7 +162,7 @@ let openAPIBuilder = OpenAPIBuilder(
                 APIParameter(name: "id", description: "User id", required: true)
             ],
             responses: [
-                APIResponse(code: "200", description: "Specific user", object: UserDto.self),
+                APIResponse(code: "200", description: "Specific user", type: .object(UserDto.self)),
                 APIResponse(code: "404", description: "User with entered id not exists"),
                 APIResponse(code: "401", description: "User not authorized")
             ],
@@ -160,8 +173,8 @@ let openAPIBuilder = OpenAPIBuilder(
             description: "Action for adding new user to the server",
             request: APIRequest(object: UserDto.self, description: "Object with user information."),
             responses: [
-                APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
-                APIResponse(code: "400", description: "There was issues during adding new user", object: ValidationErrorResponseDto.self),
+                APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
+                APIResponse(code: "400", description: "There was issues during adding new user", type: .object(ValidationErrorResponseDto.self)),
                 APIResponse(code: "401", description: "User not authorized")
             ],
             authorization: true
@@ -174,8 +187,8 @@ let openAPIBuilder = OpenAPIBuilder(
             ],
             request: APIRequest(object: UserDto.self, description: "Object with user information."),
             responses: [
-                APIResponse(code: "200", description: "User data after adding to the system", object: UserDto.self),
-                APIResponse(code: "400", description: "There was issues during updating user", object: ValidationErrorResponseDto.self),
+                APIResponse(code: "200", description: "User data after adding to the system", type: .object(UserDto.self)),
+                APIResponse(code: "400", description: "There was issues during updating user", type: .object(ValidationErrorResponseDto.self)),
                 APIResponse(code: "404", description: "User with entered id not exists"),
                 APIResponse(code: "401", description: "User not authorized")
             ],
@@ -243,8 +256,8 @@ Command options are:
 ```
 
 **TODO:**
-[ ] Client services generation
-[ ] Infromation how to use generated HTTP client services
+ - [ ] Client services generation
+ - [ ] Infromation how to use generated HTTP client services
 
 ## License
 

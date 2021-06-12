@@ -11,8 +11,7 @@ import Foundation
 public class APIResponse {
     var code: String
     var description: String
-    var object: Any.Type?
-    var array: Any.Type?
+    var type: APIResponseType?
     var contentType: String?
 
     public init(code: String, description: String) {
@@ -20,17 +19,10 @@ public class APIResponse {
         self.description = description
     }
 
-    public init(code: String, description: String, object: Any.Type?, contentType: String? = nil) {
+    public init(code: String, description: String, type: APIResponseType?, contentType: String? = nil) {
         self.code = code
         self.description = description
-        self.object = object
-        self.contentType = contentType
-    }
-
-    public init(code: String, description: String, array: Any.Type?, contentType: String? = nil) {
-        self.code = code
-        self.description = description
-        self.array = array
+        self.type = type
         self.contentType = contentType
     }
 }
