@@ -1,9 +1,7 @@
 //
-//  OptionType.swift
-//  SwiftggerGenerator
-//
-//  Created by Marcin Czachurski on 20/02/2021.
-//  Copyright © 2021 Marcin Czachurski. All rights reserved.
+//  https://mczachurski.dev
+//  Copyright © 2021 Marcin Czachurski and the repository contributors.
+//  Licensed under the MIT License.
 //
 
 import Foundation

@@ -1,8 +1,7 @@
 //
-//  OpenAPIServersBuilderTests.swift
-//  SwiftggerTests
-//
-//  Created by Marcin Czachurski on 26.03.2018.
+//  https://mczachurski.dev
+//  Copyright © 2021 Marcin Czachurski and the repository contributors.
+//  Licensed under the MIT License.
 //
 
 import XCTest

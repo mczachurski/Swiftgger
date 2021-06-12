@@ -1,8 +1,7 @@
 //
-//  OpenAPIParametersBuilderTests.swift
-//  SwiftggerTests
-//
-//  Created by Eneko Alonso on 2/2/19.
+//  https://mczachurski.dev
+//  Copyright © 2021 Marcin Czachurski and the repository contributors.
+//  Licensed under the MIT License.
 //
 
 import XCTest
