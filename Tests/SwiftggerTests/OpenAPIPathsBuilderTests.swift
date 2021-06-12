@@ -207,7 +207,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self))
                         ]
             )
         ]))
@@ -233,7 +233,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self))
                         ]
             )
         ]))
@@ -260,7 +260,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: Animal.self, contentType: "application/xml")
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self), contentType: "application/xml")
                         ]
             )
         ]))
@@ -287,7 +287,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self))
                         ]
             )
         ]))
@@ -314,7 +314,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", array: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self, asCollection: true))
                         ]
             )
         ]))
@@ -340,7 +340,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", object: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self))
                         ]
             )
         ]))
@@ -366,7 +366,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
                       description: "Action description", responses: [
-                          APIResponse(code: "200", description: "Response description", array: Animal.self)
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self, asCollection: true))
                         ]
             )
         ]))
@@ -392,7 +392,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
+                      description: "Action description", request: APIRequest(type: .object(Animal.self), description: "Animal request")
 
                 )
         ]))
@@ -418,7 +418,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
+                      description: "Action description", request: APIRequest(type: .object(Animal.self), description: "Animal request")
 
             )
         ]))
@@ -444,7 +444,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request", contentType: "application/xml")
+                      description: "Action description", request: APIRequest(type: .object(Animal.self), description: "Animal request", contentType: "application/xml")
 
             )
         ]))
@@ -470,7 +470,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
+                      description: "Action description", request: APIRequest(type: .object(Animal.self), description: "Animal request")
 
             )
         ]))
@@ -495,7 +495,7 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
             APIAction(method: .get, route: "/animals", summary: "Action summary",
-                      description: "Action description", request: APIRequest(object: Animal.self, description: "Animal request")
+                      description: "Action description", request: APIRequest(type: .object(Animal.self), description: "Animal request")
 
             )
         ]))
@@ -508,6 +508,32 @@ class OpenAPIPathsBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/json"]?.schema?.ref)
+    }
+    
+    func testActionRequestValueTypeShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", request: APIRequest(type: .value("Lion"), description: "Animal request")
+
+            )
+        ]))
+        .add([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("string", openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/json"]?.schema?.type)
+        XCTAssertEqual("Lion", openAPIDocument.paths["/animals"]?.get?.requestBody?.content?["application/json"]?.schema?.example)
     }
 
     func testActionParameterNameShouldBeAddedToOpenAPIDocument() {
@@ -563,14 +589,13 @@ class OpenAPIPathsBuilderTests: XCTestCase {
             title: "Title",
             version: "1.0.0",
             description: "Description"
-            )
-            .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-                APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
-                    APIParameter(name: "id", parameterLocation: .path, description: "Parameter description",
-                                 required: true, deprecated: true, allowEmptyValue: true)
-                    ])
-                ])
         )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/animals/{id}", summary: "Action summary", description: "Action description", parameters: [
+                APIParameter(name: "id", parameterLocation: .path, description: "Parameter description",
+                             required: true, deprecated: true, allowEmptyValue: true)
+            ])
+        ]))
 
         // Act.
         let openAPIDocument = openAPIBuilder.built()
@@ -581,27 +606,129 @@ class OpenAPIPathsBuilderTests: XCTestCase {
 
     func testActionObjectResponseReferenceWithCustomNameShouldBeAddedToOpenAPIDocument() {
 
-      // Arrange.
-      let openAPIBuilder = OpenAPIBuilder(
-        title: "Title",
-        version: "1.0.0",
-        description: "Description"
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
         )
         .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
-          APIAction(method: .get, route: "/animals", summary: "Action summary",
-                    description: "Action description", responses: [
-                      APIResponse(code: "200", description: "Response description", object: Animal.self)
-            ]
-          )
-          ]))
+            APIAction(method: .get, route: "/animals", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .object(Animal.self))
+                      ]
+                     )
+        ]))
         .add([
-          APIObject(object: Animal(name: "Dog", age: 21), customName: "CustomAnimal")
-          ])
+            APIObject(object: Animal(name: "Dog", age: 21), customName: "CustomAnimal")
+        ])
 
-      // Act.
-      let openAPIDocument = openAPIBuilder.built()
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
 
-      // Assert.
-      XCTAssertEqual("#/components/schemas/CustomAnimal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
+        // Assert.
+        XCTAssertEqual("#/components/schemas/CustomAnimal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
+    }
+    
+    func testActionStringValueTypeResponseShouldBeAddedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/version", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .value("1.0.0"), contentType: "application/text")
+                      ]
+                     )
+        ]))
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("string", openAPIDocument.paths["/version"]?.get?.responses?["200"]?.content?["application/text"]?.schema?.type)
+        XCTAssertEqual("1.0.0", openAPIDocument.paths["/version"]?.get?.responses?["200"]?.content?["application/text"]?.schema?.example)
+    }
+    
+    func testActionStringArrayValueTypeResponseShouldBeAddedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/certificates", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .value(["EURO 6", "ABS"]), contentType: "application/json")
+                      ]
+                     )
+        ]))
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("array", openAPIDocument.paths["/certificates"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.type)
+        XCTAssertEqual("string", openAPIDocument.paths["/certificates"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.items?.type)
+        
+        let example = openAPIDocument.paths["/certificates"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.example?.value as? [String]
+        XCTAssertNotNil(example, "Example array not exists")
+        XCTAssertEqual("EURO 6", example![0])
+        XCTAssertEqual("ABS", example![1])
+    }
+    
+    func testActionNumberValueTypeResponseShouldBeAddedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/temperature", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .value(43.5), contentType: "application/text")
+                      ]
+                     )
+        ]))
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("number", openAPIDocument.paths["/temperature"]?.get?.responses?["200"]?.content?["application/text"]?.schema?.type)
+        XCTAssertEqual(43.5, openAPIDocument.paths["/temperature"]?.get?.responses?["200"]?.content?["application/text"]?.schema?.example)
+    }
+    
+    func testActionNumberArrayValueTypeResponseShouldBeAddedToOpenAPIDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/temperature", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .value([32.4, 42.1]), contentType: "application/json")
+                      ]
+                     )
+        ]))
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("array", openAPIDocument.paths["/temperature"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.type)
+        XCTAssertEqual("number", openAPIDocument.paths["/temperature"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.items?.type)
+        
+        let example = openAPIDocument.paths["/temperature"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.example?.value as? [Double]
+        XCTAssertNotNil(example, "Example array not exists")
+        XCTAssertEqual(32.4, example![0])
+        XCTAssertEqual(42.1, example![1])
     }
 }

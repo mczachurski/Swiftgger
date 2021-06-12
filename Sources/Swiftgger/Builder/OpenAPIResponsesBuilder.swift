@@ -27,22 +27,9 @@ class OpenAPIResponsesBuilder {
         var openAPIResponses: [String: OpenAPIResponse] = [:]
 
         for apiResponse in apiResponses {
-
-            var apiResponseObject: Any.Type?
-            var isArray: Bool = false
-
-            if apiResponse.object != nil {
-                apiResponseObject = apiResponse.object
-            } else if apiResponse.array != nil {
-                isArray = true
-                apiResponseObject = apiResponse.array
-            }
-
-            if apiResponseObject != nil {
-
+            if let apiResponseType = apiResponse.type {
                 let contentType = apiResponse.contentType ?? "application/json"
-
-                let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiResponseObject!, isArray: isArray)
+                let openAPIMediaTypeBuilder = OpenAPIMediaTypeBuilder(objects: objects, for: apiResponseType)
                 let mediaType = openAPIMediaTypeBuilder.built()
 
                 let openAPIResponse = OpenAPIResponse(

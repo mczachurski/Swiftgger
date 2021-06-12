@@ -11,7 +11,47 @@ import Foundation
 public struct APIDataType {
     let type: String
     let format: String?
+}
 
+extension APIDataType {
+    /// Infer OpenAPI Data Type from Swift value type
+    ///
+    /// - Parameter value: Swift property value to analyze
+    /// - Returns: Most appropriate OpenAPI Data Type
+    init?(fromSwiftValue value: Any) {
+        switch value {
+        case is Int32:
+            self.type = "integer"
+            self.format = "int32"
+        case is Int:
+            self.type = "integer"
+            self.format = "int64"
+        case is Float:
+            self.type = "number"
+            self.format = "float"
+        case is Double:
+            self.type = "number"
+            self.format = "double"
+        case is Bool:
+            self.type = "boolean"
+            self.format = nil
+        case is Date:
+            self.type = "string"
+            self.format = "date"
+        case is String:
+            self.type = "string"
+            self.format = nil
+        case is UUID:
+            self.type = "string"
+            self.format = "uuid"
+        default:
+            return nil
+        }
+    }
+}
+
+extension APIDataType {
+    public static let array = APIDataType(type: "array", format: nil)
     public static let int32 = APIDataType(type: "integer", format: "int32")
     public static let int64 = APIDataType(type: "integer", format: "int64")
     public static let float = APIDataType(type: "number", format: "float")

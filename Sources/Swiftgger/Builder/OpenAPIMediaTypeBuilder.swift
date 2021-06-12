@@ -6,29 +6,47 @@
 //
 
 import Foundation
+import AnyCodable
 
 /// Builder of `paths` part of OpenAPI.
 class OpenAPIMediaTypeBuilder {
     let objects: [APIObject]
-    let object: Any.Type
-    let isArray: Bool
+    let type: APIResponseType
 
-    init(objects: [APIObject], for object: Any.Type, isArray: Bool = false) {
+    init(objects: [APIObject], for type: APIResponseType) {
         self.objects = objects
-        self.object = object
-        self.isArray = isArray
+        self.type = type
     }
 
     func built() -> OpenAPIMediaType {
-
-        let objectTypeReference = self.createObjectReference(for: self.object)
-
         var openAPISchema: OpenAPISchema?
-        if isArray {
-            let objectInArraySchema = OpenAPISchema(ref: objectTypeReference)
-            openAPISchema = OpenAPISchema(type: "array", items: objectInArraySchema)
-        } else {
-            openAPISchema = OpenAPISchema(ref: objectTypeReference)
+        
+        switch type {
+        case .object(let type, let isCollection):
+            let objectTypeReference = self.createObjectReference(for: type)
+            
+            if isCollection {
+                let objectInArraySchema = OpenAPISchema(ref: objectTypeReference)
+                openAPISchema = OpenAPISchema(type: APIDataType.array.type, items: objectInArraySchema)
+            } else {
+                openAPISchema = OpenAPISchema(ref: objectTypeReference)
+            }
+            
+            break
+        case .value(let type):
+            let example = AnyCodable(type)
+
+            if let items = type as? Array<Any>, let first = items.first {
+                let dataType = APIDataType(fromSwiftValue: first)
+                
+                let objectInArraySchema = OpenAPISchema(type: dataType?.type, format: dataType?.format)
+                openAPISchema = OpenAPISchema(type: APIDataType.array.type, items: objectInArraySchema, example: example)
+            } else {
+                let dataType = APIDataType(fromSwiftValue: type)
+                openAPISchema = OpenAPISchema(type: dataType?.type, format: dataType?.format, example: example)
+            }
+            
+            break
         }
 
         let openAPIMediaType = OpenAPIMediaType(schema: openAPISchema)
