@@ -33,11 +33,11 @@ class Program {
                                       hasEngine: false,
                                       tags: ["key": "value"],
                                       dictionary: [
-                                        "somethinf" : Fuel(level: 1, type: "GAS", productionDate: Date(), parameters: ["power"])
+                                        "somethinf" : Fuel(level: 1, type: "GAS", productionDate: Date(), parameters: ["power", "speed"])
                                       ],
                                       keyId: UUID(),
                                       uuidIds: [UUID(), UUID(), UUID()])),
-            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power"]))
+            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power", "speed"]))
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [
             APIAction(method: .get,

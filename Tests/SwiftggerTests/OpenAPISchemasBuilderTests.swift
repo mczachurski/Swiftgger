@@ -315,6 +315,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"], "Vehicle schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["User"]?.properties?["vehicles"]?.type)
         XCTAssertEqual("#/components/schemas/Vehicle", openAPIDocument.components?.schemas?["User"]?.properties?["vehicles"]?.items?.ref)
     }
 
@@ -352,6 +353,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.type)
         XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.items?.ref)
     }
     
@@ -391,6 +393,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.type)
         XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.items?.ref)
     }
     
@@ -444,7 +447,7 @@ class OpenAPISchemasBuilderTests: XCTestCase {
             description: "Description"
         )
         .add([
-            APIObject(object: Fuel(level: 1, type: "", parameters: ["power"]))
+            APIObject(object: Fuel(level: 1, type: "", parameters: ["power", "speed"]))
         ])
         
         // Act.
@@ -452,7 +455,13 @@ class OpenAPISchemasBuilderTests: XCTestCase {
 
         // Assert.
         XCTAssertNotNil(openAPIDocument.components?.schemas?["Fuel"], "Fuel schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["Fuel"]?.properties?["parameters"]?.type)
         XCTAssertEqual("string", openAPIDocument.components?.schemas?["Fuel"]?.properties?["parameters"]?.items?.type)
+        
+        let example = openAPIDocument.components?.schemas?["Fuel"]?.properties?["parameters"]?.example?.value as? [String]
+        XCTAssertNotNil(example, "Example array not exists")
+        XCTAssertEqual("power", example![0])
+        XCTAssertEqual("speed", example![1])
     }
     
     func testSchemaWithDictionaryOfStringShouldBeTranslatedToOpenAPIDocument() {
@@ -517,5 +526,34 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertEqual("string", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.type)
         XCTAssertEqual("uuid", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.format)
         XCTAssertEqual("E621E1F8-C36C-495A-93FC-0C247A3E6E5F", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["singleId"]?.example)
+    }
+    
+    func testSchemaWithArrayOfUUIDProperyShouldBeTranslatedToOpenApiDocument() {
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: VehicleKeys(singleId: UUID(), arrayIds: [
+                UUID(uuidString: "CE30476C-B335-41A8-9E68-1C0C98DCEB60")!,
+                UUID(uuidString: "B5728916-CD90-4A88-ABFD-23576BA563DA")!
+            ]))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["VehicleKeys"], "VehicleKeys schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["arrayIds"]?.type)
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["arrayIds"]?.items?.type)
+        XCTAssertEqual("uuid", openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["arrayIds"]?.items?.format)
+        
+        let example = openAPIDocument.components?.schemas?["VehicleKeys"]?.properties?["arrayIds"]?.example?.value as? [String]
+        XCTAssertNotNil(example, "Example array not exists")
+        XCTAssertEqual("CE30476C-B335-41A8-9E68-1C0C98DCEB60", example![0])
+        XCTAssertEqual("B5728916-CD90-4A88-ABFD-23576BA563DA", example![1])
     }
 }
