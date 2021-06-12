@@ -34,9 +34,17 @@ class MirrorHelper {
         return first.value
     }
     
-    static func convertBasedOnValueType(_ any: Any) -> Any {
+    static func convert(valueType any: Any) -> Any {
         if let uuid = any as? UUID {
             return uuid.uuidString
+        }
+        
+        return any
+    }
+    
+    static func convert(arrayType any: Any) -> Any {
+        if let uuidArray = any as? [UUID] {
+            return uuidArray.map { uuid in uuid.uuidString }
         }
         
         return any

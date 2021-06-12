@@ -102,7 +102,7 @@ class OpenAPISchemasBuilder {
                         unwrapped: Any,
                         array: inout [(name: String, type: OpenAPISchema)]
     ) {
-        let exampleValue = MirrorHelper.convertBasedOnValueType(unwrapped)
+        let exampleValue = MirrorHelper.convert(valueType: unwrapped)
         let example = AnyCodable(exampleValue)
         let objectProperty = OpenAPISchema(type: dataType.type, format: dataType.format, example: example)
         array.append((name: property.label ?? "", type: objectProperty))
@@ -118,14 +118,16 @@ class OpenAPISchemasBuilder {
 
         let unwrapped = MirrorHelper.unwrap(item)
         if let dataType = APIDataType(fromSwiftValue: unwrapped) {
+            let exampleValue = MirrorHelper.convert(arrayType: items)
+            let example = AnyCodable(exampleValue)
             let openApiSchema = OpenAPISchema(type: dataType.type, format: dataType.format)
-            let objectProperty = OpenAPISchema(items: openApiSchema)
+            let objectProperty = OpenAPISchema(type: APIDataType.array.type, items: openApiSchema, example: example)
 
             array.append((name: property.label ?? "", type: objectProperty))
         } else {
             let typeName = String(describing: type(of: item))
             let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
-            let objectProperty = OpenAPISchema(items: openApiSchema)
+            let objectProperty = OpenAPISchema(type: APIDataType.array.type, items: openApiSchema)
 
             array.append((name: property.label ?? "", type: objectProperty))
             self.nestedObjects.append(item)
@@ -181,7 +183,7 @@ class OpenAPISchemasBuilder {
                         array: inout [(name: String, type: OpenAPISchema)]
     ) {
         let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(arrayName)")
-        let objectProperty = OpenAPISchema(items: openApiSchema)
+        let objectProperty = OpenAPISchema(type: APIDataType.array.type, items: openApiSchema)
         array.append((name: property.label ?? "", type: objectProperty))
     }
 }
