@@ -10,9 +10,9 @@ import Foundation
 class OpenAPIResponsesBuilder {
 
     let responses: [APIResponse]?
-    let objects: [APIObject]
+    let objects: [APIObjectProtocol]
 
-    init(responses: [APIResponse]?, objects: [APIObject]) {
+    init(responses: [APIResponse]?, objects: [APIObjectProtocol]) {
         self.responses = responses
         self.objects = objects
     }

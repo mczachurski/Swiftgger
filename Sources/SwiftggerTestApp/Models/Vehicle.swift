@@ -6,7 +6,7 @@
 
 import Foundation
 
-class Vehicle {
+class Vehicle: Encodable {
     var name: String
     var age: Int?
     var fuels: [Fuel]?

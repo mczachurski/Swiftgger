@@ -35,7 +35,8 @@ class Program {
                                       ],
                                       keyId: UUID(),
                                       uuidIds: [UUID(), UUID(), UUID()])),
-            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power", "speed"]))
+            APIObject(object: Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power", "speed"])),
+            APIObject(object: Species(name: "Ant", countryOfOrigin: "Africa"))
         ])
         .add(APIController(name: "VehiclesController", description: "Contoller for vehicles", actions: [
             APIAction(method: .get,

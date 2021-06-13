@@ -27,23 +27,17 @@ public class OpenAPISchema: Codable {
          format: String? = nil,
          items: OpenAPISchema? = nil,
          required: [String]? = nil,
-         properties: [(name: String, type: OpenAPISchema)]? = nil,
+         properties: [String: OpenAPISchema]? = nil,
          example: AnyCodable? = nil,
          additionalProperties: OpenAPISchema? = nil
     ) {
         self.type = type
         self.format = format
         self.items = items
-        self.required = required
+        self.required = `required`
+        self.properties = properties
         self.example = example
         self.additionalProperties = additionalProperties
-
-        if let typeProperies = properties {
-            self.properties = [:]
-            for property in typeProperies {
-                self.properties![property.name] = property.type
-            }
-        }
     }
 
     private enum CodingKeys: String, CodingKey {

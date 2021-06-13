@@ -10,9 +10,9 @@ import Foundation
 class OpenAPIRequestBuilder {
 
     let request: APIRequest?
-    let objects: [APIObject]
+    let objects: [APIObjectProtocol]
 
-    init(request: APIRequest?, objects: [APIObject]) {
+    init(request: APIRequest?, objects: [APIObjectProtocol]) {
         self.request = request
         self.objects = objects
     }

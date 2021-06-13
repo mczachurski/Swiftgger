@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct Fuel {
+struct Fuel: Encodable {
     var level: Int
     var type: String
     var productionDate: Date

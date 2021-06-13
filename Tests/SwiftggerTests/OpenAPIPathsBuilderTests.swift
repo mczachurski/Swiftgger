@@ -9,7 +9,7 @@ import XCTest
 
 // swiftlint:disable type_body_length file_length
 
-class Animal {
+class Animal: Encodable {
     var name: String
     var age: Int?
 
