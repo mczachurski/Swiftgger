@@ -9,10 +9,10 @@ import AnyCodable
 
 /// Builder of `paths` part of OpenAPI.
 class OpenAPIMediaTypeBuilder {
-    let objects: [APIObject]
+    let objects: [APIObjectProtocol]
     let type: APIResponseType
 
-    init(objects: [APIObject], for type: APIResponseType) {
+    init(objects: [APIObjectProtocol], for type: APIResponseType) {
         self.objects = objects
         self.type = type
     }

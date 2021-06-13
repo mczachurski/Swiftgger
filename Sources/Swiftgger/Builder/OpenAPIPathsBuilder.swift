@@ -10,9 +10,9 @@ import Foundation
 class OpenAPIPathsBuilder {
     let controllers: [APIController]
     let authorizations: [APIAuthorizationType]?
-    let objects: [APIObject]
+    let objects: [APIObjectProtocol]
 
-    init(controllers: [APIController], authorizations: [APIAuthorizationType]?, objects: [APIObject]) {
+    init(controllers: [APIController], authorizations: [APIAuthorizationType]?, objects: [APIObjectProtocol]) {
         self.controllers = controllers
         self.authorizations = authorizations
         self.objects = objects

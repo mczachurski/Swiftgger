@@ -12,9 +12,9 @@ class OpenAPIOperationBuilder {
     let controllerName: String
     let action: APIAction
     let authorizations: [APIAuthorizationType]?
-    let objects: [APIObject]
+    let objects: [APIObjectProtocol]
 
-    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, objects: [APIObject]) {
+    init(controllerName: String, action: APIAction, authorizations: [APIAuthorizationType]?, objects: [APIObjectProtocol]) {
         self.controllerName = controllerName
         self.action = action
         self.authorizations = authorizations

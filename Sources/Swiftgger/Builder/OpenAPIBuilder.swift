@@ -19,7 +19,7 @@ public class OpenAPIBuilder {
 
     var controllers: [APIController] = []
     var servers: [APIServer] = []
-    var objects: [APIObject] = []
+    var objects: [APIObjectProtocol] = []
 
     /**
         Initializes a instance of OpenAPI documentation builder.
@@ -83,7 +83,7 @@ public class OpenAPIBuilder {
 
         - Returns: Same OpenAPI builder.
     */
-    public func add(_ objects: [APIObject]) -> OpenAPIBuilder {
+    public func add(_ objects: [APIObjectProtocol]) -> OpenAPIBuilder {
         self.objects.append(contentsOf: objects)
         return self
     }
