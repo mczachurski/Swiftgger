@@ -6,12 +6,6 @@
     
 import Foundation
 
-extension Encodable {
-    fileprivate func openedEncode(to container: inout SingleValueEncodingContainer) throws {
-        try container.encode(self)
-    }
-}
-
 struct APIObjectEncodable : Encodable {
     var value: Encodable
     

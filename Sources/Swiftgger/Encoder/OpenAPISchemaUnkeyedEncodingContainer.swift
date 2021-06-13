@@ -4,14 +4,18 @@
 //  Licensed under the MIT License.
 //
 
+import Foundation
+
 class OpenAPISchemaUnkeyedEncodingContainer : UnkeyedEncodingContainer {
     let encoder: OpenAPISchemaEncoder
+    let keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
     var codingPath: [CodingKey]
     var count: Int = 0
     
-    init(referencing encoder: OpenAPISchemaEncoder, codingPath: [CodingKey]) {
+    init(referencing encoder: OpenAPISchemaEncoder, codingPath: [CodingKey], keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy) {
         self.encoder = encoder
         self.codingPath = codingPath
+        self.keyEncodingStrategy = keyEncodingStrategy
     }
     
     func encode(_ value: Bool) throws { }
@@ -33,12 +37,17 @@ class OpenAPISchemaUnkeyedEncodingContainer : UnkeyedEncodingContainer {
     
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let storage = OpenAPISchemaStorage()
-        let container = OpenAPISchemaKeyedEncodingContainer<NestedKey>(referencing: self.encoder, codingPath: self.codingPath, wrapping: storage)
+        let container = OpenAPISchemaKeyedEncodingContainer<NestedKey>(referencing: self.encoder,
+                                                                       codingPath: self.codingPath,
+                                                                       wrapping: storage,
+                                                                       keyEncodingStrategy: self.keyEncodingStrategy)
         return KeyedEncodingContainer(container)
     }
     
     func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        return OpenAPISchemaUnkeyedEncodingContainer(referencing: self.encoder, codingPath: self.codingPath)
+        return OpenAPISchemaUnkeyedEncodingContainer(referencing: self.encoder,
+                                                     codingPath: self.codingPath,
+                                                     keyEncodingStrategy: self.keyEncodingStrategy)
     }
     
     func superEncoder() -> Encoder {

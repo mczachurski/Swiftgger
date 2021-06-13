@@ -11,10 +11,13 @@ import AnyCodable
 class OpenAPISchemasBuilder {
 
     let objects: [APIObjectProtocol]
+    let keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
+
     private var nestedObjects: [Any] = []
 
-    init(objects: [APIObjectProtocol]) {
+    init(objects: [APIObjectProtocol], keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy) {
         self.objects = objects
+        self.keyEncodingStrategy = keyEncodingStrategy
     }
 
     func built() -> [String: OpenAPISchema] {
@@ -27,7 +30,7 @@ class OpenAPISchemasBuilder {
                 continue
             }
             
-            let openAPISchemaConverter = OpenAPISchemaConverter()
+            let openAPISchemaConverter = OpenAPISchemaConverter(keyEncodingStrategy: self.keyEncodingStrategy)
             let objectSchema = openAPISchemaConverter.convert(APIObjectEncodable(anyEncodable), referencedObjects: objectsNames)
 
             let requestMirror: Mirror = Mirror(reflecting: object.anyObject)

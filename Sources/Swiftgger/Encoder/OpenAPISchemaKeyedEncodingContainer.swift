@@ -9,13 +9,41 @@ import AnyCodable
 
 class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContainerProtocol {
     let encoder: OpenAPISchemaEncoder
+    let keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
     var codingPath: [CodingKey]
     var storage: OpenAPISchemaStorage
     
-    init(referencing encoder: OpenAPISchemaEncoder, codingPath: [CodingKey], wrapping storage: OpenAPISchemaStorage) {
+    init(referencing encoder: OpenAPISchemaEncoder,
+         codingPath: [CodingKey],
+         wrapping storage: OpenAPISchemaStorage,
+         keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
+    ) {
         self.encoder = encoder
         self.codingPath = codingPath
         self.storage = storage
+        self.keyEncodingStrategy = keyEncodingStrategy
+    }
+    
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
+        let container = OpenAPISchemaKeyedEncodingContainer<NestedKey>(referencing: self.encoder,
+                                                                       codingPath: codingPath,
+                                                                       wrapping: storage,
+                                                                       keyEncodingStrategy: self.keyEncodingStrategy)
+        return KeyedEncodingContainer(container)
+    }
+    
+    func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
+        return OpenAPISchemaUnkeyedEncodingContainer(referencing: encoder,
+                                                     codingPath: codingPath,
+                                                     keyEncodingStrategy: self.keyEncodingStrategy)
+    }
+    
+    func superEncoder() -> Encoder {
+        return self.encoder
+    }
+    
+    func superEncoder(forKey key: Key) -> Encoder {
+        return self.encoder
     }
     
     func encodeNil(forKey key: Key) throws {
@@ -23,72 +51,72 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
     }
     
     func encode(_ value: Bool, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.boolean.type, format: APIDataType.boolean.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: String, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.string.type, format: APIDataType.string.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Double, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.double.type, format: APIDataType.double.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Float, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.float.type, format: APIDataType.float.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Int, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Int8, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Int16, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Int32, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: Int64, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int64.type, format: APIDataType.int64.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: UInt, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: UInt8, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: UInt16, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: UInt32, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int32.type, format: APIDataType.int32.format, example: AnyCodable(value)))
     }
     
     func encode(_ value: UInt64, forKey key: Key) throws {
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.int64.type, format: APIDataType.int64.format, example: AnyCodable(value)))
     }
     
@@ -139,7 +167,7 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
             let openApiSchema = OpenAPISchema(type: dataType.type, format: dataType.format)
             let objectProperty = OpenAPISchema(type: APIDataType.array.type, items: openApiSchema, example: example)
 
-            storage.push(property: key.stringValue, withParameters: objectProperty)
+            storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
             
         } else {
             guard self.isTypeReferenced(item) else {
@@ -149,7 +177,7 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
             let typeName = String(describing: type(of: item))
             let openApiSchema = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
             let objectProperty = OpenAPISchema(type: APIDataType.array.type, items: openApiSchema)
-            storage.push(property: key.stringValue, withParameters: objectProperty)
+            storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
         }
     }
     
@@ -163,7 +191,7 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
             let additionalProperties = OpenAPISchema(type: dataType.type, format: dataType.format)
             let objectProperty = OpenAPISchema(type: "object", additionalProperties: additionalProperties)
 
-            storage.push(property: key.stringValue, withParameters: objectProperty)
+            storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
         } else {
             guard self.isTypeReferenced(item.value) else {
                 return
@@ -172,7 +200,7 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
             let typeName = String(describing: type(of: item.value))
             let additionalProperties = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
             let objectProperty = OpenAPISchema(type: "object", additionalProperties: additionalProperties)
-            storage.push(property: key.stringValue, withParameters: objectProperty)
+            storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
         }
     }
         
@@ -183,12 +211,12 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
         
         let typeName = String(describing: type(of: value))
         let objectProperty = OpenAPISchema(ref: "#/components/schemas/\(typeName)")
-        storage.push(property: key.stringValue, withParameters: objectProperty)
+        storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
     }
     
     private func append(uuid: UUID, forKey key: Key) {
         let objectProperty = OpenAPISchema(type: APIDataType.uuid.type, format: APIDataType.uuid.format, example: AnyCodable(uuid.uuidString))
-        storage.push(property: key.stringValue, withParameters: objectProperty)
+        storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
     }
     
     private func append(date: Date, forKey key: Key) {
@@ -197,25 +225,27 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
         let dateString = dateFormatter.string(from: date)
         
-        storage.push(property: key.stringValue,
+        storage.push(property: self.converted(key).stringValue,
                      withParameters: OpenAPISchema(type: APIDataType.dateTime.type, format: APIDataType.dateTime.format, example: AnyCodable(dateString)))
     }
     
     private func append<T>(complex value: T, forKey key: Key) where T : Encodable {
         
-        let internalEncoder = OpenAPISchemaEncoder(codingPath: [], referencedObjects: self.encoder.referencedObjects)
+        let internalEncoder = OpenAPISchemaEncoder(codingPath: [],
+                                                   referencedObjects: self.encoder.referencedObjects,
+                                                   keyEncodingStrategy: self.keyEncodingStrategy)
         try? value.encode(to: internalEncoder)
         
         // Encode simple values (e.g. property wrappers simple values).
         if let schemaItem = internalEncoder.storage.collection.first {
-            storage.push(property: key.stringValue, withParameters: schemaItem)
+            storage.push(property: self.converted(key).stringValue, withParameters: schemaItem)
             return
         }
         
         // Encode complex objects.
         if internalEncoder.storage.container.isEmpty == false {
             let objectProperty = OpenAPISchema(type: "object", properties: internalEncoder.storage.container)
-            storage.push(property: key.stringValue, withParameters: objectProperty)
+            storage.push(property: self.converted(key).stringValue, withParameters: objectProperty)
         }
     }
     
@@ -224,20 +254,17 @@ class OpenAPISchemaKeyedEncodingContainer<Key : CodingKey> : KeyedEncodingContai
         return self.encoder.referencedObjects.contains(where: { referencedObject in referencedObject == typeName })
     }
     
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> {
-        let container = OpenAPISchemaKeyedEncodingContainer<NestedKey>(referencing: self.encoder, codingPath: codingPath, wrapping: storage)
-        return KeyedEncodingContainer(container)
-    }
-    
-    func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
-        return OpenAPISchemaUnkeyedEncodingContainer(referencing: encoder, codingPath: codingPath)
-    }
-    
-    func superEncoder() -> Encoder {
-        return self.encoder
-    }
-    
-    func superEncoder(forKey key: Key) -> Encoder {
-        return self.encoder
+    private func converted(_ key: Key) -> CodingKey {
+        switch self.keyEncodingStrategy {
+        case .useDefaultKeys:
+            return key
+        case .convertToSnakeCase:
+            let newKeyString = key.stringValue.snakeCase()
+            return PropertyKey(stringValue: newKeyString, intValue: key.intValue)
+        case .custom(let converter):
+            return converter(codingPath + [key])
+        @unknown default:
+            return key
+        }
     }
 }

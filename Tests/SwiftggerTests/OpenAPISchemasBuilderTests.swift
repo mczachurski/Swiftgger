@@ -516,4 +516,26 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertEqual("string", openAPIDocument.components?.schemas?["Species"]?.properties?["country_of_origin"]?.type)
         XCTAssertEqual("Africa", openAPIDocument.components?.schemas?["Species"]?.properties?["country_of_origin"]?.example)
     }
+    
+    func testSchemaWithCustomEncodingStrategyShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: User(vehicles: [], family: [:], birthDate: Date()))
+        ])
+        .use(keyEncodingStrategy: .convertToSnakeCase)
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+        
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["User"]?.properties?["birth_date"], "birth_date property not exists in schema")
+        XCTAssertEqual("string", openAPIDocument.components?.schemas?["User"]?.properties?["birth_date"]?.type)
+        XCTAssertEqual("date-time", openAPIDocument.components?.schemas?["User"]?.properties?["birth_date"]?.format)
+    }
 }

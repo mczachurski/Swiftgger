@@ -12,21 +12,28 @@ class OpenAPISchemaEncoder: Encoder {
     let codingPath: [CodingKey]
     let storage: OpenAPISchemaStorage
     let referencedObjects: [String]
+    let keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy
     
-    init(codingPath: [CodingKey] = [], referencedObjects: [String] = []) {
+    init(codingPath: [CodingKey] = [], referencedObjects: [String] = [], keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy) {
         self.userInfo = [:]
         self.codingPath = codingPath
         self.referencedObjects = referencedObjects
+        self.keyEncodingStrategy = keyEncodingStrategy
         self.storage = OpenAPISchemaStorage()
     }
     
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
-        let container = OpenAPISchemaKeyedEncodingContainer<Key>(referencing: self, codingPath: self.codingPath, wrapping: storage)
+        let container = OpenAPISchemaKeyedEncodingContainer<Key>(referencing: self,
+                                                                 codingPath: self.codingPath,
+                                                                 wrapping: storage,
+                                                                 keyEncodingStrategy: self.keyEncodingStrategy)
         return KeyedEncodingContainer(container)
     }
     
     func unkeyedContainer() -> UnkeyedEncodingContainer {
-        return OpenAPISchemaUnkeyedEncodingContainer(referencing: self, codingPath: self.codingPath)
+        return OpenAPISchemaUnkeyedEncodingContainer(referencing: self,
+                                                     codingPath: self.codingPath,
+                                                     keyEncodingStrategy: self.keyEncodingStrategy)
     }
     
     func singleValueContainer() -> SingleValueEncodingContainer {

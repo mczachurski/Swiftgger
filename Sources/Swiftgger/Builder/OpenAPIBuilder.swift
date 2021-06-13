@@ -21,6 +21,9 @@ public class OpenAPIBuilder {
     var servers: [APIServer] = []
     var objects: [APIObjectProtocol] = []
 
+    /// The strategy to use for encoding keys. Defaults to `.useDefaultKeys`.
+    var keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy = .useDefaultKeys
+    
     /**
         Initializes a instance of OpenAPI documentation builder.
 
@@ -89,6 +92,18 @@ public class OpenAPIBuilder {
     }
 
     /**
+        Use custom model key encoding strategy.
+     
+        - Parameter keyEncodingStrategy: Encoding key strategy used to prepare keys in OpenAPI model.
+
+        - Returns: Same OpenAPI builder.
+     */
+    public func use(keyEncodingStrategy: JSONEncoder.KeyEncodingStrategy) -> OpenAPIBuilder {
+        self.keyEncodingStrategy = keyEncodingStrategy
+        return self
+    }
+    
+    /**
         Method which is responsible for build OpenAPI document.
 
         - Returns: Object with OpenAPI specification.
@@ -117,7 +132,7 @@ public class OpenAPIBuilder {
         let openAPIServers = openAPIServersBuilder.built()
 
         // Create information about schemas (objects).
-        let openAPISchemasBuilder = OpenAPISchemasBuilder(objects: self.objects)
+        let openAPISchemasBuilder = OpenAPISchemasBuilder(objects: self.objects, keyEncodingStrategy: self.keyEncodingStrategy)
         let schemas = openAPISchemasBuilder.built()
 
         // Create information about paths (actions).
