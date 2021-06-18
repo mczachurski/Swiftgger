@@ -396,6 +396,30 @@ class OpenAPISchemasBuilderTests: XCTestCase {
         XCTAssertEqual("power", example![0])
         XCTAssertEqual("speed", example![1])
     }
+
+    func testSchemaWithArrayOfObjectsShouldBeTranslatedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add([
+            APIObject(object: Vehicle(name: "Ford", age: 12, wrappedString: "", fuels: [
+                Fuel(level: 1, type: "GAS", parameters: [])
+            ])),
+            APIObject(object: Fuel(level: 1, type: "GAS", parameters: []))
+        ])
+        
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertNotNil(openAPIDocument.components?.schemas?["Vehicle"], "Vehicle schema not exists")
+        XCTAssertEqual("array", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.type)
+        XCTAssertEqual("#/components/schemas/Fuel", openAPIDocument.components?.schemas?["Vehicle"]?.properties?["fuels"]?.items?.ref)
+    }
     
     func testSchemaWithDictionaryOfStringShouldBeTranslatedToOpenAPIDocument() {
 

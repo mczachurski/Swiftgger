@@ -26,7 +26,10 @@ class Program {
         .add([
             APIObject(object: Vehicle(name: "Ford",
                                       age: 21,
-                                      fuels: nil,
+                                      fuels: [
+                                        Fuel(level: 91, type: "E98", productionDate: Date(), parameters: ["power", "speed"]),
+                                        Fuel(level: 90, type: "GAS", productionDate: Date(), parameters: ["power", "speed"])
+                                      ],
                                       currentFuel: nil,
                                       hasEngine: false,
                                       tags: ["key": "value"],

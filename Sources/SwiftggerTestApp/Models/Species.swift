@@ -6,8 +6,7 @@
     
 import Foundation
 
-struct Species: Encodable
-{
+struct Species: Encodable {
     var name: String
     var countryOfOrigin: String
 
