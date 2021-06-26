@@ -125,6 +125,24 @@ class Program {
                       authorization: true
             ),
             APIAction(method: .get,
+                      route: "/vehicles/tags",
+                      summary: "Get vehicle associated tags",
+                      description: "GET action for downloading vehicle associated tags.",
+                      responses: [
+                        APIResponse(code: "200", description: "Vehicle tags", type: .dictionary(String.self)),
+                        APIResponse(code: "401", description: "Unauthorized")
+                      ]
+            ),
+            APIAction(method: .get,
+                      route: "/vehicles/fuels",
+                      summary: "Get vehicle associated fuels",
+                      description: "GET action for downloading vehicle associated fuels.",
+                      responses: [
+                        APIResponse(code: "200", description: "Vehicle fuels", type: .dictionary(Fuel.self)),
+                        APIResponse(code: "401", description: "Unauthorized")
+                      ]
+            ),
+            APIAction(method: .get,
                       route: "/echo",
                       summary: "Send text",
                       description: "GET action for printing request in response body",

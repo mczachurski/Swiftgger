@@ -628,6 +628,57 @@ class OpenAPIPathsBuilderTests: XCTestCase {
         // Assert.
         XCTAssertEqual("#/components/schemas/CustomAnimal", openAPIDocument.paths["/animals"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.ref)
     }
+
+    func testActionObjectResponseDictionaryStringShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/tags", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .dictionary(String.self))
+                      ]
+                     )
+        ]))
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("object", openAPIDocument.paths["/tags"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.type)
+        XCTAssertEqual("string", openAPIDocument.paths["/tags"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.additionalProperties?.type)
+    }
+    
+    func testActionObjectResponseDictionaryObjectShouldBeAddedToOpenAPIDocument() {
+
+        // Arrange.
+        let openAPIBuilder = OpenAPIBuilder(
+            title: "Title",
+            version: "1.0.0",
+            description: "Description"
+        )
+        .add(APIController(name: "ControllerName", description: "ControllerDescription", actions: [
+            APIAction(method: .get, route: "/tags", summary: "Action summary",
+                      description: "Action description", responses: [
+                        APIResponse(code: "200", description: "Response description", type: .dictionary(Animal.self))
+                      ]
+                     )
+        ]))
+        .add([
+            APIObject(object: Animal(name: "Dog", age: 21))
+        ])
+
+        // Act.
+        let openAPIDocument = openAPIBuilder.built()
+
+        // Assert.
+        XCTAssertEqual("object", openAPIDocument.paths["/tags"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.type)
+        XCTAssertEqual("#/components/schemas/Animal", openAPIDocument.paths["/tags"]?.get?.responses?["200"]?.content?["application/json"]?.schema?.additionalProperties?.ref)
+    }
     
     func testActionStringValueTypeResponseShouldBeAddedToOpenAPIDocument() {
         // Arrange.

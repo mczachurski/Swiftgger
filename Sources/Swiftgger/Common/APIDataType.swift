@@ -47,6 +47,37 @@ extension APIDataType {
             return nil
         }
     }
+    
+    init?(fromSwiftType type: Any.Type) {
+        switch type {
+        case is Int32.Type:
+            self.type = "integer"
+            self.format = "int32"
+        case is Int.Type:
+            self.type = "integer"
+            self.format = "int64"
+        case is Float.Type:
+            self.type = "number"
+            self.format = "float"
+        case is Double.Type:
+            self.type = "number"
+            self.format = "double"
+        case is Bool.Type:
+            self.type = "boolean"
+            self.format = nil
+        case is Date.Type:
+            self.type = "string"
+            self.format = "date"
+        case is String.Type:
+            self.type = "string"
+            self.format = nil
+        case is UUID.Type:
+            self.type = "string"
+            self.format = "uuid"
+        default:
+            return nil
+        }
+    }
 }
 
 extension APIDataType {
